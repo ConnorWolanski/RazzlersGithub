@@ -18,6 +18,7 @@ class Header extends React.Component{
   }
 
   render(){
+    //set modals for login and signup and about
     let modalSignUpClose = () => this.setState({ modalShowSignUp: false });
     let modalLogInClose = () => this.setState({ modalShowLogIn: false });
     let modalMemberClose = () => this.setState({ modalShowMember: false });
