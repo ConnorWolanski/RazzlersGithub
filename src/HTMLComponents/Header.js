@@ -77,10 +77,3 @@ class Header extends React.Component{
   }
 }
 export default Header
-//
-// <Modal show={this.state.show} onHide={this.handleClose}>
-//   <Modal.Body>
-//     <SignUp/>
-//   </Modal.Body>
-// </Modal>
-//
