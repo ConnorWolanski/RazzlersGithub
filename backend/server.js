@@ -2,11 +2,17 @@
 const express = require('express');
 const mysql = require('mysql')
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 // initiate express middleware
 const app = express();
 const router = express.Router();
+
+// use these configurations to run on
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+app.use("/api", router);
 
 // Test connection to MySQL Database
 const connection = mysql.createConnection({
@@ -31,8 +37,7 @@ connection.connect(function(err) {
 // function to return to frontend
 router.get("/getData", function(req, response)
 {
-  var returned = "123";
-  console.log("Received fetch request...");
+  console.log("Received GET fetch request...");
   var sql = "SELECT * FROM users";
   connection.query(sql, function(err, result, fields)
   {
@@ -49,11 +54,29 @@ router.get("/getData", function(req, response)
   });
 });
 
-// api
-app.use("/api", router);
+router.post("/getData/checkLogin", function(req, response)
+{
+  console.log("Received POST fetch request...");
+  console.log(req.body);
+  var sql = "SELECT * FROM users WHERE username = \'" + req.body.username + "\'";
+  //var sql = "SELECT * FROM users WHERE username = \'" + args + "\'";
+  connection.query(sql, function(err, result, fields)
+  {
+    if(err)
+    {
+      throw err;
+      return;
+    } else {
+      //console.log(result);
+      response.send(result);
+      //returned = result;
+      //response.send(returned);
+    }
+  });
+});
 
 // start backend on port 3001
 app.listen(3001, function()
 {
-    console.log('Server started on port 3001...');
+    console.log("Server started on port 3001...");
 });
