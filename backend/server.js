@@ -49,6 +49,7 @@ router.get("/getData", function(req, response)
   });
 });
 
+// api
 app.use("/api", router);
 
 // start backend on port 3001
