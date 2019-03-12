@@ -20,27 +20,38 @@ class App  extends React.Component
     }
   }
 
+  // This method is called when react first initializes, ensures react is mounted
   componentDidMount()
   {
     document.title ="Razzlers";
     this.fetchData();
+    var hasLocalStorage = this.checkLocalStorage();
+    if(hasLocalStorage === true)
+    {
+      console.log("This browser has HTML5 Local Storage!");
+    } else {
+      console.log("This browser does not support Local Storage...");
+    }
   }
 
+  // check if client browser has HTML5 localStorage enabled
+  checkLocalStorage()
+  {
+    try{
+      return 'localStorage' in window && window['localStorage'] !== null;
+    } catch(e) {
+      console.log(e);
+      return false;
+    }
+  }
+
+  // fetches data on mount for states
   fetchData()
   {
-    const url = "http://localhost:3001/api/getData";
-    fetch(url, {method: 'GET'})
-    .then(response => {
-      if(response.ok)
-      {
-        response.json().then(json => {
-          // console.log(json[0].username + ": " + json[0].first_name + " " + json[0].last_name);
-          console.log(json);
-        })
-      }
-    })
-    .then()
+
   }
+
+  // This is what is drawn on the browser
   render()
   {
     //const{backgroundImage, logo, database} = this.state;
@@ -62,4 +73,5 @@ class App  extends React.Component
     );
   }
 }
+
 export default App;

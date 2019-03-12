@@ -31,27 +31,31 @@ connection.connect(function(err) {
     throw err;
     return;
   }
-  console.log("Connected!");
+  console.log("Connected to MySQL database!");
 })
 
-// function to return to frontend
-router.get("/getData", function(req, response)
+// goes to MySQL DB and fetches WHOLE list of users
+function getUserListLength()
 {
-  console.log("Received Data Dump fetch request...");
-  var sql = "SELECT * FROM users";
-  connection.query(sql, function(err, result, fields)
+  return new Promise(function(resolve, reject)
   {
-    if(err)
+    var sql = "SELECT * FROM users";
+    connection.query(sql, function(err, result, fields)
     {
-      throw err;
-      return;
-    } else {
-      //console.log(result);
-      response.send(result);
-    }
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        resolve(result.length);
+      }
+    });
   });
-});
+}
 
+// function for checking logins
+// returns true for correct username : password
+// returns false for invalid credentials
 router.post("/getData/checkLogin", function(req, response)
 {
   var username = req.body.username;
@@ -67,12 +71,39 @@ router.post("/getData/checkLogin", function(req, response)
     } else {
       //console.log(result);
       var isCorrect = false;
-      console.log(result[0].password === password);
+      //console.log(result[0].password === password);
       isCorrect = (result[0].password === password);
       isCorrect =  '{"result": "' + isCorrect + '"}';
       response.send(isCorrect);
     }
   });
+});
+
+router.put("/register", function(req, response)
+{
+  getUserListLength().then(result => {
+    var returned = {length:result};
+    response.send(returned);
+  });
+  // var username = req.body.username;
+  // var password = req.body.password;
+  // console.log("Received Login request (" + username + " : " + password + ")...");
+  // var sql = "SELECT * FROM users WHERE username = \'" + username + "\'";
+  // connection.query(sql, function(err, result, fields)
+  // {
+  //   if(err)
+  //   {
+  //     throw err;
+  //     return;
+  //   } else {
+  //     //console.log(result);
+  //     var isCorrect = false;
+  //     //console.log(result[0].password === password);
+  //     isCorrect = (result[0].password === password);
+  //     isCorrect =  '{"result": "' + isCorrect + '"}';
+  //     response.send(isCorrect);
+  //   }
+  // });
 });
 
 // start backend on port 3001
