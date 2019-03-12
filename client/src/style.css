@@ -15,15 +15,18 @@
   display: flex;
   flex-wrap:wrap;
   flex-direction: column;
-  max-width: 30%;
+  max-width: 400px;
+  margin: 1%;
+  padding: 1%;
   border: 7px;
   border-style: ridge;
   border-color: grey;
 }
- #sign{
-   position: absolute;
-   left: 0;
-   top: 50%;
+
+ .tos{
+  background: none;
+  background-color: none;
+  padding-left: 5px;
  }
  .logo_button{
    float: left;
@@ -44,6 +47,7 @@
    border-color: white;
    border-radius: 8px;
    color: white;
+   margin-top: 5px;
    padding: 5px 5px;
  }
  .input{

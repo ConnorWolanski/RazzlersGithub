@@ -4,7 +4,7 @@ class SignUp extends React.Component {
 
   render() {
     return (
-      <div className = "bg2" align = "center">
+      <div className = "bg2" align = "left">
         <font size= "26" >Sign Up</font>
           <input
             type="text"
@@ -36,6 +36,12 @@ class SignUp extends React.Component {
               type="password"
               placeholder="Password"
               className="input"/>
+            <body className="tos">
+              <font> </font>
+              <input type="checkbox" name="terms"></input>
+                <font> I Agree Terms & Coditions</font>
+                <br></br>
+              </body>
             <button  className="button2">
               SignUp
             </button>
