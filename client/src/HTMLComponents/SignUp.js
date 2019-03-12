@@ -16,7 +16,6 @@ class SignUp extends React.Component {
               placeholder="First Name"
               className="input"/>
 
-
             <input
               type="text"
               placeholder="Last Name"

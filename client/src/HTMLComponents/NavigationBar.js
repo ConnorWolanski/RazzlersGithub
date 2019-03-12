@@ -4,7 +4,6 @@ class NavigationBar extends React.Component
 {
   render()
   {
-    //const{ params } = this.props;
     return(
       <div>
         <header>
