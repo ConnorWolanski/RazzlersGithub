@@ -1,21 +1,10 @@
 import React from 'react';
-import SignUp from "./SignUp";
-import Login from "./Login.jsx";
+import SignUp from "./SignUp.js";
+import Login from "./Login.js";
 
 class NavigationBar extends React.Component{
-  constructor(...args) {
-    super(...args);
-
-    this.state =
-    {
-      modalShowSignUp: false,
-      modalShowLogIn: false
-    };
-  }
-
-  render(){
-    let modalSignUpClose = () => this.setState({ modalShowSignUp: false });
-    let modalLogInClose = () => this.setState({ modalShowLogIn: false });
+  render()
+  {
     const{ params } = this.props;
     return(
       <html>
@@ -26,7 +15,7 @@ class NavigationBar extends React.Component{
           <nav class="navbar navbar-default">
             <div class="container-fluid">
               <div class="navbar-header">
-                <a class="navbar-brand" href="Home"><img src="http://razzlers.me:8080/Razzlers_files/Razzlers-Logo.png" height= "100%"/></a>
+                <a class="navbar-brand" href="/"><img src="http://razzlers.me:8080/Razzlers_files/Razzlers-Logo.png" height= "100%"/></a>
               </div>
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
@@ -41,21 +30,16 @@ class NavigationBar extends React.Component{
                   <button type="submit" class="button2" >Search</button>
                 </form>
                 <ul class="nav navbar-nav navbar-right">
-                    <button type = "button" class="button" onClick={() => this.setState({ modalShowSignUp: false, modalShowLogIn: true})}>LogIn</button>
-                    <button type = "button" class="button" onClick={() => this.setState({ modalShowSignUp: true, modalShowLogIn: false})}>SignUp</button>
+                    <button type = "button" class="button" onClick={() => window.location.href='login'}>LogIn</button>
+                    <button type = "button" class="button" onClick={() => window.location.href='signup'}>SignUp</button>
                 </ul>
               </div>
             </div>
           </nav>
         </body>
-        <Login
-          show={this.state.modalShowLogIn}
-          onHide={modalLogInClose}/>
-        <SignUp
-          show={this.state.modalShowSignUp}
-          onHide={modalSignUpClose}/>
       </html>
-  );
+    );
   }
 }
+// onClick={() => checkStorage()}
 export default NavigationBar;
