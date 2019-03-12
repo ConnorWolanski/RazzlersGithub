@@ -24,11 +24,11 @@ class Header extends React.Component{
     let modalMemberClose = () => this.setState({ modalShowMember: false });
     return (
       <div>
-        <header id = "bg2">
+        <header id = "bg2" >
           <button
             className="logo_button"
             type="button">
-              <img src="http://razzlers.me:8080/Razzlers_files/Razzlers-Logo.png" height = "80" padding = "10"/>
+              <img src="http://razzlers.me:8080/Razzlers_files/Razzlers-Logo.png" />
           </button>
           <button
             className="redirects"

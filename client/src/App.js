@@ -2,7 +2,9 @@ import React from "react";
 import BackgroundImage from './back2.png';
 import './style.css';
 //import templates from other places
-import Header from "./HTMLComponents/Header";
+//import Header from "./HTMLComponents/Header";
+
+import NavigationBar from "./HTMLComponents/NavigationBar";
 import SignUp from "./HTMLComponents/SignUp";
 //import MainContent from "./HTMLComponents/MainContent";
 //import Footer from "./HTMLComponents/Footer";
@@ -40,8 +42,7 @@ class App  extends React.Component {
     return (
       <div>
           <img src = {this.state.backgroundImage} id = "bg"/>
-          <Header />
-          
+          <NavigationBar params={this.props.params}/>
       </div>
     );
   }
