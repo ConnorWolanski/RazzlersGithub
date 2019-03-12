@@ -37,7 +37,7 @@ connection.connect(function(err) {
 // function to return to frontend
 router.get("/getData", function(req, response)
 {
-  console.log("Received GET fetch request...");
+  console.log("Received Data Dump fetch request...");
   var sql = "SELECT * FROM users";
   connection.query(sql, function(err, result, fields)
   {
@@ -48,18 +48,16 @@ router.get("/getData", function(req, response)
     } else {
       //console.log(result);
       response.send(result);
-      //returned = result;
-      //response.send(returned);
     }
   });
 });
 
 router.post("/getData/checkLogin", function(req, response)
 {
-  console.log("Received POST fetch request...");
-  console.log(req.body);
-  var sql = "SELECT * FROM users WHERE username = \'" + req.body.username + "\'";
-  //var sql = "SELECT * FROM users WHERE username = \'" + args + "\'";
+  var username = req.body.username;
+  var password = req.body.password;
+  console.log("Received Login request (" + username + " : " + password + ")...");
+  var sql = "SELECT * FROM users WHERE username = \'" + username + "\'";
   connection.query(sql, function(err, result, fields)
   {
     if(err)
@@ -68,9 +66,11 @@ router.post("/getData/checkLogin", function(req, response)
       return;
     } else {
       //console.log(result);
-      response.send(result);
-      //returned = result;
-      //response.send(returned);
+      var isCorrect = false;
+      console.log(result[0].password === password);
+      isCorrect = (result[0].password === password);
+      isCorrect =  '{"result": "' + isCorrect + '"}';
+      response.send(isCorrect);
     }
   });
 });

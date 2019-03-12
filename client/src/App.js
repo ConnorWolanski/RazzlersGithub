@@ -38,11 +38,20 @@ class App  extends React.Component {
     .then()
   }
   render(){
+<<<<<<< HEAD
     return (
       <Router>
         <div>
           <img src = {this.state.backgroundImage} id = "bg" />
           <NavigationBar/>
+=======
+    //const{backgroundImage, logo, database} = this.state;
+    return (
+      <Router>
+        <div>
+          <img src = {this.state.backgroundImage} id = "bg" alt = "logo"/>
+          <NavigationBar params={this.props.params} />
+>>>>>>> c2a38726134a951299d9c83f84a1926b5f0c52cc
           <Switch>
             <Route exact path = "/" component = {Home} />
             <Route path = "/movies" component = {Movies} />

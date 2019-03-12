@@ -41,7 +41,11 @@ class SignUp extends React.Component {
               <input type="checkbox" name="terms"></input>
                 <font> I Agree Terms & Coditions</font>
                 <br></br>
+<<<<<<< HEAD
               </div>
+=======
+            </div>
+>>>>>>> c2a38726134a951299d9c83f84a1926b5f0c52cc
             <button  className="button2">
               SignUp
             </button>
