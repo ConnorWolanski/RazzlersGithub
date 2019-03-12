@@ -36,12 +36,12 @@ class SignUp extends React.Component {
               type="password"
               placeholder="Password"
               className="input"/>
-            <body className="tos">
+            <div className="tos">
               <font> </font>
               <input type="checkbox" name="terms"></input>
                 <font> I Agree Terms & Coditions</font>
                 <br></br>
-              </body>
+              </div>
             <button  className="button2">
               SignUp
             </button>

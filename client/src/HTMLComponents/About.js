@@ -17,9 +17,9 @@ class Members extends React.Component {
         </p>
         <p>
           <br/>
-          <a href="https://docs.google.com/spreadsheets/d/1oB89hJ1GFzxqWqvS5EAoRzdsZX7hjpS6eOnHcdjmu2g/edit?usp=sharing" target="_blank">Click here for Log Sheet!</a>
+          <a href="https://docs.google.com/spreadsheets/d/1oB89hJ1GFzxqWqvS5EAoRzdsZX7hjpS6eOnHcdjmu2g/edit?usp=sharing">Click here for Log Sheet!</a>
           <br/>
-          <a href="https://docs.google.com/document/d/1sDUOCYqBGxDh_UEdmFem4ufKH6Z9PKwI-xJBBrAMPlg/edit?usp=sharing" target="_blank">Click here for Software Requirement Specifications!</a>
+          <a href="https://docs.google.com/document/d/1sDUOCYqBGxDh_UEdmFem4ufKH6Z9PKwI-xJBBrAMPlg/edit?usp=sharing">Click here for Software Requirement Specifications!</a>
           <br/>
         </p>
       </div>
