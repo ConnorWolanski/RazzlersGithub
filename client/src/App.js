@@ -10,20 +10,24 @@ import Shows from './HTMLComponents/Shows';
 import NavigationBar from "./HTMLComponents/NavigationBar";
 import SignUp from "./HTMLComponents/SignUp.js";
 
-class App  extends React.Component {
-  constructor(props){
+class App  extends React.Component
+{
+  constructor(props)
+  {
     super(props)
     this.state = {
       backgroundImage: BackgroundImage
     }
   }
 
-  componentDidMount(){
+  componentDidMount()
+  {
     document.title ="Razzlers";
     this.fetchData();
   }
 
-  fetchData(){
+  fetchData()
+  {
     const url = "http://localhost:3001/api/getData";
     fetch(url, {method: 'GET'})
     .then(response => {
@@ -37,21 +41,14 @@ class App  extends React.Component {
     })
     .then()
   }
-  render(){
-<<<<<<< HEAD
-    return (
-      <Router>
-        <div>
-          <img src = {this.state.backgroundImage} id = "bg" />
-          <NavigationBar/>
-=======
+  render()
+  {
     //const{backgroundImage, logo, database} = this.state;
     return (
       <Router>
         <div>
-          <img src = {this.state.backgroundImage} id = "bg" alt = "logo"/>
+          <img src = {this.state.backgroundImage} id = "bg" alt = "razzlers logo"/>
           <NavigationBar params={this.props.params} />
->>>>>>> c2a38726134a951299d9c83f84a1926b5f0c52cc
           <Switch>
             <Route exact path = "/" component = {Home} />
             <Route path = "/movies" component = {Movies} />
