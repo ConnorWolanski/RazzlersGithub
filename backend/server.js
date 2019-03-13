@@ -81,7 +81,6 @@ router.post("/getData/checkLogin", function(req, response)
         isCorrect = '{"result": "' + isCorrect + '"}';
         response.send(isCorrect);
       } else {
-        console.log(result[0].password === password);
         isCorrect = (result[0].password === password);
         isCorrect =  '{"result": "' + isCorrect + '"}';
         response.send(isCorrect);
@@ -95,39 +94,38 @@ router.post("/getData/checkLogin", function(req, response)
 // here on server side and return {result: false}
 router.put("/register", function(req, response)
 {
-  var currentUserID = 0;
   getUserListLength().then(result => {
+    // set vars to text fields
     // inside the project so it knows what index of USER_ID we are at
-    var returned = {length:result};
-    var currentUserID = returned.length;
-    console.log(currentUserID);
-    response.send(returned);
+    var currentUserID = result;
+    var username = req.body.username;
+    var password = req.body.password;
+    var email = req.body.email;
+    var first_name = req.body.first_name;
+    var last_name = req.body.last_name;
+    var display_name = req.body.display_name;
+    var activation_key = utilFunc.createActivationKey();
+    var status = "false";
+    // debug
+    //console.log("Concated: " + currentUserID + " " + username  + " " + first_name + " " + last_name + " " + password + " " + email + " " + activation_key + " " + status + " " + display_name + " ");
+    // then submit to object type
+    var isInserted = false;
+    var sql = "INSERT INTO users (user_id, username, first_name, last_name, password, email, activation_key, status, display_name) VALUES (\'" + currentUserID + "\', \'" + username  + "\', \'" + first_name + "\', \'" + last_name + "\', \'" + password + "\', \'" + email + "\', \'" + activation_key + "\', \'" + status + "\', \'" + display_name + "\')";
+    connection.query(sql, function(err, result)
+    {
+      if(err)
+      {
+        var returned = '{"result": "' + isInserted + '"}';
+        console.log(err);
+        response.send(returned);
+      } else {
+        isInserted = true;
+        var returned = '{"result": "' + isInserted + '"}';
+        console.log("Record inserted correctly!");
+        response.send(returned);
+      }
+    });
   });
-  // set vars to text fields
-  // then submit to object type
-  var user_id = req.body.user_id;
-  var username = req.body.username;
-  var first_name = req.body.first_name;
-  var last_name = req.body.last_name;
-  var password = req.body.password;
-  var email = req.body.email;
-  var activation_key = req.body.activation_key;
-  var status = req.body.status;
-  var display_name = req.body.display_name;
-  // debug
-  console.log("Concated: " + user_id + " " + username  + " " + first_name + " " + last_name + " " + password + " " + email + " " + activation_key + " " + status + " " + display_name + " ");
-  // var sql = "INSERT INTO users (user_id, username, first_name, last_name, password, email, activation_key, status, display_name) VALUES (\'" + user_id + "\', \'" + username  + "\', \'" + first_name + "\', \'" + last_name + "\', \'" + password + "\', \'" + email + "\', \'" + activation_key + "\', \'" + status + "\', \'" + display_name + "\')";
-  // console.log(sql);
-  // connection.query(sql, function(err, result)
-  // {
-  //   if(err)
-  //   {
-  //     throw err;
-  //     return;
-  //   }
-  //   console.log("Record inserted correctly!");
-  // });
-  // return;
 });
 
 // start backend on port 3001
