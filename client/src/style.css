@@ -22,7 +22,15 @@
   border-style: ridge;
   border-color: grey;
 }
-
+.error{
+  background-color: #FFC1C7;
+  border-color: black;
+  border-radius: 3px;
+  border: 3px;
+  font-size: 14px;
+  color: #A81B35;
+  padding: 3px;
+}
  .tos{
   background: none;
   background-color: none;
