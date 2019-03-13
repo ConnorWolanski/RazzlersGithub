@@ -42,32 +42,49 @@ class SignUp extends React.Component
           <font color="black"> I Agree Terms & Conditions</font>
           <br></br>
         </div>
-        <button className="button2" id="registerButton" onClick={() => register("scoutz", "knifez")}>Register</button>
+        <button className="button2" id="registerButton" onClick={() =>
+          {
+            // this is a promise
+            register(document.getElementById("usernameInput").value,
+             document.getElementById("emailInput").value,
+             document.getElementById("passwordInput").value,
+             document.getElementById("firstNameInput").value,
+             document.getElementById("lastNameInput").value,
+             document.getElementById("displayNameInput").value)
+
+
+
+
+
+          }}>Register</button>
         <button className="button2" id="toLoginPageButton" onClick={() => window.location.href='login'}>Login</button>
       </div>
     );
   }
 }
 //  function for attempting to register the user to the DB
-function register(inUsername, inPassword)
+function register(inUsername, inEmail, inPassword, inFirstName, inLastName, inDisplayName)
 {
-  var data = '{"username": "' + inUsername + '", "password": "' + inPassword + '"}';
-  var transport = {
-    headers: {
-      'Content-Type': "application/json"
-    },
-    method: "PUT",
-    body: JSON.stringify(data)
-  };
-  const url = "http://localhost:3001/api/register";
-  fetch(url, transport).then(response => response.json()).then(json => {
-    // needs to return true or false based on if registration is successful
-    // if true, return true and set username in localStorage
-    // if false, return what went wrong, if multiple things, put inside array[]
-      console.log(json);
-      var fetched = json.length;
-      console.log(fetched);
-    });
+  var data = '{"username": "' + inUsername + '", "password": "' + inPassword + '", "email": "' + inEmail + '", "first_name": "' + inFirstName + '", "last_name": "' + inLastName + '", "display_name": "' + inDisplayName + '"}';
+  console.log(data);
+
+
+  // var transport = {
+  //   headers: {
+  //     'Content-Type': "application/json"
+  //   },
+  //   method: "PUT",
+  //   body: JSON.stringify(data)
+  // };
+  // const url = "http://localhost:3001/api/register";
+  // fetch(url, transport).then(response => response.json()).then(json => {
+  //   // needs to return true or false based on if registration is successful
+  //   // if true, return true and set username in localStorage
+  //   // if false, return what went wrong, if multiple things, put inside array[]
+  //     console.log(json);
+  //     var fetched = json.length;
+  //     console.log(fetched);
+  //   });
 
 }
 
