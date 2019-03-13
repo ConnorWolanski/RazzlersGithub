@@ -17,15 +17,15 @@ class NavigationBar extends React.Component
               </div>
               <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul className="nav navbar-nav">
-                  <li><a href="Shows">Shows</a></li>
-                  <li><a href="Movies">Movies</a></li>
-                  <li><a href="About">About</a></li>
+                  <li><a href="Shows"><b>Shows</b></a></li>
+                  <li><a href="Movies"><b>Movies</b></a></li>
+                  <li><a href="About"><b>About</b></a></li>
                 </ul>
                 <form className="navbar-form navbar-left" role="search">
                   <div className="form-group">
                     <input type="text" className="form-control" placeholder="Search"/>
                   </div>
-                  <button type="submit" className="button2" >Search</button>
+                  <button type="submit" className="button3" >Search</button>
                 </form>
                 <ul className="nav navbar-nav navbar-right">
                   <button type = "button" className="button" onClick={() => window.location.href='login'}>LogIn</button>

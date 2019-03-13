@@ -3,20 +3,19 @@ import '../style.css';
 class Login extends React.Component {
   render() {
     return (
-        <div>
-          <font size= "26">Log In</font>
-        <div>
+      <div className = "bg2" align = "left">
+        <font size= "26" >Login</font>
           <input
             type="text"
             placeholder="Username"
             className="input"/>
-        </div>
-        <div>
           <input
             type="password"
             placeholder="Password"
             className="input"/>
-        </div>
+            <button  className="button2">
+              Login
+            </button>
         </div>
     );
   }

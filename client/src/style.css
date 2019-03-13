@@ -48,6 +48,15 @@
    border-radius: 8px;
    color: white;
    margin-top: 5px;
+
+   padding: 5px 5px;
+ }
+ .button3{
+   background-image: url('./back2.png');
+   border: 1;
+   border-color: white;
+   border-radius: 8px;
+   color: white;
    padding: 5px 5px;
  }
  .input{
