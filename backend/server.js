@@ -97,30 +97,37 @@ router.put("/register", function(req, response)
 {
   var currentUserID = 0;
   getUserListLength().then(result => {
+    // inside the project so it knows what index of USER_ID we are at
     var returned = {length:result};
     var currentUserID = returned.length;
     console.log(currentUserID);
     response.send(returned);
   });
-  // var username = req.body.username;
-  // var password = req.body.password;
-  // console.log("Received Login request (" + username + " : " + password + ")...");
-  // var sql = "SELECT * FROM users WHERE username = \'" + username + "\'";
-  // connection.query(sql, function(err, result, fields)
+  // set vars to text fields
+  // then submit to object type
+  var user_id = req.body.user_id;
+  var username = req.body.username;
+  var first_name = req.body.first_name;
+  var last_name = req.body.last_name;
+  var password = req.body.password;
+  var email = req.body.email;
+  var activation_key = req.body.activation_key;
+  var status = req.body.status;
+  var display_name = req.body.display_name;
+  // debug
+  console.log("Concated: " + user_id + " " + username  + " " + first_name + " " + last_name + " " + password + " " + email + " " + activation_key + " " + status + " " + display_name + " ");
+  // var sql = "INSERT INTO users (user_id, username, first_name, last_name, password, email, activation_key, status, display_name) VALUES (\'" + user_id + "\', \'" + username  + "\', \'" + first_name + "\', \'" + last_name + "\', \'" + password + "\', \'" + email + "\', \'" + activation_key + "\', \'" + status + "\', \'" + display_name + "\')";
+  // console.log(sql);
+  // connection.query(sql, function(err, result)
   // {
   //   if(err)
   //   {
   //     throw err;
   //     return;
-  //   } else {
-  //     //console.log(result);
-  //     var isCorrect = false;
-  //     //console.log(result[0].password === password);
-  //     isCorrect = (result[0].password === password);
-  //     isCorrect =  '{"result": "' + isCorrect + '"}';
-  //     response.send(isCorrect);
   //   }
+  //   console.log("Record inserted correctly!");
   // });
+  // return;
 });
 
 // start backend on port 3001

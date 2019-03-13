@@ -9,32 +9,38 @@ class SignUp extends React.Component
         <font size= "26" >Sign Up</font>
         <input
           type="text"
-          placeholder="Email"
-          className="input"/>
-        <input
-          type="text"
-          placeholder="First Name"
-          className="input"/>
-        <input
-          type="text"
-          placeholder="Last Name"
-          className="input"/>
-        <input
-          type="text"
-          placeholder="Display Name"
-          className="input"/>
-        <input
-          type="text"
           placeholder="Username"
-          className="input"/>
+          className="input"
+          id="usernameInput"/>
+        <input
+          type="text"
+          placeholder="Email"
+          className="input"
+          id="emailInput"/>
         <input
           type="password"
           placeholder="Password"
-          className="input"/>
+          className="input"
+          id="passwordInput"/>
+        <input
+          type="text"
+          placeholder="First Name"
+          className="input"
+          id="firstNameInput"/>
+        <input
+          type="text"
+          placeholder="Last Name"
+          className="input"
+          id="lastNameInput"/>
+        <input
+          type="text"
+          placeholder="Display Name"
+          className="input"
+          id="displayNameInput"/>
         <div className="tos">
           <input type="checkbox" name="terms"></input>
-            <font color="black"> I Agree Terms & Conditions</font>
-            <br></br>
+          <font color="black"> I Agree Terms & Conditions</font>
+          <br></br>
         </div>
         <button className="button2" id="registerButton" onClick={() => register("scoutz", "knifez")}>Register</button>
         <button className="button2" id="toLoginPageButton" onClick={() => window.location.href='login'}>Login</button>
@@ -45,11 +51,13 @@ class SignUp extends React.Component
 //  function for attempting to register the user to the DB
 function register(inUsername, inPassword)
 {
+  var data = '{"username": "' + inUsername + '", "password": "' + inPassword + '"}';
   var transport = {
     headers: {
       'Content-Type': "application/json"
     },
     method: "PUT",
+    body: JSON.stringify(data)
   };
   const url = "http://localhost:3001/api/register";
   fetch(url, transport).then(response => response.json()).then(json => {
