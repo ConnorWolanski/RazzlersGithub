@@ -8,7 +8,7 @@ class Login extends React.Component
       <div className = "bg2" align = "left">
         <font size= "26">Log In</font>
         <p hidden id="invalidMessage">
-          <font size= "14px">Username or password is invalid, please try again!</font>
+          <font className="error">Username or password is invalid, please try again!</font>
         </p>
         <input
           type="text"
@@ -24,7 +24,7 @@ class Login extends React.Component
           loginVerification(document.getElementById("usernameInput").value, document.getElementById("passwordInput").value).then(result => {
             if(result === true)
             {
-              document.getElementById("invalidMessage").hidden = true;
+              window.location.href='home';
             } else {
               document.getElementById("invalidMessage").hidden=false;
             }
