@@ -1,8 +1,22 @@
 import React from 'react';
 class NavigationBar extends React.Component
 {
+  constructor(props)
+  {
+    super(props)
+    this.state = {
+      logedin: false
+    }
+  }
   render()
   {
+    var isHidden = window.localStorage.getItem("Razzlers_Username");
+    if(isHidden === null)
+    {
+      isHidden = false;
+    } else {
+      isHidden = true;
+    }
     return(
       <div>
         <header>
@@ -27,8 +41,13 @@ class NavigationBar extends React.Component
                   <button type="submit" className="button3" >Search</button>
                 </form>
                 <ul className="nav navbar-nav navbar-right">
-                  <button type = "button" className="button" onClick={() => window.location.href='login'}>LogIn</button>
-                  <button type = "button" className="button" onClick={() => window.location.href='signup'}>SignUp</button>
+                  <button hidden = {isHidden} type = "button" className="button" onClick={() => window.location.href='login'}>LogIn</button>
+                  <button hidden = {isHidden} type = "button" className="button" onClick={() => window.location.href='signup'}>SignUp</button>
+                  <button hidden = {!isHidden} type = "button" className="button" onClick={() => window.location.href='about'}>Profile</button>
+                  <button hidden = {!isHidden} type = "button" className="button" onClick={() => {
+                      window.localStorage.removeItem("Razzlers_Username");
+                      window.location.href='/';
+                    }}>Logout</button>
                 </ul>
               </div>
             </div>
@@ -38,6 +57,5 @@ class NavigationBar extends React.Component
     );
   }
 }
-
 // onClick={() => checkStorage()}
 export default NavigationBar;

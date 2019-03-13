@@ -54,11 +54,11 @@ function loginVerification(inUsername, inPassword)
       console.log(serverResponse);
       if(serverResponse === "true")
       {
-        localStorage.setItem("username", inUsername);
+        localStorage.setItem("Razzlers_Username", inUsername);
         resolve(true);
       } else {
         // reject the user, tell invalid password try again
-        localStorage.setItem("username", null);
+        localStorage.setItem("Razzlers_Username", null);
         resolve(false);
       }
     });
