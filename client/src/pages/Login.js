@@ -26,7 +26,7 @@ class Login extends React.Component
             {
               document.getElementById("invalidMessage").hidden = true;
             } else {
-              document.getElementById("invalidMessage").hidden = false;
+              document.getElementById("invalidMessage").hidden=false;
             }
           });
         }}>Login</button>
