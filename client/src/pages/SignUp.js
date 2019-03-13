@@ -65,27 +65,25 @@ class SignUp extends React.Component
 //  function for attempting to register the user to the DB
 function register(inUsername, inEmail, inPassword, inFirstName, inLastName, inDisplayName)
 {
-  var data = '{"username": "' + inUsername + '", "password": "' + inPassword + '", "email": "' + inEmail + '", "first_name": "' + inFirstName + '", "last_name": "' + inLastName + '", "display_name": "' + inDisplayName + '"}';
-  console.log(data);
-
-
-  // var transport = {
-  //   headers: {
-  //     'Content-Type': "application/json"
-  //   },
-  //   method: "PUT",
-  //   body: JSON.stringify(data)
-  // };
-  // const url = "http://localhost:3001/api/register";
-  // fetch(url, transport).then(response => response.json()).then(json => {
-  //   // needs to return true or false based on if registration is successful
-  //   // if true, return true and set username in localStorage
-  //   // if false, return what went wrong, if multiple things, put inside array[]
-  //     console.log(json);
-  //     var fetched = json.length;
-  //     console.log(fetched);
-  //   });
-
+  return new Promise(function(resolve, reject)
+  {
+    var data = '{"username": "' + inUsername + '", "password": "' + inPassword + '", "email": "' + inEmail + '", "first_name": "' + inFirstName + '", "last_name": "' + inLastName + '", "display_name": "' + inDisplayName + '"}';
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    };
+    const url = "http://localhost:3001/api/register";
+    fetch(url, transport).then(response => response.json()).then(json =>
+      {
+      // needs to return true or false based on if registration is successful
+      // if true, return true and set username in localStorage
+      // if false, return what went wrong, if multiple things, put inside array[]
+        console.log(json);
+      });
+  });
 }
 
 export default SignUp
