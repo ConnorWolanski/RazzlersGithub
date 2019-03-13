@@ -10,7 +10,7 @@
 }
 
 .bg2{
-  background-image: url('./background.png');
+  background-image: url('./images/background.png');
   background-size: cover;
   display: flex;
   flex-wrap:wrap;
@@ -32,7 +32,7 @@
    float: left;
  }
  .button{
-   background-image: url('./back2.png');
+   background-image: url('./images/back2.png');
    border: 1;
    border-color: white;
    border-radius: 2px;
@@ -42,7 +42,7 @@
    padding: 5px 5px;
  }
  .button2{
-   background-image: url('./back2.png');
+   background-image: url('./images/back2.png');
    border: 1;
    border-color: white;
    border-radius: 8px;
@@ -52,7 +52,7 @@
    padding: 5px 5px;
  }
  .button3{
-   background-image: url('./back2.png');
+   background-image: url('./images/back2.png');
    border: 1;
    border-color: white;
    border-radius: 8px;
@@ -73,14 +73,14 @@
   top: inherit;
 }
 .signUpPage{
-  background-image: url('./background.png');
+  background-image: url('./images/background.png');
   border: 7px;
   border-radius: 20px;
   border-style: ridge;
   padding: 50px;
 }
 .navbar-default {
-  background-image: url('./background.png');
+  background-image: url('./images/background.png');
   background-size: cover;
 }
 

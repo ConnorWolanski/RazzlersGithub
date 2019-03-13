@@ -1,14 +1,14 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
-import BackgroundImage from './back2.png';
+import BackgroundImage from './images/back2.png';
 import './style.css';
-import Home from './HTMLComponents/Home';
-import About from './HTMLComponents/About';
-import Login from './HTMLComponents/Login.js';
-import Movies from './HTMLComponents/Movies';
-import Shows from './HTMLComponents/Shows';
+import Home from './pages/Home';
+import About from './pages/About';
+import Login from './pages/Login.js';
+import Movies from './pages/Movies';
+import Shows from './pages/Shows';
 import NavigationBar from "./HTMLComponents/NavigationBar";
-import SignUp from "./HTMLComponents/SignUp.js";
+import SignUp from "./pages/SignUp.js";
 
 class App  extends React.Component
 {
