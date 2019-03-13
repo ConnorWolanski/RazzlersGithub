@@ -33,7 +33,7 @@ class SignUp extends React.Component
           className="input"/>
         <div className="tos">
           <input type="checkbox" name="terms"></input>
-            <font color="black"> I Agree Terms & Coditions</font>
+            <font color="black"> I Agree Terms & Conditions</font>
             <br></br>
         </div>
         <button className="button2" id="registerButton" onClick={() => register("scoutz", "knifez")}>Register</button>
