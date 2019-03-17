@@ -18,6 +18,8 @@ class App  extends React.Component
     this.state = {
       backgroundImage: BackgroundImage
     }
+    const dotenv = require('dotenv');
+    dotenv.config();
   }
 
   // This method is called when react first initializes, ensures react is mounted
