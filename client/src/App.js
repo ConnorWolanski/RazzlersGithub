@@ -10,6 +10,7 @@ import Shows from './pages/Shows';
 import NavigationBar from "./HTMLComponents/NavigationBar";
 import SignUp from "./pages/SignUp.js";
 import PlayVideo from "./pages/PlayVideo.js";
+import ContactUs from "./pages/ContactUs.js";
 
 class App  extends React.Component
 {
@@ -71,6 +72,7 @@ class App  extends React.Component
             <Route path = "/login" component = {Login} />
             <Route path = "/signup" component = {SignUp} />
             <Route path = "/playvideo" component = {PlayVideo} />
+            <Route path = "/contactus" component = {ContactUs} />
           </Switch>
         </div>
       </Router>
