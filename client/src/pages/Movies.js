@@ -5,6 +5,7 @@ class Movies extends React.Component {
     return (
       <div>
       <h2><font color ="white" size = "50">Movies</font></h2>
+      <button className="button2" onClick={() => window.location.href='PlayVideo'}>PlayVideo</button>
       </div>
     );
   }
