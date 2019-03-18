@@ -1,6 +1,6 @@
 import React from "react";
 import '../style.css';
-class Members extends React.Component {
+class About extends React.Component {
   render() {
     return (
       <div className ="bg2">
@@ -25,4 +25,4 @@ class Members extends React.Component {
     );
   }
 }
-export default Members
+export default About

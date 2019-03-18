@@ -33,6 +33,7 @@ class NavigationBar extends React.Component
                   <li><a href="Shows"><b>Shows</b></a></li>
                   <li><a href="Movies"><b>Movies</b></a></li>
                   <li><a href="About"><b>About</b></a></li>
+                  <li><a href="contactus"><b>Contact Us</b></a></li>
                 </ul>
                 <form className="navbar-form navbar-left" role="search">
                   <div className="form-group">
@@ -43,7 +44,7 @@ class NavigationBar extends React.Component
                 <ul className="nav navbar-nav navbar-right">
                   <button hidden = {isHidden} type = "button" className="button" onClick={() => window.location.href='login'}>LogIn</button>
                   <button hidden = {isHidden} type = "button" className="button" onClick={() => window.location.href='signup'}>SignUp</button>
-                  <button hidden = {!isHidden} type = "button" className="button" onClick={() => window.location.href='about'}>Profile</button>
+                  <button hidden = {!isHidden} type = "button" className="button" onClick={() => window.location.href='profile'}>Profile</button>
                   <button hidden = {!isHidden} type = "button" className="button" onClick={() => {
                       window.localStorage.removeItem("Razzlers_Username");
                       window.location.href='/';
