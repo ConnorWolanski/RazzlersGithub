@@ -31,6 +31,14 @@
   color: #A81B35;
   padding: 3px;
 }
+.center{
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+.centerText{
+  text-align: center;
+}
  .tos{
   background: none;
   background-color: none;
@@ -48,6 +56,12 @@
    margin-left: 5px;
    color: white;
    padding: 5px 5px;
+ }
+ .quarterLeft{
+   margin-left: 25%;
+ }
+ .quarterRight{
+   margin-right: 25%;
  }
  .button2{
    background-image: url('./images/back2.png');

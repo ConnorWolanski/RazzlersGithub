@@ -48,7 +48,7 @@ function loginVerification(inUsername, inPassword)
       method: "POST",
       body: JSON.stringify(data)
     };
-    const url = "http://134.209.50.240:3001/api/getData/checkLogin";
+    const url = "http://razzlers.me:3001/api/getData/checkLogin";
     fetch(url, transport).then(response => response.json()).then(json => {
       var serverResponse = json.result;
       console.log(serverResponse);
@@ -61,6 +61,8 @@ function loginVerification(inUsername, inPassword)
         localStorage.setItem("Razzlers_Username", null);
         resolve(false);
       }
+    }).catch(err => {
+      throw new Error(err);
     });
   });
 }

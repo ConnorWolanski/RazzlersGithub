@@ -115,9 +115,8 @@ router.put("/register", function(req, response)
     {
       if(err)
       {
-        var returned = '{"result": "' + isInserted + '"}';
         console.log(err);
-        response.send(returned);
+        response.send('{"result": "' + isInserted + '"}');
       } else {
         isInserted = true;
         var returned = '{"result": "' + isInserted + '"}';
@@ -126,6 +125,47 @@ router.put("/register", function(req, response)
       }
     });
   });
+});
+
+router.put("/getData/getVideoInfo", function(req, response)
+{
+  var isMovie = req.body.isMovie;
+  var id = req.body.id;
+  // pull from either MOVIES or SHOWS
+  if(isMovie === "true")
+  {
+    var sql = "SELECT * FROM movie WHERE movie_id = \'" + id + "\'";
+    connection.query(sql, function(err, result)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        console.log("Fetched id: " + id + " from movies: " + isMovie);
+        // build the response from result
+        var back = '{"title": "' + result[0].movie_name + '", "desc": "' + result[0].movie_description +
+                    '", "rate": "' + result[0].movie_rating + '", "act": "' + "" + '", "year": "' + result[0].movie_release_year + '"}';
+        response.send(back);
+      }
+    });
+  } else {
+    var sql = "SELECT * FROM tv_show WHERE tv_show_id = \'" + id + "\'";
+    connection.query(sql, function(err, result)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        console.log("Fetched id: " + id + " from movies: " + isMovie);
+        // build the response from result
+        var back = '{"title": "' + result[0].tv_show_title + '", "desc": "' + result[0].tv_show_description +
+                    '", "rate": "' + result[0].tv_show_rating + '", "act": "' + "" + '", "year": "' + result[0].tv_show_release_year + '"}';
+        response.send(back);
+      }
+    });
+  }
 });
 
 // start backend on port 3001
