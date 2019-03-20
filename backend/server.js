@@ -184,6 +184,22 @@ router.get("/getData/getMovieList", function(req, response)
   });
 });
 
+router.get("/getData/getShowList", function(req, response)
+{
+  var sql = "SELECT * FROM tv_show";
+  connection.query(sql, function(err, result)
+  {
+    if(err)
+    {
+      console.log(err);
+      response.send('{"result": "false"}');
+    } else {
+      // send JSON array of movies
+      response.send(result);
+    }
+  });
+});
+
 // start backend on port 3001
 app.listen(3001, function()
 {
