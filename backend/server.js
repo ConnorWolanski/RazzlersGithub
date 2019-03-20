@@ -168,6 +168,22 @@ router.put("/getData/getVideoInfo", function(req, response)
   }
 });
 
+router.get("/getData/getMovieList", function(req, response)
+{
+  var sql = "SELECT * FROM movie";
+  connection.query(sql, function(err, result)
+  {
+    if(err)
+    {
+      console.log(err);
+      response.send('{"result": "false"}');
+    } else {
+      // send JSON array of movies
+      response.send(result);
+    }
+  });
+});
+
 // start backend on port 3001
 app.listen(3001, function()
 {
