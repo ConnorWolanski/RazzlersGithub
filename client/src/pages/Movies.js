@@ -24,15 +24,15 @@ class Movies extends React.Component {
     //console.log(movieList[0]);
     if(movieList !== 0){
       console.log(movieList)
-    return (
-      <div>
-        <h2><font color ="white" size = "50">Movies</font></h2>
-          <MovieCard movie={movieList[0]}></MovieCard>
-        <button className="button2" onClick={() => window.location.href='PlayVideo?isMovie=true&id=1'}>PlayVideo</button>
-      </div>
-    );
+      return (
+        <div>
+          <p className="centerTextWithBack"><font color ="black" size="1000">Movies</font></p>
+            <MovieList movies={movieList}></MovieList>
+          <button className="button2" onClick={() => window.location.href='PlayVideo?isMovie=true&id=1'}>PlayVideo</button>
+        </div>
+      );
     }
-    return(<div></div>)
+    return(<div></div>);
   }
 }
 

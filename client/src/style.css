@@ -39,6 +39,19 @@
 .centerText{
   text-align: center;
 }
+.centerTextWithBack{
+  background-image: url('./images/background.png');
+  background-size:auto;
+  width: 200px;
+  border:6px;
+  border-style:groove;
+  font-family:serif;
+  border-color: white;
+  border-radius: 10px;
+  text-align: center;
+  margin-right:auto;
+  margin-left: auto;
+}
  .tos{
   background: none;
   background-color: none;
