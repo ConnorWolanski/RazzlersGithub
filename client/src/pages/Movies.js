@@ -1,8 +1,7 @@
 import React from "react";
 import '../style.css';
 import MovieList from "../HTMLComponents/MovieList";
-//import * as scrollHelpers from '../Helpers/ScrollHelpers';
-import MovieCard from '../HTMLComponents/MovieCard';
+
 class Movies extends React.Component {
   constructor(props)
   {
@@ -16,19 +15,12 @@ class Movies extends React.Component {
   }
   render() {
     const {movieList} = this.state;
-    //console.log(this.state);
-    /*if(typeof movieList === "object")
+    if(movieList !== 0)
     {
-      console.log(movieList[0].movie_name);
-    }*/
-    //console.log(movieList[0]);
-    if(movieList !== 0){
-      console.log(movieList)
       return (
         <div>
           <p className="centerTextWithBack"><font color ="black" size="1000">Movies</font></p>
             <MovieList movies={movieList}></MovieList>
-          <button className="button2" onClick={() => window.location.href='PlayVideo?isMovie=true&id=1'}>PlayVideo</button>
         </div>
       );
     }

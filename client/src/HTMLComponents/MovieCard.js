@@ -10,12 +10,12 @@ const styles = {
     overflow: 'hidden'
   },
   cardMedia: {
-    maxHeight: 594,
+    maxHeight: 399,
     overflow: 'hidden'
   },
   card: {
     cursor: 'pointer',
-    height: 600,
+    height: 400,
     overflow: 'hidden'
   },
   bgImage: {
@@ -53,7 +53,7 @@ class MovieCard extends React.Component {
               <CardTitle
                 title={movie.movie_name + " (" + movie.movie_release_year + ")"}
                 subtitle={subtitle}/>}>
-            <img style={styles.bgImage} src={loc} />
+            <img style={styles.bgImage} src={loc} alt="background"/>
           </CardMedia>
         </Card>
       </MuiThemeProvider>

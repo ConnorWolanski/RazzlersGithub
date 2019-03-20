@@ -1,5 +1,7 @@
 import React from "react";
 import '../style.css';
+import ShowList from "../HTMLComponents/ShowList";
+
 class Shows extends React.Component {
   constructor(props)
   {
@@ -13,15 +15,14 @@ class Shows extends React.Component {
   }
   render() {
     const {showList} = this.state;
-    if(showList !== 0){
-      console.log(showList)
-    return (
-      <div>
-        <h2><font color ="white" size = "50">shows</font></h2>
-          <MovieCard movie={movieList[0]}></MovieCard>
-        <button className="button2" onClick={() => window.location.href='PlayVideo?isMovie=false&id=1'}>PlayVideo</button>
-      </div>
-    );
+    if(showList !== 0)
+    {
+      return (
+        <div>
+            <p className="centerTextWithBack"><font color ="black" size="1000">Shows</font></p>
+            <ShowList shows={showList}></ShowList>
+        </div>
+      );
     }
     return(<div></div>)
   }

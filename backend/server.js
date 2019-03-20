@@ -142,10 +142,14 @@ router.put("/getData/getVideoInfo", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-        console.log("Fetched id: " + id + " from movies: " + isMovie);
+        //console.log("Fetched id: " + id + " from movies: " + isMovie);
         // build the response from result
-        var back = '{"title": "' + result[0].movie_name + '", "desc": "' + result[0].movie_description +
-                    '", "rate": "' + result[0].movie_rating + '", "act": "' + "" + '", "year": "' + result[0].movie_release_year + '"}';
+        var back = '{"result": "false"}';
+        if(result[0] !== null)
+        {
+          back = '{"title": "' + result[0].movie_name + '", "desc": "' + result[0].movie_description +
+                  '", "rate": "' + result[0].movie_rating + '", "act": "' + "" + '", "year": "' + result[0].movie_release_year + '"}';
+        }
         response.send(back);
       }
     });
@@ -158,10 +162,14 @@ router.put("/getData/getVideoInfo", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-        console.log("Fetched id: " + id + " from movies: " + isMovie);
+        //console.log("Fetched id: " + id + " from movies: " + isMovie);
         // build the response from result
-        var back = '{"title": "' + result[0].tv_show_title + '", "desc": "' + result[0].tv_show_description +
-                    '", "rate": "' + result[0].tv_show_rating + '", "act": "' + "" + '", "year": "' + result[0].tv_show_release_year + '"}';
+        var back = '{"result": "false"}'
+        if(result[0] !== null)
+        {
+          back = '{"title": "' + result[0].tv_show_title + '", "desc": "' + result[0].tv_show_description +
+                  '", "rate": "' + result[0].tv_show_rating + '", "act": "' + "" + '", "year": "' + result[0].tv_show_release_year + '"}';
+        }
         response.send(back);
       }
     });

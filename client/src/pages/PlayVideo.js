@@ -60,13 +60,11 @@ class PlayVideo extends React.Component {
     }
     return (
       <div>
-        <h2 className="centerText"><font  color ="white" size = "50"> {name} </font></h2>
-
+        <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
         <video className="center" width="720" height="480"   controls>
           <source src={loc} type="video/mp4"/>
         </video>
-        <p className="centerText"><font  color ="white" size = "20px">{"(" + release_year + ") " + rating + "/10, " + description}</font></p>
-
+        <p className="centerText"><font  color ="white" size = "20px">{"(" + release_year + ") " + rating + "/10, " + description + "\n" + actors}</font></p>
       </div>
     );
   }
@@ -99,7 +97,6 @@ function getVideoInfo(isMovie, id)
     const url = "http://localhost:3001/api/getData/getVideoInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
-      if(1 === 1) {} else { reject(); }
     }).catch(err => {
       throw new Error(err);
     });
