@@ -58,7 +58,6 @@ class PlayVideo extends React.Component {
     } else {
       loc = "//razzlers.me/assets/videos/episodes/" + id + ".mp4";
     }
-    console.log("hello2");
     return (
       <div>
         <h2 className="centerText"><font  color ="white" size = "50"> {name} </font></h2>
