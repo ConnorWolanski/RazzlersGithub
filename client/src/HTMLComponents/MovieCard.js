@@ -10,12 +10,12 @@ const styles = {
     overflow: 'hidden'
   },
   cardMedia: {
-    maxHeight: 394,
+    maxHeight: 594,
     overflow: 'hidden'
   },
   card: {
     cursor: 'pointer',
-    height: 400,
+    height: 600,
     overflow: 'hidden'
   },
   bgImage: {
