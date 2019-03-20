@@ -36,13 +36,7 @@ class MovieCard extends React.Component {
 
   render() {
     const {movie} = this.props;
-    var loc = "";
-
-    // if(movie.hasOwnProperty("movie_id"))
-    // {
-    //   console.log("I have an ID!");
-       loc += "//razzlers.me/assets/thumbnails/movieThumbnails/" + movie.movie_id + ".jpg";
-    // }
+    var loc = "//razzlers.me/assets/thumbnails/movieThumbnails/" + movie.movie_id + ".jpg";
 
     // The subtitle won't render if it's null
     const subtitle = this.state.isMouseOver ? movie.movie_description : null;
@@ -52,12 +46,12 @@ class MovieCard extends React.Component {
           style={styles.card}
           onMouseOver={() => this.setState({isMouseOver: true})}
           onMouseLeave={() => this.setState({isMouseOver: false})}
-          onClick={() => window.location.href='PlayVideo?isMovie=true&id=1'}>
+          onClick={() => window.location.href="PlayVideo?isMovie=true&id=" + movie.movie_id}>
           <CardMedia
             style={styles.cardMedia}
             overlay={
               <CardTitle
-                title={movie.movie_name}
+                title={movie.movie_name + " (" + movie.movie_release_year + ")"}
                 subtitle={subtitle}/>}>
             <img style={styles.bgImage} src={loc} />
           </CardMedia>

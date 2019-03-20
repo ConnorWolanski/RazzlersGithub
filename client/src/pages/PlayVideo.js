@@ -66,12 +66,12 @@ class PlayVideo extends React.Component {
           <source src={loc} type="video/mp4"/>
         </video>
         <p className="centerText"><font  color ="white" size = "20px">{"(" + release_year + ") " + rating + "/10, " + description}</font></p>
-        <p className="quarterLeft"><button className= "button">Previous Episode</button></p>
+
       </div>
     );
   }
 }
-
+  //<p className="quarterLeft"><button className= "button">Previous Episode</button></p>
 function checkParams()
 {
   return new Promise(function(resolve, reject)
