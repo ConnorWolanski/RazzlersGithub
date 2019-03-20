@@ -1,6 +1,6 @@
 import React from 'react';
 import {Row, Col} from 'react-bootstrap';
-import MovieCard from '../movie-card/movie-card.component';
+import MovieCard from './MovieCard';
 
 const styles = {
   movieColumn: {
@@ -17,7 +17,6 @@ const MovieListComponent = ({movies}) => {
   return (
     <Row>
       {movieColumns}
-      <LoaderComponent isLoading={isLoading} />
     </Row>
   );
 }

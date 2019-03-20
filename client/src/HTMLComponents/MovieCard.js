@@ -1,5 +1,7 @@
 import React from 'react';
 import {Card, CardTitle, CardMedia} from 'material-ui';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+
 
 const styles = {
   cardTitle: {
@@ -25,33 +27,43 @@ class MovieCard extends React.Component {
   constructor(props) {
     super(props);
     // Track if the mouse hovering over the movie card
+    //console.log(this.props);
     this.state = {
-      isMouseOver: false
+      isMouseOver: false,
+      movie: props
     };
   }
 
   render() {
     const {movie} = this.props;
-    // The subtitle won't render if it's null
-    const subtitle = this.state.isMouseOver ? movie.overview : null;
+    var loc = "";
 
+    // if(movie.hasOwnProperty("movie_id"))
+    // {
+    //   console.log("I have an ID!");
+       loc += "//razzlers.me/assets/thumbnails/movieThumbnails/" + movie.movie_id + ".jpg";
+    // }
+
+    // The subtitle won't render if it's null
+    const subtitle = this.state.isMouseOver ? movie.movie_description : null;
     return (
-      <Card
-        style={styles.card}
-        onMouseOver={() => this.setState({isMouseOver: true})}
-        onMouseLeave={() => this.setState({isMouseOver: false})}
-        onClick={() => window.location.href='PlayVideo?isMovie=true&id=1'}>
-        <CardMedia
-          style={styles.cardMedia}
-          overlay={
-            <CardTitle
-              title={movie.title}
-              subtitle={subtitle}/>}>
-          <img style={styles.bgImage} src={movie.poster_path} />
-        </CardMedia>
-      </Card>
+      <MuiThemeProvider>
+        <Card
+          style={styles.card}
+          onMouseOver={() => this.setState({isMouseOver: true})}
+          onMouseLeave={() => this.setState({isMouseOver: false})}
+          onClick={() => window.location.href='PlayVideo?isMovie=true&id=1'}>
+          <CardMedia
+            style={styles.cardMedia}
+            overlay={
+              <CardTitle
+                title={movie.movie_name}
+                subtitle={subtitle}/>}>
+            <img style={styles.bgImage} src={loc} />
+          </CardMedia>
+        </Card>
+      </MuiThemeProvider>
     );
   }
 }
-
 export default MovieCard;
