@@ -56,6 +56,99 @@ function getUserListLength()
   });
 }
 
+// goes to MySQL DB and fetches userID of username
+function getUserID(username)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var sql = "SELECT * FROM users WHERE username='" + username + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        resolve(result[0].user_id);
+      }
+    });
+  });
+}
+
+function getShowFromID(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var sql = "SELECT * FROM tv_show WHERE tv_show_id='" + id + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        resolve(result[0]);
+      }
+    });
+  });
+}
+
+function getShowList(idList)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var returnedList = [];
+    idList.forEach(function(id)
+    {
+      getShowFromID(id.tv_show_id).then(result =>
+      {
+        //add to array, and increment processed.
+        returnedList[returnedList.length] = result;
+        if(returnedList.length === idList.length)
+        {
+          resolve(returnedList);
+        }
+      });
+    });
+  });
+}
+function getMovieFromID(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var sql = "SELECT * FROM movie WHERE movie_id='" + id + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        resolve(result[0]);
+      }
+    });
+  });
+}
+
+function getMovieList(idList)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var returnedList = [];
+    idList.forEach(function(id)
+    {
+      getMovieFromID(id.movie_id).then(result =>
+      {
+        //add to array, and increment processed.
+        returnedList[returnedList.length] = result;
+        if(returnedList.length === idList.length)
+        {
+          resolve(returnedList);
+        }
+      });
+    });
+  });
+}
 // function for checking logins
 // returns true for correct username : password
 // returns false for invalid credentials
@@ -205,6 +298,56 @@ router.get("/getData/getShowList", function(req, response)
       // send JSON array of movies
       response.send(result);
     }
+  });
+});
+
+router.put("/getData/getSubscribedShows", function(req, response)
+{
+  // first get ID from username passed in.
+  var username = req.body.username;
+  getUserID(username).then(result => {
+    // now we have the userID stored in result
+    var sql = "SELECT tv_show_id FROM user_shows_selected WHERE user_id='" + result + "'";
+    connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        // result = tv_show_id array
+        var returned = "";
+        getShowList(sqlresult).then(listResult => {
+          returned = listResult;
+          response.send(returned);
+        });
+      }
+    });
+  });
+});
+
+router.put("/getData/getSubscribedMovies", function(req, response)
+{
+  // first get ID from username passed in.
+  var username = req.body.username;
+  getUserID(username).then(result => {
+    // now we have the userID stored in result
+    var sql = "SELECT movie_id FROM user_movies_selected WHERE user_id='" + result + "'";
+    connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        // result = tv_show_id array
+        var returned = "";
+        getMovieList(sqlresult).then(listResult => {
+          returned = listResult;
+          response.send(returned);
+        });
+      }
+    });
   });
 });
 

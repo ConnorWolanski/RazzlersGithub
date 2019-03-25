@@ -21,7 +21,6 @@ class Subscriptions extends React.Component {
   }
   render() {
     const {movieList, showList} = this.state;
-    console.log(showList);
     if(movieList !== 0 && showList !==0)
     {
       return (
@@ -43,13 +42,18 @@ function getMovieList()
 {
   return new Promise(function(resolve, reject)
   {
+    var username = window.localStorage.getItem("Razzlers_Username");
+    // check if username is undefined
+    var data = '{"username": "' + username + '"}';
+    data = JSON.parse(data);
     var transport = {
       headers: {
         'Content-Type': "application/json"
       },
-      method: "GET"
+      method: "PUT",
+      body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getMovieList";
+    const url = "http://localhost:3001/api/getData/getSubscribedMovies";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -61,13 +65,18 @@ function getShowList()
 {
   return new Promise(function(resolve, reject)
   {
+    var username = window.localStorage.getItem("Razzlers_Username");
+    // check if username is undefined
+    var data = '{"username": "' + username + '"}';
+    data = JSON.parse(data);
     var transport = {
       headers: {
         'Content-Type': "application/json"
       },
-      method: "GET"
+      method: "PUT",
+      body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getShowList";
+    const url = "http://localhost:3001/api/getData/getSubscribedShows";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {

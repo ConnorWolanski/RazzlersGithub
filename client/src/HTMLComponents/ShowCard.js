@@ -51,7 +51,7 @@ class ShowCard extends React.Component {
             style={styles.cardMedia}
             overlay={
               <CardTitle
-                title={show.tv_show_name + " (" + show.tv_show_release_year + ")"}
+                title={show.tv_show_title + " (" + show.tv_show_release_year + ")"}
                 subtitle={subtitle}/>}>
             <img style={styles.bgImage} src={loc} alt="background"/>
           </CardMedia>
