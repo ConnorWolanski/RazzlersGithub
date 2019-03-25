@@ -8,7 +8,9 @@
   min-width: 100%;
   min-height: 100%;
 }
-
+.hide{
+  display: none;
+}
 .bg2{
   background-image: url('./images/background.png');
   background-size: cover;

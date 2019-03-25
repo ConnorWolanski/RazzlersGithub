@@ -19,7 +19,7 @@ app.use("/api", router);
 
 // Test connection to MySQL Database
 const connection = mysql.createConnection({
-  host: "157.230.162.99",
+  host: "assets.razzlers.me",
   port: 3306,
   //host: "localhost",
   user: "root",

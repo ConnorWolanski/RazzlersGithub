@@ -36,7 +36,7 @@ class ShowCard extends React.Component {
 
   render() {
     const {show} = this.props;
-    var loc = "//razzlers.me/assets/thumbnails/showThumbnails/" + show.tv_show_id + ".jpg";
+    var loc = "//assets.razzlers.me/assets/thumbnails/showThumbnails/" + show.tv_show_id + ".jpg";
 
     // The subtitle won't render if it's null
     const subtitle = this.state.isMouseOver ? show.tv_show_description : null;

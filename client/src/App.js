@@ -12,6 +12,7 @@ import SignUp from "./pages/SignUp.js";
 import PlayVideo from "./pages/PlayVideo.js";
 import ContactUs from "./pages/ContactUs.js";
 import Profile from "./pages/Profile.js";
+import Subscriptions from "./pages/Subscriptions.js";
 
 class App  extends React.Component
 {
@@ -74,6 +75,7 @@ class App  extends React.Component
             <Route path = "/signup" component = {SignUp} />
             <Route path = "/playvideo" component = {PlayVideo} />
             <Route path = "/contactus" component = {ContactUs} />
+            <Route path = "/Subscriptions" component = {Subscriptions} />
             <Route path = "/profile" component = {Profile} />
           </Switch>
         </div>

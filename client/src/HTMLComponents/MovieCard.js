@@ -36,7 +36,7 @@ class MovieCard extends React.Component {
 
   render() {
     const {movie} = this.props;
-    var loc = "//razzlers.me/assets/thumbnails/movieThumbnails/" + movie.movie_id + ".jpg";
+    var loc = "//assets.razzlers.me/assets/thumbnails/movieThumbnails/" + movie.movie_id + ".jpg";
 
     // The subtitle won't render if it's null
     const subtitle = this.state.isMouseOver ? movie.movie_description : null;

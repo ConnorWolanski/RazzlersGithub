@@ -32,6 +32,7 @@ class NavigationBar extends React.Component
                 <ul className="nav navbar-nav">
                   <li><a href="Shows"><b>Shows</b></a></li>
                   <li><a href="Movies"><b>Movies</b></a></li>
+                  <li id ="Subscriptions" className={ !isHidden ? 'hide' : 'none'}><a href="Subscriptions" ><b>Subscriptions</b></a></li>
                   <li><a href="About"><b>About</b></a></li>
                   <li><a href="contactus"><b>Contact Us</b></a></li>
                 </ul>
