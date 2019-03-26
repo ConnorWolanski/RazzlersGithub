@@ -1,5 +1,8 @@
 import React from "react";
 import '../style.css';
+
+const utilFunc = require('../Helpers/UtilityFunctions');
+
 class Login extends React.Component
 {
   render()
@@ -55,10 +58,29 @@ function loginVerification(inUsername, inPassword)
       if(serverResponse === "true")
       {
         localStorage.setItem("Razzlers_Username", inUsername);
-        resolve(true);
+        utilFunc.getSubscribedShowList().then(result => {
+          var showList = [];
+          result.forEach(function(show)
+          {
+            showList[showList.length] = show.tv_show_id;
+          });
+          localStorage.setItem("Razzlers_Subscribed_Shows", JSON.stringify(showList));
+        });
+        utilFunc.getSubscribedMovieList().then(result =>
+        {
+          var movieList = [];
+          result.forEach(function(movie)
+          {
+            movieList[movieList.length] = movie.movie_id;
+          });
+          localStorage.setItem("Razzlers_Subscribed_Movies", JSON.stringify(movieList));
+          resolve(true);
+        });
       } else {
         // reject the user, tell invalid password try again
         localStorage.setItem("Razzlers_Username", null);
+        localStorage.setItem("Razzlers_Subscribed_Shows", null);
+        localStorage.setItem("Razzlers_Subscribed_Movies", null);
         resolve(false);
       }
     }).catch(err => {

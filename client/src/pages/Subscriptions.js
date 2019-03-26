@@ -3,6 +3,8 @@ import '../style.css';
 import MovieList from "../HTMLComponents/MovieList";
 import ShowList from "../HTMLComponents/ShowList";
 
+const utilFunc = require('../Helpers/UtilityFunctions');
+
 class Subscriptions extends React.Component {
   constructor(props)
   {
@@ -11,10 +13,10 @@ class Subscriptions extends React.Component {
       movieList: 0,
       showList: 0
     };
-    getShowList().then(result => {
+    utilFunc.getSubscribedShowList().then(result => {
       this.setState({ showList: result });
     });
-    getMovieList().then(result => {
+    utilFunc.getSubscribedMovieList().then(result => {
       this.setState({ movieList: result });
     });
 
@@ -38,50 +40,4 @@ class Subscriptions extends React.Component {
   }
 }
 
-function getMovieList()
-{
-  return new Promise(function(resolve, reject)
-  {
-    var username = window.localStorage.getItem("Razzlers_Username");
-    // check if username is undefined
-    var data = '{"username": "' + username + '"}';
-    data = JSON.parse(data);
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(data)
-    };
-    const url = "http://localhost:3001/api/getData/getSubscribedMovies";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      resolve(json);
-    }).catch(err => {
-      throw new Error(err);
-    });
-  });
-}
-function getShowList()
-{
-  return new Promise(function(resolve, reject)
-  {
-    var username = window.localStorage.getItem("Razzlers_Username");
-    // check if username is undefined
-    var data = '{"username": "' + username + '"}';
-    data = JSON.parse(data);
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(data)
-    };
-    const url = "http://localhost:3001/api/getData/getSubscribedShows";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      resolve(json);
-    }).catch(err => {
-      throw new Error(err);
-    });
-  });
-}
 export default Subscriptions
