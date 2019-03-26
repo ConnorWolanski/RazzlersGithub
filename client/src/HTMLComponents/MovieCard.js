@@ -12,6 +12,7 @@ const styles = {
   cardMedia: {
     maxHeight: 399,
     overflow: 'hidden'
+
   },
   card: {
     cursor: 'pointer',
@@ -19,6 +20,7 @@ const styles = {
     overflow: 'hidden'
   },
   bgImage: {
+    minHeight:400,
     width: '100%'
   }
 };

@@ -19,6 +19,7 @@ const styles = {
     overflow: 'hidden'
   },
   bgImage: {
+    minHeight: 400,
     width: '100%'
   }
 };
