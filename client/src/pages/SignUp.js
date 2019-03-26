@@ -84,6 +84,8 @@ class SignUp extends React.Component
                {
                  // registration was successful
                  window.localStorage.setItem("Razzlers_Username", document.getElementById("usernameInput").value);
+                 window.localStorage.setItem("Razzlers_Subscribed_Shows", 0);
+                 window.localStorage.setItem("Razzlers_Subscribed_Movies", 0);
                  window.location.href='/';
                } else {
                  // display error, reprompt for information
@@ -110,12 +112,13 @@ function register(inUsername, inEmail, inPassword, inFirstName, inLastName, inDi
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me:3001/api/register";
+    const url = "//localhost:3001/api/register";
     fetch(url, transport).then(response => response.json()).then(json =>
       {
         // needs to return true or false based on if registration is successful
         // if true, return true and set username in localStorage
         // if false, return what went wrong, if multiple things, put inside array[]
+        console.log(json);
         resolve(json);
       });
   });

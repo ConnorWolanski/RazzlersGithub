@@ -23,7 +23,7 @@ class Subscriptions extends React.Component {
   }
   render() {
     const {movieList, showList} = this.state;
-    if(movieList !== 0 && showList !==0)
+    if(Array.isArray(movieList) && Array.isArray(showList))
     {
       return (
         <div>

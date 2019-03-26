@@ -13,7 +13,7 @@ exports.getSubscribedMovieList = function()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getSubscribedMovies";
+    const url = "//localhost:3001/api/getData/getSubscribedMovies";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -37,7 +37,7 @@ exports.getSubscribedShowList = function()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getSubscribedShows";
+    const url = "//localhost:3001/api/getData/getSubscribedShows";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {

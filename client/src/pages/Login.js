@@ -51,29 +51,44 @@ function loginVerification(inUsername, inPassword)
       method: "POST",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me:3001/api/getData/checkLogin";
+    const url = "//localhost:3001/api/getData/checkLogin";
     fetch(url, transport).then(response => response.json()).then(json => {
       var serverResponse = json.result;
-      console.log(serverResponse);
       if(serverResponse === "true")
       {
         localStorage.setItem("Razzlers_Username", inUsername);
         utilFunc.getSubscribedShowList().then(result => {
           var showList = [];
-          result.forEach(function(show)
+          console.log("here1");
+          if(Array.isArray(result))
           {
-            showList[showList.length] = show.tv_show_id;
-          });
-          localStorage.setItem("Razzlers_Subscribed_Shows", JSON.stringify(showList));
+            console.log("here2");
+            result.forEach(function(show)
+            {
+              showList[showList.length] = show.tv_show_id;
+            });
+            localStorage.setItem("Razzlers_Subscribed_Shows", JSON.stringify(showList));
+          } else {
+            console.log("here2.25");
+            localStorage.setItem("Razzlers_Subscribed_Shows", null);
+          }
         });
         utilFunc.getSubscribedMovieList().then(result =>
         {
+          console.log("here3");
           var movieList = [];
-          result.forEach(function(movie)
+          if(Array.isArray(result))
           {
-            movieList[movieList.length] = movie.movie_id;
-          });
-          localStorage.setItem("Razzlers_Subscribed_Movies", JSON.stringify(movieList));
+            result.forEach(function(movie)
+            {
+              movieList[movieList.length] = movie.movie_id;
+            });
+            localStorage.setItem("Razzlers_Subscribed_Movies", JSON.stringify(movieList));
+          } else {
+            console.log("here3.5");
+            localStorage.setItem("Razzlers_Subscribed_Movies", null);
+          }
+          console.log("here4");
           resolve(true);
         });
       } else {
