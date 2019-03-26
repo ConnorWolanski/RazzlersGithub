@@ -52,21 +52,49 @@ class PlayVideo extends React.Component {
   render() {
     const {isMovie, id, name, description, rating, actors, release_year} = this.state;
     var loc = "";
+    var isSubscribed = false;
+    /*console.log(id);
+    console.log(JSON.parse(localStorage.getItem("Razzlers_Subscribed_Shows")));
+    console.log(localStorage.getItem("Razzlers_Subscribed_Shows"));
+    console.log(parseInt(id, 10) ===);
+    console.log(typeof JSON.parse(localStorage.getItem("Razzlers_Subscribed_Movies"))[0]);*/
     if(isMovie === "true")
     {
-      loc = "//razzlers.me/assets/videos/movies/" + id + ".mp4";
+      isSubscribed = JSON.parse(localStorage.getItem("Razzlers_Subscribed_Movies")).includes(parseInt(id,10));
+      loc = "//assets.razzlers.me/assets/videos/movies/" + id + ".mp4";
     } else {
-      loc = "//razzlers.me/assets/videos/episodes/" + id + ".mp4";
+      isSubscribed = JSON.parse(localStorage.getItem("Razzlers_Subscribed_Shows")).includes(parseInt(id,10));
+      loc = "//assets.razzlers.me/assets/videos/episodes/" + id + ".mp4";
     }
-    return (
-      <div>
-        <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
-        <video className="center" width="720" height="480"   controls>
-          <source src={loc} type="video/mp4"/>
-        </video>
-        <p className="centerText"><font  color ="white" size = "20px">{"(" + release_year + ") " + rating + "/10, " + description + "\n" + actors}</font></p>
-      </div>
-    );
+    if(!isSubscribed)
+    {
+      // is NOT subscribed
+      if(isMovie === "true"){
+        loc = "//assets.razzlers.me/assets/thumbnails/movieThumbnails/" + id + ".jpg";
+      }else{
+        loc = "//assets.razzlers.me/assets/thumbnails/showThumbnails/" + id + ".jpg";
+      }
+      return (
+        <div>
+          <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
+          <p className="centerText"><font  color ="white" size = "20px">{"(" + release_year + ") " + rating + "/10, " + description + "\n" + actors}</font></p>
+          <img className="center" src={loc} alt="background"/>
+          <p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
+          <button hidden ={isSubscribed} className="subButton">Subscribe</button>
+        </div>
+      );
+    } else {
+      // is subscribed
+      return (
+        <div>
+          <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
+          <video className="center" width="720" height="480"   controls>
+            <source src={loc} type="video/mp4"/>
+          </video>
+          <p className="centerText"><font  color ="white" size = "20px">{"(" + release_year + ") " + rating + "/10, " + description + "\n" + actors}</font></p>
+        </div>
+      );
+    }
   }
 }
   //<p className="quarterLeft"><button className= "button">Previous Episode</button></p>

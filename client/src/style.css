@@ -24,6 +24,18 @@
   border-style: ridge;
   border-color: grey;
 }
+.subButton{
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+  background-image: url('./images/back2.png');
+  border: 1;
+  border-color: white;
+  border-radius: 8px;
+  color: white;
+  margin-top: 5px;
+  padding: 5px 5px;
+}
 .error{
   background-color: #FFC1C7;
   border-color: black;
