@@ -48,6 +48,8 @@ class NavigationBar extends React.Component
                   <button hidden = {!isHidden} type = "button" className="button" onClick={() => window.location.href='profile'}>Profile</button>
                   <button hidden = {!isHidden} type = "button" className="button" onClick={() => {
                       window.localStorage.removeItem("Razzlers_Username");
+                      window.localStorage.removeItem("Razzlers_Subscribed_Shows");
+                      window.localStorage.removeItem("Razzlers_Subscribed_Moives");
                       window.location.href='/';
                     }}>Logout</button>
                 </ul>
