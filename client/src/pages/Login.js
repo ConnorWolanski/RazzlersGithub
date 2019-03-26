@@ -8,7 +8,7 @@ class Login extends React.Component
   render()
   {
     return(
-      <div className = "bg2" align = "left">
+      <form className = "bg2" align = "left" >
         <font size= "26">Log In</font>
         <p hidden id="invalidMessage">
           <font className="error">Username or password is invalid, please try again!</font>
@@ -27,19 +27,20 @@ class Login extends React.Component
           loginVerification(document.getElementById("usernameInput").value, document.getElementById("passwordInput").value).then(result => {
             if(result === true)
             {
-              window.location.href='home';
+              window.location.href='/';
             } else {
               document.getElementById("invalidMessage").hidden=false;
             }
           });
         }}>Login</button>
-      </div>
+    </form>
     );
   }
 }
 // checks if username and password are valid with backend server
 function loginVerification(inUsername, inPassword)
 {
+  window.event.preventDefault();
   return new Promise(function(resolve, reject)
   {
     var data = '{"username": "' + inUsername + '", "password": "' + inPassword + '"}';
