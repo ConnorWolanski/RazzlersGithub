@@ -276,6 +276,75 @@ router.put("/register", function(req, response)
   });
 });
 
+//Update info in users_billing if user already has billing setup
+router.put("/updateBilling", function(req, response)
+{
+	var name = req.body.name
+	var ccn = req.body.ccn
+	var exp = req.body.exp
+	var cvc = req.body.cvc
+	var address = req.body.address
+	var username = req.body.username
+	
+    var status = "false";
+
+    var isInserted = false;
+    var sql = "UPDATE users_billing AS UB INNER JOIN users AS U ON UB.user_id = U.user_id SET UB.billing_name = ?, UB.credit_card_number =?, UB.expiration_date = ? ,UB.cvc = ? , UB.billing_address = ? WHERE U.username = ?";
+  
+	connection.query(sql, [name, ccn, exp, cvc, address, username], function(err, result)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "' + isInserted + '"}');
+      } else {
+        isInserted = true;
+        var returned = '{"result": "' + isInserted + '"}';
+        console.log("Record updated correctly!");
+        response.send(returned);
+      }
+    });
+ });
+ 
+ //Add info in users_billing if user does not have billing setup
+ router.put("/addBilling", function(req, response)
+{
+	getUserID(req.body.username).then(result => {
+	var user_id = result;
+	var billingID = Math.floor(Math.random()*9000000) + 1000000;
+	var name = req.body.name
+	var ccn = req.body.ccn
+	var exp = req.body.exp
+	var cvc = req.body.cvc
+	var address = req.body.address
+	var username = req.body.username
+	
+	var d = new Date();
+    var date = d.getDate();
+
+    var status = "false";
+ 
+    var isInserted = false;
+    
+	var sql = "INSERT INTO users_billing (user_id, billing_id, billing_name, credit_card_number, expiration_date, cvc, billing_address, billing_date) VALUES (\'" + user_id + "\', \'" + billingID  + "\', \'" + name + "\', \'" + ccn + "\', \'" + exp + "\', \'" + cvc + "\', \'" + address + "\', \'" + date + "\')";
+ 	
+	connection.query(sql, function(err, result)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "' + isInserted + '"}');
+      } else {
+        isInserted = true;
+        var returned = '{"result": "' + isInserted + '"}';
+        console.log("Record updated correctly!");
+        response.send(returned);
+      }
+    });
+	
+	});
+ });
+
 router.put("/getData/setSubs", function(req, response)
 {
   // sets sub total to 10 for user.
@@ -477,6 +546,72 @@ router.put("/getData/getVideoInfo", function(req, response)
       }
     });
   }
+});
+
+router.put("/getData/getUserInfo", function(req, response)
+{
+  var user = req.body.user;
+  
+  var sql = "SELECT * FROM users WHERE username = \'" + user + "\'";
+  connection.query(sql, function(err, result)
+  {
+    if(err)
+    {
+      console.log(err);
+      response.send('{"result": "false"}');
+	} else {
+		console.log("Fetched username: " + user);
+        // build the response from result
+        var back = '{"result": "false"}';
+		var accountStatus = "";
+        if(result[0] !== null)
+        {
+		  if(result[0].status == 0){
+			  accountStatus = "Inactive";
+		  }
+		  else if(result[0].status == 1){
+			  accountStatus = "Active";
+		  }
+		  
+          back = '{"id": "' + result[0].user_id + '", "first": "' + result[0].first_name +
+                  '", "last": "' + result[0].last_name + '", "email": "' + result[0].email + '", "status": "' + 
+				  accountStatus + '", "display": "' + result[0].display_name + '", "user": "' + result[0].username + '"}';
+        }
+        response.send(back);
+      }
+    });
+});
+
+router.put("/getData/getUserBilling", function(req, response)
+{
+  var user = req.body.user;
+  var hasBillingInfo = false;
+  
+  var sql = "SELECT * FROM users_billing UB INNER JOIN users U ON UB.user_id = U.user_id WHERE U.username= \'" + user + "\'";
+
+  connection.query(sql, function(err, result)
+  {
+    if(err)
+    {
+      console.log(err);
+      response.send('{"result": "false"}');
+	} else {
+		// build the response from result
+		var back = '{"result": "false"}';
+		if(result.length>0)
+		{
+		hasBillingInfo = true;
+		back = '{"uID": "' + result[0].user_id + '", "bID": "' + result[0].billing_id +
+                 '", "bName": "' + result[0].billing_name + '", "ccN": "' + result[0].credit_card_number + '", "expD": "' + 
+			  result[0].expiration_date + '", "cvc": "' + result[0].cvc + '", "bAddress": "' + result[0].billing_address + 
+			  '", "bDate": "' + result[0].billing_date + '", "hasBillingInfo": "' + hasBillingInfo + '"}';
+		}
+		else {
+			back = '{"result": "false", "hasBillingInfo": "' + hasBillingInfo + '"}';
+		}
+		response.send(back);		
+      }
+    });
 });
 
 router.get("/getData/getMovieList", function(req, response)
