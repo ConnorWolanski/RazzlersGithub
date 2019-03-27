@@ -268,6 +268,45 @@ router.put("/register", function(req, response)
   });
 });
 
+router.put("/getData/setSubs", function(req, response)
+{
+  // sets sub total to 10 for user.
+  var username = req.body.username;
+  getUserID(username).then(result =>
+  {
+    var sql = "UPDATE users SET subscription_slots=10 WHERE user_id='" + result + "'";
+    connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"value": "false"}');
+      } else {
+        response.send('{"value": "true"}');
+      }
+    });
+  });
+});
+
+router.put("/getData/resetSubs", function(req, response)
+{
+  var username = req.body.username;
+  getUserID(username).then(result =>
+  {
+    var sql = "DELETE FROM user_shows_selected WHERE user_id='" + result + "'";
+    connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"value": "false"}');
+      } else {
+        response.send('{"value": "true"}');
+      }
+    });
+  });
+});
+
 router.put("/getData/subscribe", function(req, response)
 {
   var username = req.body.username;
