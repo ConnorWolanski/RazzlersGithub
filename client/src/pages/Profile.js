@@ -1,7 +1,8 @@
 import React from "react";
 import '../style.css';
 
-class Profile extends React.Component {
+class Profile extends React.Component
+{
   constructor(props)
   {
     super(props)
@@ -12,21 +13,23 @@ class Profile extends React.Component {
       lastName: "",
       Email: "",
       Status: 0,
-	  displayName: ""
+  	  displayName: ""
     };
-    checkParams().then(json => {
+    checkParams().then(json =>
+    {
       this.setState({
         id: 0,
-		user: json.user,
-		firstName: "",
-		lastName: "",
-		Email: "",
-		Status: 0,
-		displayName: ""
+    		user: json.user,
+    		firstName: "",
+    		lastName: "",
+    		Email: "",
+    		Status: 0,
+    		displayName: ""
       });
       var user = json.user;
       var set = {};
-      getUserInfo(user).then(result => {
+      getUserInfo(user).then(result =>
+      {
         set = result;
         if(set.hasOwnProperty("result"))
         {
@@ -34,14 +37,14 @@ class Profile extends React.Component {
           console.log("file doesnt exist!");
         } else {
           // parse good response into constants for current state
-		  this.setState({
-			user: json.user,
+    		  this.setState({
+      			user: json.user,
             id: set.id,
-			firstName: set.first,
-			lastName: set.last,
-			Email: set.email,
-			Status: set.status,
-			displayName: set.display
+      			firstName: set.first,
+      			lastName: set.last,
+      			Email: set.email,
+      			Status: set.status,
+      			displayName: set.display
           });
         }
       });
@@ -49,17 +52,17 @@ class Profile extends React.Component {
   }
   render() {
     const {id, user, firstName, lastName, Email, Status, displayName} = this.state;
-    var loc = "";
+    console.log(id);
     return (
       <div className ="bg2">
-        <h2 className="centerText"><font  color = "black" size = "50"> {"Hello, " + user + "!"} </font></h2>
-		<p className="centerText"><font  color ="black" size = "20px">{"Username: " + user}</font></p>
-		<p className="centerText"><font  color ="black" size = "20px">{"Name: " + firstName + " " + lastName}</font></p>
-		<p className="centerText"><font  color ="black" size = "20px">{"Email: " + Email}</font></p>
-		<p className="centerText"><font  color ="black" size = "20px">{"Account Status: " + Status}</font></p>
-		<p className="centerText"><font  color ="black" size = "20px">{"Display Name: " + displayName}</font></p> 
-		<p className="centerText"><a href="../billing"><font color= "#d7e2e9" size = "20px">Click here to view billing information</font></a></p>
-	  </div>
+        <h2 className="centerText"><font  color = "black" size = "50">{"Hello, " + user + "!"}</font></h2>
+    		<p className="centerText"><font  color ="black" size = "20px">{"Username: " + user}</font></p>
+    		<p className="centerText"><font  color ="black" size = "20px">{"Name: " + firstName + " " + lastName}</font></p>
+    		<p className="centerText"><font  color ="black" size = "20px">{"Email: " + Email}</font></p>
+    		<p className="centerText"><font  color ="black" size = "20px">{"Account Status: " + Status}</font></p>
+    		<p className="centerText"><font  color ="black" size = "20px">{"Display Name: " + displayName}</font></p>
+    		<p className="centerText"><a href="../billing"><font color= "#d7e2e9" size = "20px">Click here to view billing information</font></a></p>
+      </div>
     );
   }
 }
@@ -68,8 +71,8 @@ function checkParams()
 {
   return new Promise(function(resolve, reject)
   {
-	var user = window.localStorage.getItem("Razzlers_Username");
-    resolve({user});
+	   var user = window.localStorage.getItem("Razzlers_Username");
+     resolve({user});
   });
 }
 function getUserInfo(user)
@@ -85,7 +88,7 @@ function getUserInfo(user)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me:3001/api/getData/getUserInfo";
+    const url = "http://localhost:3001/api/getData/getUserInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {

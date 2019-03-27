@@ -285,65 +285,52 @@ router.put("/updateBilling", function(req, response)
 	var cvc = req.body.cvc
 	var address = req.body.address
 	var username = req.body.username
-	
-    var status = "false";
+  var sql = "UPDATE users_billing AS UB INNER JOIN users AS U ON UB.user_id = U.user_id SET UB.billing_name = ?, UB.credit_card_number =?, UB.expiration_date = ? ,UB.cvc = ? , UB.billing_address = ? WHERE U.username = ?";
 
-    var isInserted = false;
-    var sql = "UPDATE users_billing AS UB INNER JOIN users AS U ON UB.user_id = U.user_id SET UB.billing_name = ?, UB.credit_card_number =?, UB.expiration_date = ? ,UB.cvc = ? , UB.billing_address = ? WHERE U.username = ?";
-  
 	connection.query(sql, [name, ccn, exp, cvc, address, username], function(err, result)
-    {
+  {
       if(err)
       {
         console.log(err);
-        response.send('{"result": "' + isInserted + '"}');
+        response.send('{"result": "false"}');
       } else {
-        isInserted = true;
-        var returned = '{"result": "' + isInserted + '"}';
-        console.log("Record updated correctly!");
-        response.send(returned);
+        console.log("Billing updated correctly!");
+        response.send('{"result": "true"}');
       }
-    });
- });
- 
- //Add info in users_billing if user does not have billing setup
- router.put("/addBilling", function(req, response)
-{
-	getUserID(req.body.username).then(result => {
-	var user_id = result;
-	var billingID = Math.floor(Math.random()*9000000) + 1000000;
-	var name = req.body.name
-	var ccn = req.body.ccn
-	var exp = req.body.exp
-	var cvc = req.body.cvc
-	var address = req.body.address
-	var username = req.body.username
-	
-	var d = new Date();
-    var date = d.getDate();
+  });
+});
 
-    var status = "false";
- 
-    var isInserted = false;
-    
-	var sql = "INSERT INTO users_billing (user_id, billing_id, billing_name, credit_card_number, expiration_date, cvc, billing_address, billing_date) VALUES (\'" + user_id + "\', \'" + billingID  + "\', \'" + name + "\', \'" + ccn + "\', \'" + exp + "\', \'" + cvc + "\', \'" + address + "\', \'" + date + "\')";
- 	
-	connection.query(sql, function(err, result)
+//Add info in users_billing if user does not have billing setup
+router.put("/addBilling", function(req, response)
+{
+	getUserID(req.body.username).then(result =>
+  {
+  	var user_id = result;
+  	var billingID = Math.floor(Math.random()*9000000) + 1000000;
+  	var name = req.body.name
+  	var ccn = req.body.ccn
+  	var exp = req.body.exp
+  	var cvc = req.body.cvc
+  	var address = req.body.address
+  	var username = req.body.username
+
+  	var d = new Date();
+    var date = d.getDate();
+  	var sql = "INSERT INTO users_billing (user_id, billing_id, billing_name, credit_card_number, expiration_date, cvc, billing_address, billing_date) VALUES (\'" + user_id + "\', \'" + billingID  + "\', \'" + name + "\', \'" + ccn + "\', \'" + exp + "\', \'" + cvc + "\', \'" + address + "\', \'" + date + "\')";
+
+  	connection.query(sql, function(err, result)
     {
       if(err)
       {
         console.log(err);
-        response.send('{"result": "' + isInserted + '"}');
+        response.send('{"result": "false"}');
       } else {
-        isInserted = true;
-        var returned = '{"result": "' + isInserted + '"}';
-        console.log("Record updated correctly!");
-        response.send(returned);
+        console.log("Billing added!");
+        response.send('{"result": "true"}');
       }
     });
-	
-	});
- });
+  });
+});
 
 router.put("/getData/setSubs", function(req, response)
 {
@@ -551,7 +538,7 @@ router.put("/getData/getVideoInfo", function(req, response)
 router.put("/getData/getUserInfo", function(req, response)
 {
   var user = req.body.user;
-  
+
   var sql = "SELECT * FROM users WHERE username = \'" + user + "\'";
   connection.query(sql, function(err, result)
   {
@@ -572,9 +559,9 @@ router.put("/getData/getUserInfo", function(req, response)
 		  else if(result[0].status == 1){
 			  accountStatus = "Active";
 		  }
-		  
+
           back = '{"id": "' + result[0].user_id + '", "first": "' + result[0].first_name +
-                  '", "last": "' + result[0].last_name + '", "email": "' + result[0].email + '", "status": "' + 
+                  '", "last": "' + result[0].last_name + '", "email": "' + result[0].email + '", "status": "' +
 				  accountStatus + '", "display": "' + result[0].display_name + '", "user": "' + result[0].username + '"}';
         }
         response.send(back);
@@ -586,7 +573,7 @@ router.put("/getData/getUserBilling", function(req, response)
 {
   var user = req.body.user;
   var hasBillingInfo = false;
-  
+
   var sql = "SELECT * FROM users_billing UB INNER JOIN users U ON UB.user_id = U.user_id WHERE U.username= \'" + user + "\'";
 
   connection.query(sql, function(err, result)
@@ -602,14 +589,14 @@ router.put("/getData/getUserBilling", function(req, response)
 		{
 		hasBillingInfo = true;
 		back = '{"uID": "' + result[0].user_id + '", "bID": "' + result[0].billing_id +
-                 '", "bName": "' + result[0].billing_name + '", "ccN": "' + result[0].credit_card_number + '", "expD": "' + 
-			  result[0].expiration_date + '", "cvc": "' + result[0].cvc + '", "bAddress": "' + result[0].billing_address + 
+                 '", "bName": "' + result[0].billing_name + '", "ccN": "' + result[0].credit_card_number + '", "expD": "' +
+			  result[0].expiration_date + '", "cvc": "' + result[0].cvc + '", "bAddress": "' + result[0].billing_address +
 			  '", "bDate": "' + result[0].billing_date + '", "hasBillingInfo": "' + hasBillingInfo + '"}';
 		}
 		else {
 			back = '{"result": "false", "hasBillingInfo": "' + hasBillingInfo + '"}';
 		}
-		response.send(back);		
+		response.send(back);
       }
     });
 });
