@@ -102,6 +102,7 @@ class PlayVideo extends React.Component {
             {
               subscribe(isMovie, id).then(result =>
               {
+                console.log("result");
                 // result is either true or false based on if subbing went correctly or note
                 if(result.value === "true")
                 {

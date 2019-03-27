@@ -147,6 +147,10 @@ function getShowList(idList)
   return new Promise(function(resolve, reject)
   {
     var returnedList = [];
+    if(idList.length === 0)
+    {
+      resolve(returnedList);
+    }
     idList.forEach(function(id)
     {
       getShowFromID(id.tv_show_id).then(result =>
@@ -184,6 +188,10 @@ function getMovieList(idList)
   return new Promise(function(resolve, reject)
   {
     var returnedList = [];
+    if(idList.length === 0)
+    {
+      resolve(returnedList);
+    }
     idList.forEach(function(id)
     {
       getMovieFromID(id.movie_id).then(result =>
@@ -293,6 +301,7 @@ router.put("/getData/resetSubs", function(req, response)
   var username = req.body.username;
   getUserID(username).then(result =>
   {
+    console.log(result);
     var sql = "DELETE FROM user_shows_selected WHERE user_id='" + result + "'";
     connection.query(sql, function(err, sqlresult)
     {
@@ -301,6 +310,18 @@ router.put("/getData/resetSubs", function(req, response)
         console.log(err);
         response.send('{"value": "false"}');
       } else {
+        console.log("Deleted subbed shows for userID: " + result);
+      }
+    });
+    var sql = "DELETE FROM user_movies_selected WHERE user_id='" + result + "'";
+    connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"value": "false"}');
+      } else {
+        console.log("Deleted subbed movies for userID: " + result);
         response.send('{"value": "true"}');
       }
     });

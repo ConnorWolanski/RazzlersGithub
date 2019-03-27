@@ -63,9 +63,11 @@ function resetSubs()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/setSubs";
+    const url = "http://localhost:3001/api/getData/resetSubs";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
+      window.localStorage.setItem("Razzlers_Subscribed_Shows", null);
+      window.localStorage.setItem("Razzlers_Subscribed_Movies", null);
       resolve(json);
     }).catch(err => {
       throw new Error(err);
