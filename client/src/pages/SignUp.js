@@ -5,7 +5,7 @@ class SignUp extends React.Component
   render()
   {
     return (
-      <div className = "bg2" align = "left">
+      <div className = "bg2_center" align = "left">
         <font size= "26">Sign Up</font>
         <p hidden id="invalidMessage">
           <font className="error">Username or password is invalid, please try again!</font>

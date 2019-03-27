@@ -8,7 +8,7 @@ class Login extends React.Component
   render()
   {
     return(
-      <form className = "bg2" align = "left" >
+      <form className = "bg2_center" align = "left" >
         <font size= "26">Log In</font>
         <p hidden id="invalidMessage">
           <font className="error">Username or password is invalid, please try again!</font>

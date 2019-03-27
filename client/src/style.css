@@ -24,6 +24,23 @@
   border-style: ridge;
   border-color: grey;
 }
+.bg2_center{
+  background-image: url('./images/background.png');
+  background-size: cover;
+  display: flex;
+  flex-wrap:wrap;
+  flex-direction: column;
+  max-width: 400px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 10%;
+  align-content: center;
+  justify-content: center;
+  padding: 1%;
+  border: 7px;
+  border-style: ridge;
+  border-color: grey;
+}
 .subButton{
   display: block;
   margin-right: auto;

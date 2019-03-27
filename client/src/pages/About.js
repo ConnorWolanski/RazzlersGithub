@@ -3,7 +3,7 @@ import '../style.css';
 class About extends React.Component {
   render() {
     return (
-      <div className ="bg2">
+      <div className ="bg2_center">
         <font size ="20" color="black">About</font>
         <font color="black"><u><b>Team Members:</b></u><br/></font>
         <p>

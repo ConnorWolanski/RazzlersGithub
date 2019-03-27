@@ -35,7 +35,6 @@ class NavigationBar extends React.Component
                   <li><a href="Movies"><b>Movies</b></a></li>
                   <li id ="Subscriptions" className={!isHidden ? 'hide' : 'none'}><a href="Subscriptions" ><b>Subscriptions</b></a></li>
                   <li><a href="About"><b>About</b></a></li>
-                  <li><a href="contactus"><b>Contact Us</b></a></li>
                 </ul>
                 <form hidden = {window.location.pathname !== '/profile'} className="navbar-form navbar-left" role="search">
                   <div className="form-group">
