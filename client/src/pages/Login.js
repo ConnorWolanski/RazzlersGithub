@@ -58,39 +58,8 @@ function loginVerification(inUsername, inPassword)
       if(serverResponse === "true")
       {
         localStorage.setItem("Razzlers_Username", inUsername);
-        utilFunc.getSubscribedShowList().then(result => {
-          var showList = [];
-          console.log("here1");
-          if(Array.isArray(result))
-          {
-            console.log("here2");
-            result.forEach(function(show)
-            {
-              showList[showList.length] = show.tv_show_id;
-            });
-            localStorage.setItem("Razzlers_Subscribed_Shows", JSON.stringify(showList));
-          } else {
-            console.log("here2.25");
-            localStorage.setItem("Razzlers_Subscribed_Shows", null);
-          }
-        });
-        utilFunc.getSubscribedMovieList().then(result =>
-        {
-          console.log("here3");
-          var movieList = [];
-          if(Array.isArray(result))
-          {
-            result.forEach(function(movie)
-            {
-              movieList[movieList.length] = movie.movie_id;
-            });
-            localStorage.setItem("Razzlers_Subscribed_Movies", JSON.stringify(movieList));
-          } else {
-            console.log("here3.5");
-            localStorage.setItem("Razzlers_Subscribed_Movies", null);
-          }
-          console.log("here4");
-          resolve(true);
+        utilFunc.updateLocalSubscribedLists().then(result => {
+          resolve(result);
         });
       } else {
         // reject the user, tell invalid password try again

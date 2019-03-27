@@ -285,7 +285,7 @@ router.put("/getData/subscribe", function(req, response)
         if(total > count)
         {
           // they can still sub
-          if(isMovie)
+          if(isMovie === "true")
           {
             console.log("isMovie: true");
             var sql = "SELECT movie_id FROM user_movies_selected WHERE user_id='" + result + "'";
@@ -303,12 +303,22 @@ router.put("/getData/subscribe", function(req, response)
                   {
                     // list does not contain the subbed movie
                     // add it to movie db and return {value:true}
-                    var sql = "INSERT INTO user_movies_selected (user_id, movie_id) VALUES (\'" + userID + "\', \'" + id + "\')";
-                    response.sent('{"value": "true"}');
+                    var sql = "INSERT INTO user_movies_selected (user_id, movie_id) VALUES (\'" + result + "\', \'" + id + "\')";
+                    connection.query(sql, function(err, result)
+                    {
+                      if(err)
+                      {
+                        console.log(err);
+                        response.send('{"value": "false"}');
+                      } else {
+                        console.log(username + " has subscribed to movie " + id);
+                        response.send('{"value": "true"}');
+                      }
+                    });
                   } else {
                     // list does contain the subbed movie
                     // return {value:true}
-                    response.sent('{"value": "true"}');
+                    response.send('{"value": "true"}');
                   }
                 });
               }
@@ -330,12 +340,22 @@ router.put("/getData/subscribe", function(req, response)
                   {
                     // list does not contain the subbed movie
                     // add it to movie db and return {value:true}
-                    var sql = "INSERT INTO user_shows_selected (user_id, tv_show_id) VALUES (\'" + userID + "\', \'" + id + "\')";
-                    response.sent('{"value": "true"}');
+                    var sql = "INSERT INTO user_shows_selected (user_id, tv_show_id) VALUES (\'" + result + "\', \'" + id + "\')";
+                    connection.query(sql, function(err, result)
+                    {
+                      if(err)
+                      {
+                        console.log(err);
+                        response.send('{"value": "false"}');
+                      } else {
+                        console.log(username + " has subscribed to show " + id);
+                        response.send('{"value": "true"}');
+                      }
+                    });
                   } else {
                     // list does contain the subbed movie
                     // return {value:true}
-                    response.sent('{"value": "true"}');
+                    response.send('{"value": "true"}');
                   }
                 });
               }

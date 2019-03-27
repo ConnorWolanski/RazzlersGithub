@@ -13,7 +13,7 @@ class Home extends React.Component {
 
 function printTest()
 {
-  //console.log(localStorage.getItem("Razzlers_Subscribed_Shows") + " : " + localStorage.getItem("Razzlers_Subscribed_Movies"));
+  console.log(localStorage.getItem("Razzlers_Subscribed_Shows") + " : " + localStorage.getItem("Razzlers_Subscribed_Movies"));
 }
 
 export default Home

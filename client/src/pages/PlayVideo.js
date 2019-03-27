@@ -1,6 +1,8 @@
 import React from "react";
 import '../style.css';
 
+const utilFunc = require('../Helpers/UtilityFunctions');
+
 class PlayVideo extends React.Component {
   constructor(props)
   {
@@ -53,21 +55,36 @@ class PlayVideo extends React.Component {
     const {isMovie, id, name, description, rating, actors, release_year} = this.state;
     var loc = "";
     var isSubscribed = false;
-    if(isMovie === "true")
+    if(id !== 0)
     {
-      isSubscribed = JSON.parse(localStorage.getItem("Razzlers_Subscribed_Movies")).includes(parseInt(id,10));
-      loc = "//assets.razzlers.me/assets/videos/movies/" + id + ".mp4";
-    } else {
-      isSubscribed = JSON.parse(localStorage.getItem("Razzlers_Subscribed_Shows")).includes(parseInt(id,10));
-      loc = "//assets.razzlers.me/assets/videos/episodes/" + id + ".mp4";
+      if(isMovie === "true")
+      {
+        var movieList = JSON.parse(localStorage.getItem("Razzlers_Subscribed_Movies"));
+        if(movieList !== null)
+        {
+          isSubscribed = movieList.includes(parseInt(id,10));
+          loc = "//assets.razzlers.me/assets/videos/movies/" + id + ".mp4";
+        }
+      } else {
+        var showList = JSON.parse(localStorage.getItem("Razzlers_Subscribed_Shows"));
+        if(showList !== null)
+        {
+          isSubscribed = showList.includes(parseInt(id,10));
+          loc = "//assets.razzlers.me/assets/videos/episodes/" + id + ".mp4";
+        }
+      }
     }
     if(!isSubscribed)
     {
       // is NOT subscribed
-      if(isMovie === "true"){
-        loc = "//assets.razzlers.me/assets/thumbnails/movieThumbnails/" + id + ".jpg";
-      }else{
-        loc = "//assets.razzlers.me/assets/thumbnails/showThumbnails/" + id + ".jpg";
+      if(id !== 0)
+      {
+        if(isMovie === "true")
+        {
+          loc = "//assets.razzlers.me/assets/thumbnails/movieThumbnails/" + id + ".jpg";
+        } else {
+          loc = "//assets.razzlers.me/assets/thumbnails/showThumbnails/" + id + ".jpg";
+        }
       }
       return (
         <div>
@@ -135,9 +152,12 @@ function subscribe(isMovie, id)
       body: JSON.stringify(data)
     };
     const url = "http://localhost:3001/api/getData/subscribe";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      console.log(json);
-      resolve(json);
+    fetch(url, transport).then(result => result.json()).then(json =>
+    {
+      utilFunc.updateLocalSubscribedLists().then(output =>
+      {
+        resolve(json);
+      });
     }).catch(err => {
       throw new Error(err);
     });
