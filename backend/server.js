@@ -24,7 +24,7 @@ const connection = mysql.createConnection({
   //host: "localhost",
   user: "root",
   password: "34a5704359a61d63c4488972ae2df00671b32da6fa225c95",
-  database: "razzlers_main_db",
+  database: "razzlers_main_db"
 });
 
 // test connection to SQL DB
@@ -56,6 +56,7 @@ function getUserListLength()
   });
 }
 
+// goes to MySQL DB and fetches userID of username
 function getUserID(username)
 {
   return new Promise(function(resolve, reject)
@@ -74,6 +75,129 @@ function getUserID(username)
   });
 }
 
+function getUserSubscriptionTotal(username)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var sql = "SELECT * FROM users WHERE username='" + username + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        resolve(parseInt(result[0].subscription_slots, 10));
+      }
+    });
+  });
+}
+
+function getUserSubscriptionCount(userid)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var total = 0;
+    var sql = "SELECT * FROM user_movies_selected WHERE user_id='" + userid + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        total += result.length;
+      }
+    });
+    var sql = "SELECT * FROM user_shows_selected WHERE user_id='" + userid + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        total += result.length;
+        resolve(total);
+      }
+    });
+  });
+}
+
+function getShowFromID(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var sql = "SELECT * FROM tv_show WHERE tv_show_id='" + id + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        resolve(result[0]);
+      }
+    });
+  });
+}
+
+function getShowList(idList)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var returnedList = [];
+    idList.forEach(function(id)
+    {
+      getShowFromID(id.tv_show_id).then(result =>
+      {
+        //add to array, and increment processed.
+        returnedList[returnedList.length] = result;
+        if(returnedList.length === idList.length)
+        {
+          resolve(returnedList);
+        }
+      });
+    });
+  });
+}
+function getMovieFromID(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var sql = "SELECT * FROM movie WHERE movie_id='" + id + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        resolve(result[0]);
+      }
+    });
+  });
+}
+
+function getMovieList(idList)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var returnedList = [];
+    idList.forEach(function(id)
+    {
+      getMovieFromID(id.movie_id).then(result =>
+      {
+        //add to array, and increment processed.
+        returnedList[returnedList.length] = result;
+        if(returnedList.length === idList.length)
+        {
+          resolve(returnedList);
+        }
+      });
+    });
+  });
+}
 // function for checking logins
 // returns true for correct username : password
 // returns false for invalid credentials
@@ -123,21 +247,20 @@ router.put("/register", function(req, response)
     var last_name = req.body.last_name;
     var display_name = req.body.display_name;
     var activation_key = utilFunc.createActivationKey();
-    var status = "false";
+    var status = "0";
+    var subscription_slots = "0";
     // debug
     //console.log("Concated: " + currentUserID + " " + username  + " " + first_name + " " + last_name + " " + password + " " + email + " " + activation_key + " " + status + " " + display_name + " ");
     // then submit to object type
-    var isInserted = false;
-    var sql = "INSERT INTO users (user_id, username, first_name, last_name, password, email, activation_key, status, display_name) VALUES (\'" + currentUserID + "\', \'" + username  + "\', \'" + first_name + "\', \'" + last_name + "\', \'" + password + "\', \'" + email + "\', \'" + activation_key + "\', \'" + status + "\', \'" + display_name + "\')";
+    var sql = "INSERT INTO users (user_id, username, first_name, last_name, password, email, activation_key, status, display_name, subscription_slots) VALUES (\'" + currentUserID + "\', \'" + username  + "\', \'" + first_name + "\', \'" + last_name + "\', \'" + password + "\', \'" + email + "\', \'" + activation_key + "\', \'" + status + "\', \'" + display_name + "\', \'" + subscription_slots + "\')";
     connection.query(sql, function(err, result)
     {
       if(err)
       {
         console.log(err);
-        response.send('{"result": "' + isInserted + '"}');
+        response.send('{"result": "false"}');
       } else {
-        isInserted = true;
-        var returned = '{"result": "' + isInserted + '"}';
+        var returned = '{"result": "true"}';
         console.log("Record inserted correctly!");
         response.send(returned);
       }
@@ -213,6 +336,147 @@ router.put("/updateBilling", function(req, response)
 	
 	});
  });
+
+router.put("/getData/setSubs", function(req, response)
+{
+  // sets sub total to 10 for user.
+  var username = req.body.username;
+  getUserID(username).then(result =>
+  {
+    var sql = "UPDATE users SET subscription_slots=10 WHERE user_id='" + result + "'";
+    connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"value": "false"}');
+      } else {
+        response.send('{"value": "true"}');
+      }
+    });
+  });
+});
+
+router.put("/getData/resetSubs", function(req, response)
+{
+  var username = req.body.username;
+  getUserID(username).then(result =>
+  {
+    var sql = "DELETE FROM user_shows_selected WHERE user_id='" + result + "'";
+    connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"value": "false"}');
+      } else {
+        response.send('{"value": "true"}');
+      }
+    });
+  });
+});
+
+router.put("/getData/subscribe", function(req, response)
+{
+  var username = req.body.username;
+  var isMovie = req.body.isMovie;
+  var id = req.body.id;
+  // get the user data first
+  getUserID(username).then(result =>
+  {
+    // result is now userID
+    // check if user cant sub anymore because they are at capacity
+    getUserSubscriptionCount(result).then(count => {
+      // count should be int
+      getUserSubscriptionTotal(username).then(total => {
+        console.log("total: " + count + " / " + total);
+        if(total > count)
+        {
+          // they can still sub
+          if(isMovie === "true")
+          {
+            console.log("isMovie: true");
+            var sql = "SELECT movie_id FROM user_movies_selected WHERE user_id='" + result + "'";
+            connection.query(sql, function(err, sqlresult)
+            {
+              if(err)
+              {
+                console.log(err);
+                response.send('{"value": "false"}');
+              } else {
+                // result = tv_show_id array
+                getMovieList(sqlresult).then(listResult => {
+                  returned = listResult.includes(parseInt(id,10));
+                  if(!returned)
+                  {
+                    // list does not contain the subbed movie
+                    // add it to movie db and return {value:true}
+                    var sql = "INSERT INTO user_movies_selected (user_id, movie_id) VALUES (\'" + result + "\', \'" + id + "\')";
+                    connection.query(sql, function(err, result)
+                    {
+                      if(err)
+                      {
+                        console.log(err);
+                        response.send('{"value": "false"}');
+                      } else {
+                        console.log(username + " has subscribed to movie " + id);
+                        response.send('{"value": "true"}');
+                      }
+                    });
+                  } else {
+                    // list does contain the subbed movie
+                    // return {value:true}
+                    response.send('{"value": "true"}');
+                  }
+                });
+              }
+            });
+          } else {
+            console.log("isMovie: false");
+            var sql = "SELECT tv_show_id FROM user_shows_selected WHERE user_id='" + result + "'";
+            connection.query(sql, function(err, sqlresult)
+            {
+              if(err)
+              {
+                console.log(err);
+                response.send('{"value": "false"}');
+              } else {
+                // result = tv_show_id array
+                getShowList(sqlresult).then(listResult => {
+                  returned = listResult.includes(parseInt(id,10));
+                  if(!returned)
+                  {
+                    // list does not contain the subbed movie
+                    // add it to movie db and return {value:true}
+                    var sql = "INSERT INTO user_shows_selected (user_id, tv_show_id) VALUES (\'" + result + "\', \'" + id + "\')";
+                    connection.query(sql, function(err, result)
+                    {
+                      if(err)
+                      {
+                        console.log(err);
+                        response.send('{"value": "false"}');
+                      } else {
+                        console.log(username + " has subscribed to show " + id);
+                        response.send('{"value": "true"}');
+                      }
+                    });
+                  } else {
+                    // list does contain the subbed movie
+                    // return {value:true}
+                    response.send('{"value": "true"}');
+                  }
+                });
+              }
+            });
+          }
+        } else {
+          // they are at capacity!
+          response.send('{"value": "full"}')
+        }
+      });
+    });
+  });
+});
 
 router.put("/getData/getVideoInfo", function(req, response)
 {
@@ -329,7 +593,6 @@ router.put("/getData/getUserBilling", function(req, response)
     });
 });
 
-
 router.get("/getData/getMovieList", function(req, response)
 {
   var sql = "SELECT * FROM movie";
@@ -362,12 +625,68 @@ router.get("/getData/getShowList", function(req, response)
   });
 });
 
+router.put("/getData/getSubscribedShows", function(req, response)
+{
+  // first get ID from username passed in.
+  var username = req.body.username;
+  getUserID(username).then(result => {
+    // now we have the userID stored in result
+    var sql = "SELECT tv_show_id FROM user_shows_selected WHERE user_id='" + result + "'";
+    connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        // result = tv_show_id array
+        var returned = "";
+        if(sqlresult == "")
+        {
+          response.send("{}");
+        } else {
+          getShowList(sqlresult).then(listResult => {
+            returned = listResult;
+            response.send(returned);
+          });
+        }
+      }
+    });
+  });
+});
 
+router.put("/getData/getSubscribedMovies", function(req, response)
+{
+  // first get ID from username passed in.
+  var username = req.body.username;
+  getUserID(username).then(result => {
+    // now we have the userID stored in result
+    var sql = "SELECT movie_id FROM user_movies_selected WHERE user_id='" + result + "'";
+    connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        // result = tv_show_id array
+        var returned = "";
+        if(sqlresult == "")
+        {
+          response.send("{}");
+        } else {
+          getMovieList(sqlresult).then(listResult => {
+            returned = listResult;
+            response.send(returned);
+          });
+        }
+      }
+    });
+  });
+});
 
 // start backend on port 3001
 app.listen(3001, function()
 {
     console.log("Server started on port 3001...");
 });
-
-
