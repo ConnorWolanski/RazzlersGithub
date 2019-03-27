@@ -88,7 +88,7 @@ function getUserInfo(user)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getUserInfo";
+    const url = "http://razzlers.me:3001/api/getData/getUserInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {

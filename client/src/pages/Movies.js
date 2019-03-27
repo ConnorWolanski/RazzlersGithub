@@ -38,7 +38,7 @@ function getMovieList()
       },
       method: "GET"
     };
-    const url = "http://localhost:3001/api/getData/getMovieList";
+    const url = "http://razzlers.me:3001/api/getData/getMovieList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {

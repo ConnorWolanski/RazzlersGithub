@@ -37,7 +37,7 @@ function setSubsToTen()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/setSubs";
+    const url = "http://razzlers.me:3001/api/getData/setSubs";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
       resolve(json);
@@ -63,7 +63,7 @@ function resetSubs()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/resetSubs";
+    const url = "http://razzlers.me:3001/api/getData/resetSubs";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
       window.localStorage.setItem("Razzlers_Subscribed_Shows", null);

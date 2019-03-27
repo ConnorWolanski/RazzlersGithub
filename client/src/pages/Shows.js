@@ -39,7 +39,7 @@ function getShowList()
       },
       method: "GET"
     };
-    const url = "http://localhost:3001/api/getData/getShowList";
+    const url = "http://razzlers.me:3001/api/getData/getShowList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {

@@ -174,7 +174,7 @@ function getUserBilling(user)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getUserBilling";
+    const url = "http://razzlers.me:3001/api/getData/getUserBilling";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -197,7 +197,7 @@ function updateBilling(inName, inCCN, inExp, inCvc, inAddress)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/updateBilling";
+    const url = "http://razzlers.me:3001/api/updateBilling";
     fetch(url, transport).then(response => response.json()).then(json =>
       {
         // needs to return true or false based on if registration is successful
@@ -222,7 +222,7 @@ function addBilling(inName, inCCN, inExp, inCvc, inAddress)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost.me:3001/api/addBilling";
+    const url = "http://razzlers.me:3001/api/addBilling";
     fetch(url, transport).then(response => response.json()).then(json =>
       {
         // needs to return true or false based on if registration is successful

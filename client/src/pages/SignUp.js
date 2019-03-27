@@ -112,7 +112,7 @@ function register(inUsername, inEmail, inPassword, inFirstName, inLastName, inDi
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//localhost:3001/api/register";
+    const url = "//razzlers.me:3001/api/register";
     fetch(url, transport).then(response => response.json()).then(json =>
       {
         // needs to return true or false based on if registration is successful

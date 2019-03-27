@@ -152,7 +152,7 @@ function subscribe(isMovie, id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/subscribe";
+    const url = "http://razzlers.me:3001/api/getData/subscribe";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
       utilFunc.updateLocalSubscribedLists().then(output =>
@@ -190,7 +190,7 @@ function getVideoInfo(isMovie, id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getVideoInfo";
+    const url = "http://razzlers.me:3001/api/getData/getVideoInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {

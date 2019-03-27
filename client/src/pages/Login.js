@@ -52,7 +52,7 @@ function loginVerification(inUsername, inPassword)
       method: "POST",
       body: JSON.stringify(data)
     };
-    const url = "//localhost:3001/api/getData/checkLogin";
+    const url = "//razzlers.me:3001/api/getData/checkLogin";
     fetch(url, transport).then(response => response.json()).then(json => {
       var serverResponse = json.result;
       if(serverResponse === "true")
