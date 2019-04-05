@@ -65,7 +65,7 @@ class Billing extends React.Component
     const {user, userID, billingID, name, censoredCCN, exp, CVC, address, date, hasBillingInfo} = this.state;
     console.log(user + " " + userID + " " + billingID);
     return (
-      <div className ="bg2">
+      <div className ="bg2_center">
         <div>
           {hasBillingInfo ? (
             <div>

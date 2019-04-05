@@ -36,35 +36,15 @@ class NavigationBar extends React.Component
                   <li id ="Subscriptions" className={!isHidden ? 'hide' : 'none'}><a href="Subscriptions" ><b>Subscriptions</b></a></li>
                   <li><a href="About"><b>About</b></a></li>
                 </ul>
-                <form hidden = {window.location.pathname !== '/profile'} className="navbar-form navbar-left" role="search">
+                <form className="navbar-form navbar-left" role="search">
                   <div className="form-group">
-                    <input type="text" className="form-control" placeholder="Search Users"/>
+                    <input type="text" className="form-control" placeholder="Search" id = "search"/>
                   </div>
-                  <button type="submit" className="button3" >Search</button>
-                </form>
-                <form hidden = {window.location.pathname !== '/Movies'} className="navbar-form navbar-left" role="search">
-                  <div className="form-group">
-                    <input type="text" className="form-control" placeholder="Search Movies"/>
-                  </div>
-                  <button type="submit" className="button3" >Search</button>
-                </form>
-                <form hidden = {window.location.pathname !== '/Shows'} className="navbar-form navbar-left" role="search">
-                  <div className="form-group">
-                    <input type="text" className="form-control" placeholder="Search Shows"/>
-                  </div>
-                  <button type="submit" className="button3" >Search</button>
-                </form>
-                <form hidden = {!(window.location.pathname === '/' || window.location.pathname === '/contactus' || window.location.pathname === '/About')} className="navbar-form navbar-left" role="search">
-                  <div className="form-group">
-                    <input type="text" className="form-control" placeholder="Search All"/>
-                  </div>
-                  <button type="submit" className="button3" >Search</button>
-                </form>
-                <form hidden = {window.location.pathname !== '/Subscriptions'} className="navbar-form navbar-left" role="search">
-                  <div className="form-group">
-                    <input type="text" className="form-control" placeholder="Search Subscribed"/>
-                  </div>
-                  <button type="submit" className="button3" >Search</button>
+                  <button type="submit" className="button3" onClick={() =>
+                      {
+                        window.location.href='/search?search=' + document.getElementById("search").value;
+                        window.event.preventDefault();
+                      }}>Search</button>
                 </form>
                 <ul className="nav navbar-nav navbar-right">
                   <button hidden = {isHidden} type = "button" className="button" onClick={() => window.location.href='login'}>LogIn</button>
@@ -85,5 +65,4 @@ class NavigationBar extends React.Component
     );
   }
 }
-// onClick={() => checkStorage()}
 export default NavigationBar;

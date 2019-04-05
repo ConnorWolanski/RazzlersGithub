@@ -12,6 +12,7 @@ import SignUp from "./pages/SignUp.js";
 import PlayVideo from "./pages/PlayVideo.js";
 import Profile from "./pages/Profile.js";
 import Subscriptions from "./pages/Subscriptions.js";
+import Search from "./pages/Search.js";
 import Billing from "./pages/Billing.js";
 import EditBilling from "./pages/EditBilling.js";
 
@@ -76,6 +77,7 @@ class App  extends React.Component
             <Route path = "/signup" component = {SignUp} />
             <Route path = "/playvideo" component = {PlayVideo} />
             <Route path = "/Subscriptions" component = {Subscriptions} />
+            <Route path = "/Search" component = {Search} />
             <Route path = "/profile" component = {Profile} />
 	      		<Route path = "/billing" component = {Billing} />
 	      		<Route path = "/editBilling" component = {EditBilling} />
