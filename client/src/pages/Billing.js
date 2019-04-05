@@ -98,6 +98,7 @@ function checkParams()
     resolve({user});
   });
 }
+
 function getUserBilling(user)
 {
   return new Promise(function(resolve, reject)

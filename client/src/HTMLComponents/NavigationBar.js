@@ -10,14 +10,14 @@ class NavigationBar extends React.Component
   }
   render()
   {
-    var isHidden = window.localStorage.getItem("Razzlers_Username");
-    if(isHidden === null)
+    var username = window.localStorage.getItem("Razzlers_Username");
+    var isHidden = false;
+    if(username === null)
     {
       isHidden = false;
     } else {
       isHidden = true;
     }
-    var username = window.localStorage.getItem("Razzlers_Username");
     return(
       <div>
         <header>
@@ -85,5 +85,5 @@ class NavigationBar extends React.Component
     );
   }
 }
-// onClick={() => checkStorage()}
+
 export default NavigationBar;

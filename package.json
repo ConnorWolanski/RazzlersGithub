@@ -11,8 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "concurrently": "^4.1.0",
+    "create-react-app": "^2.1.8",
     "express": "^4.16.4",
-    "react-bootstrap": "^1.0.0-beta.5",
+    "react": "^16.8.6",
+    "react-bootstrap": "^1.0.0-beta.6",
     "video.js": "^7.4.1"
   }
 }
