@@ -2,12 +2,13 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import BackgroundImage from './images/back2.png';
 import './style.css';
-import Home from './pages/Home';
-import About from './pages/About';
+import NavigationBar from "./HTMLComponents/NavigationBar.js";
+import Footer from "./HTMLComponents/Footer.js";
+import Home from './pages/Home.js';
+import About from './pages/About.js';
 import Login from './pages/Login.js';
-import Movies from './pages/Movies';
-import Shows from './pages/Shows';
-import NavigationBar from "./HTMLComponents/NavigationBar";
+import Movies from './pages/Movies.js';
+import Shows from './pages/Shows.js';
 import SignUp from "./pages/SignUp.js";
 import PlayVideo from "./pages/PlayVideo.js";
 import Profile from "./pages/Profile.js";
@@ -82,6 +83,7 @@ class App  extends React.Component
 	      		<Route path = "/billing" component = {Billing} />
 	      		<Route path = "/editBilling" component = {EditBilling} />
           </Switch>
+          <Footer />
         </div>
       </Router>
     );

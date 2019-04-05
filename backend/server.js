@@ -61,7 +61,7 @@ function getUserID(username)
 {
   return new Promise(function(resolve, reject)
   {
-    var sql = "SELECT * FROM users WHERE username='" + username + "'";
+    var sql = "SELECT user_id FROM users WHERE username='" + username + "'";
     connection.query(sql, function(err, result, fields)
     {
       if(err)
@@ -70,6 +70,24 @@ function getUserID(username)
         return;
       } else {
         resolve(result[0].user_id);
+      }
+    });
+  });
+}
+
+function getUsername(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var sql = "SELECT username FROM users WHERE user_id='" + id + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        resolve(result[0].username);
       }
     });
   });
@@ -165,6 +183,7 @@ function getShowList(idList)
     });
   });
 }
+
 function getMovieFromID(id)
 {
   return new Promise(function(resolve, reject)
@@ -206,6 +225,7 @@ function getMovieList(idList)
     });
   });
 }
+
 // function for checking logins
 // returns true for correct username : password
 // returns false for invalid credentials
@@ -567,6 +587,46 @@ router.put("/getData/getUserInfo", function(req, response)
         response.send(back);
       }
     });
+});
+
+router.put("/getData/getUsersFriends", function(req, response)
+{
+  getUserID(req.body.username).then(result => {
+    var sql = "SELECT friend_id FROM friends WHERE user_id='" + result + "'";
+    connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        // sqlresult = friend_id array
+        if(sqlresult.length === 0)
+        {
+          // respond with no friends :( like connor
+          response.send('{"friends": []}');
+        } else {
+          // transform the user ids into usernames
+          var friendIDs = [];
+          sqlresult.forEach(function(item)
+          {
+            friendIDs[friendIDs.length] = item.friend_id;
+          });
+          var friendUsernames = [];
+          friendIDs.forEach(function(id)
+          {
+            getUsername(id).then(usernameResult => {
+              friendUsernames[friendUsernames.length] = '"' + usernameResult + '"';
+              if(friendUsernames.length == friendIDs.length)
+              {
+                response.send('{"friends": [' + friendUsernames + ']}');
+              }
+            });
+          });
+        }
+      }
+    });
+  });
 });
 
 router.put("/getData/getUserBilling", function(req, response)
