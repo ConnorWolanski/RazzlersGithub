@@ -619,13 +619,44 @@ router.put("/getData/getUsersFriends", function(req, response)
               friendUsernames[friendUsernames.length] = '"' + usernameResult + '"';
               if(friendUsernames.length == friendIDs.length)
               {
-                response.send('{"friends": [' + friendUsernames + ']}');
+                response.send('{"friends": [' + friendUsernames + '], "IDs": [' + friendIDs + ']}');
               }
             });
           });
         }
       }
     });
+  });
+});
+
+router.put("/getData/getUsersMessages", function(req, response)
+{
+  getUserID(req.body.username).then(result => {
+    var receivedMessages = [];
+    var sql = 'SELECT * FROM message WHERE (recipient_user_id="' + result + '" OR user_id="' + result + '")';
+    connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"messages": "false"}');
+      } else {
+        // sqlresult = friend_id array
+        if(sqlresult.length === 0)
+        {
+          // respond with no messages like connor talking to girls
+          response.send('{"messages": []}');
+        } else {
+          var messageList = [];
+          sqlresult.forEach(function(message)
+          {
+            messageList[messageList.length] = JSON.parse(JSON.stringify(message));
+          });
+          response.send('{"messages": ' + JSON.stringify(messageList) + '}');
+        }
+      }
+    });
+
   });
 });
 

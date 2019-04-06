@@ -1,108 +1,137 @@
 import React from "react";
 import '../style.css';
 
-class Billing extends React.Component
-{
-  constructor(props)
-  {
+class Billing extends React.Component {
+  constructor(props) {
     super(props)
     this.state = {
-  	  user: "",
-  	  userID: 0,
+      user: "",
+      userID: 0,
       billingID: 0,
       name: "",
       CCNumber: 0,
-  	  exp: 0,
+      exp: 0,
       CVC: 0,
       address: "",
-  	  date: 0,
-  	  hasBillingInfo: false
+      date: 0,
+      hasBillingInfo: false
     };
-    checkParams().then(json =>
-    {
+    checkParams().then(json => {
       this.setState({
-    		user: json.user,
-    		userID: 0,
-    		billingID: 0,
-    		name: "",
-    		CCNumber: 0,
-    		exp: 0,
-    		CVC: 0,
-    		address: "",
-    		date: 0,
-    		hasBillingInfo: false,
-    		censoredCCN:0
+        user: json.user,
+        userID: 0,
+        billingID: 0,
+        name: "",
+        CCNumber: 0,
+        exp: 0,
+        CVC: 0,
+        address: "",
+        date: 0,
+        hasBillingInfo: false,
+        censoredCCN: 0
       });
       var user = json.user;
       var set = {};
-      getUserBilling(user).then(result =>
-      {
+      getUserBilling(user).then(result => {
         set = result;
-        if(set.hasOwnProperty("result"))
-        {
-			    console.log("file doesnt exist!");
+        if (set.hasOwnProperty("result")) {
+          console.log("file doesnt exist!");
         } else {
           // parse good response into constants for current state
-    		  this.setState({
-      			user: json.user,
+          this.setState({
+            user: json.user,
             userID: set.uID,
-      			billingID: set.bID,
-      			name: set.bName,
-      			CCNumber: set.ccN,
-      			exp: set.expD,
-      			CVC: set.cvc,
-      			address: set.bAddress,
-      			date:set.bDate,
-      			hasBillingInfo: set.hasBillingInfo,
-      			censoredCCN: set.ccN.replace(/\d(?=\d{4})/g, "*")
+            billingID: set.bID,
+            name: set.bName,
+            CCNumber: set.ccN,
+            exp: set.expD,
+            CVC: set.cvc,
+            address: set.bAddress,
+            date: set.bDate,
+            hasBillingInfo: set.hasBillingInfo,
+            censoredCCN: set.ccN.replace(/\d(?=\d{4})/g, "*")
           });
         }
       });
     });
   }
-  render()
-  {
-    const {user, userID, billingID, name, censoredCCN, exp, CVC, address, date, hasBillingInfo} = this.state;
+  render() {
+    const {
+      user,
+      userID,
+      billingID,
+      name,
+      censoredCCN,
+      exp,
+      CVC,
+      address,
+      date,
+      hasBillingInfo
+    } = this.state;
     console.log(user + " " + userID + " " + billingID);
-    return (
-      <div className ="bg2">
-        <div>
-          {hasBillingInfo ? (
-            <div>
-              <h2 className="centerText"><font  color = "black" size = "50"> {"Billing Information"} </font></h2>
-              <p className="centerText"><font  color ="black" size = "20px">{"Name on card: " + name}</font></p>
-              <p className="centerText"><font  color ="black" size = "20px">{"Credit Card Number: " + censoredCCN}</font></p>
-              <p className="centerText"><font  color ="black" size = "20px">{"Expiration Date: " + exp}</font></p>
-              <p className="centerText"><font  color ="black" size = "20px">{"CVC: " + CVC}</font></p>
-              <p className="centerText"><font  color ="black" size = "20px">{"Billing Address: " + address}</font></p>
-              <p className="centerText"><font  color ="black" size = "20px">{"Billing Date: " + date + " of every month"}</font></p>
-              <p className="centerText"><a href="/editBilling" ><font color= "#d7e2e9">Click here to edit it!</font></a></p>
-            </div>
-          ) : (
-    				<div>
-      				<h2 className="centerText"><font  color = "black" size = "50"> {"Billing Information"} </font></h2>
-      				<p className="centerText"><font  color ="red" size = "20px">{"You do not have any billing information in file"}</font></p>
-      				<p className="centerText"><a href="/editBilling" ><font color= "#d7e2e9">Click here to add it!</font></a></p>
-    				</div>
-          )}
-        </div>
+    return (<div className="bg2">
+      <div>
+        {
+          hasBillingInfo
+            ? (<div>
+              <h2 className="centerText">
+                <font color="black" size="50">
+                  {"Billing Information"}
+                </font>
+              </h2>
+              <p className="centerText">
+                <font color="black" size="20px">{"Name on card: " + name}</font>
+              </p>
+              <p className="centerText">
+                <font color="black" size="20px">{"Credit Card Number: " + censoredCCN}</font>
+              </p>
+              <p className="centerText">
+                <font color="black" size="20px">{"Expiration Date: " + exp}</font>
+              </p>
+              <p className="centerText">
+                <font color="black" size="20px">{"CVC: " + CVC}</font>
+              </p>
+              <p className="centerText">
+                <font color="black" size="20px">{"Billing Address: " + address}</font>
+              </p>
+              <p className="centerText">
+                <font color="black" size="20px">{"Billing Date: " + date + " of every month"}</font>
+              </p>
+              <p className="centerText">
+                <a href="/editBilling">
+                  <font color="#d7e2e9">Click here to edit it!</font>
+                </a>
+              </p>
+            </div>)
+            : (<div>
+              <h2 className="centerText">
+                <font color="black" size="50">
+                  {"Billing Information"}
+                </font>
+              </h2>
+              <p className="centerText">
+                <font color="red" size="20px">{"You do not have any billing information in file"}</font>
+              </p>
+              <p className="centerText">
+                <a href="/editBilling">
+                  <font color="#d7e2e9">Click here to add it!</font>
+                </a>
+              </p>
+            </div>)
+        }
       </div>
-    );
+    </div>);
   }
 }
-function checkParams()
-{
-  return new Promise(function(resolve, reject)
-  {
+function checkParams() {
+  return new Promise(function(resolve, reject) {
     var user = window.localStorage.getItem("Razzlers_Username");
     resolve({user});
   });
 }
 
-function getUserBilling(user)
-{
-  return new Promise(function(resolve, reject)
-  {
+function getUserBilling(user) {
+  return new Promise(function(resolve, reject) {
     var data = '{"user": "' + user + '"}';
     data = JSON.parse(data);
     var transport = {
