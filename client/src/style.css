@@ -72,6 +72,15 @@
   color: white;
   padding: 4px 4px;
 }
+.friendCard{
+  background-image: url('./images/background.png');
+  padding: 1px;
+  padding-left: 3px;
+  font-size: 16px;
+  border: 1px;
+  border-style: ridge;
+  border-color: grey;
+}
 .bg2{
   background-image: url('./images/background.png');
   background-size: cover;

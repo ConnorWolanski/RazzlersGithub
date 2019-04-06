@@ -619,7 +619,7 @@ router.put("/getData/getUsersFriends", function(req, response)
               friendUsernames[friendUsernames.length] = '"' + usernameResult + '"';
               if(friendUsernames.length == friendIDs.length)
               {
-                response.send('{"friends": [' + friendUsernames + ']}');
+                response.send('{"friends": [' + friendUsernames + '], "IDs": [' + friendIDs + ']}');
               }
             });
           });
@@ -687,7 +687,7 @@ router.get("/getData/getShowList", function(req, response)
       console.log(err);
       response.send('{"result": "false"}');
     } else {
-      // send JSON array of movies
+      // send JSON array of shows
       response.send(result);
     }
   });
