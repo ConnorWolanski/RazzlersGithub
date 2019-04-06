@@ -65,8 +65,4 @@ class NavigationBar extends React.Component
     );
   }
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> b044d00bd805a04b043ac2456f871c4d3369ba80
 export default NavigationBar;
