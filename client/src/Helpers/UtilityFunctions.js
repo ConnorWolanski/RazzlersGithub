@@ -1,3 +1,52 @@
+exports.getMovieList = function()
+{
+  return getMovieList();
+}
+
+function getMovieList()
+{
+  return new Promise(function(resolve, reject)
+  {
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "GET"
+    };
+    const url = "http://razzlers.me:3001/api/getData/getMovieList";
+    fetch(url, transport).then(result => result.json()).then(json => {
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+
+exports.getShowList = function()
+{
+  return getShowList();
+}
+
+
+function getShowList()
+{
+  return new Promise(function(resolve, reject)
+  {
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "GET"
+    };
+    const url = "http://razzlers.me:3001/api/getData/getShowList";
+    fetch(url, transport).then(result => result.json()).then(json => {
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+
 exports.getSubscribedMovieList = function()
 {
   return getSubscribedMList();

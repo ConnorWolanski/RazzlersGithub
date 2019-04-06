@@ -11,6 +11,76 @@
 .hide{
   display: none;
 }
+.footer{
+  background-image: url('./images/background.png');
+  position: fixed;
+  bottom: .2%;
+  right: .3%;
+  height: 57px;
+  border: 7px;
+  padding: 3px;
+  border-style: ridge;
+  border-color: grey;
+  align-items: center;
+}
+.footerMenu{
+  background-image: url('./images/background.png');
+  background-size:cover;
+  position: fixed;
+  height: 40%;
+  width: 17%;
+  right: .3%;
+  bottom: 58px;
+  border: 7px;
+  border-style: ridge;
+  border-color: grey;
+}
+.menuTitle{
+  background-image: url('./images/back2.png');
+  height:31px;
+  width: 100%;
+  font-size: 20px;
+  border: 0px;
+  border-bottom: 2px;
+  border-style: ridge;
+  border-color: grey;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-left: 5px;
+  padding-right: 2px;
+  padding-bottom: 1px;
+}
+.userSearch{
+  width: 100%;
+}
+.typeMessage{
+  margin-left: 2px;
+  position: fixed;
+  width: 100%;
+  bottom: 66px;
+}
+.messageText{
+  width: 14%;
+  height: 30px;
+}
+.sendButton{
+  background-image: url('./images/back2.png');
+  border: 1;
+  border-color: white;
+  border-radius: 2px;
+  width: 2.3%;
+  color: white;
+  padding: 4px 4px;
+}
+.friendCard{
+  background-image: url('./images/background.png');
+  padding: 1px;
+  padding-left: 3px;
+  font-size: 16px;
+  border: 1px;
+  border-style: ridge;
+  border-color: grey;
+}
 .bg2{
   background-image: url('./images/background.png');
   background-size: cover;
@@ -101,6 +171,14 @@
    color: white;
    padding: 5px 5px;
  }
+ .iconButton{
+    background-image: url('./images/background.png');
+    border: 1;
+    height: auto;
+    border-color: grey;
+    border-radius: 2px;
+    float: right;
+ }
  .quarterLeft{
    margin-left: 25%;
  }
@@ -114,7 +192,6 @@
    border-radius: 8px;
    color: white;
    margin-top: 5px;
-
    padding: 5px 5px;
  }
  .button3{

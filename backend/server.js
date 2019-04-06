@@ -718,7 +718,7 @@ router.get("/getData/getShowList", function(req, response)
       console.log(err);
       response.send('{"result": "false"}');
     } else {
-      // send JSON array of movies
+      // send JSON array of shows
       response.send(result);
     }
   });

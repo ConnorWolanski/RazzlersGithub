@@ -2,6 +2,8 @@ import React from "react";
 import '../style.css';
 import MovieList from "../HTMLComponents/MovieList";
 
+const utilFunc = require('../Helpers/UtilityFunctions');
+
 class Movies extends React.Component {
   constructor(props)
   {
@@ -9,7 +11,7 @@ class Movies extends React.Component {
     this.state = {
       movieList: 0
     };
-    getMovieList().then(result => {
+    utilFunc.getMovieList().then(result => {
       this.setState({ movieList: result });
     });
   }
@@ -26,25 +28,6 @@ class Movies extends React.Component {
     }
     return(<div></div>);
   }
-}
-
-function getMovieList()
-{
-  return new Promise(function(resolve, reject)
-  {
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "GET"
-    };
-    const url = "http://razzlers.me:3001/api/getData/getMovieList";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      resolve(json);
-    }).catch(err => {
-      throw new Error(err);
-    });
-  });
 }
 
 export default Movies

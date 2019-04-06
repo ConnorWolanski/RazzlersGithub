@@ -69,56 +69,28 @@ class Billing extends React.Component {
       hasBillingInfo
     } = this.state;
     console.log(user + " " + userID + " " + billingID);
-    return (<div className="bg2">
-      <div>
-        {
-          hasBillingInfo
-            ? (<div>
-              <h2 className="centerText">
-                <font color="black" size="50">
-                  {"Billing Information"}
-                </font>
-              </h2>
-              <p className="centerText">
-                <font color="black" size="20px">{"Name on card: " + name}</font>
-              </p>
-              <p className="centerText">
-                <font color="black" size="20px">{"Credit Card Number: " + censoredCCN}</font>
-              </p>
-              <p className="centerText">
-                <font color="black" size="20px">{"Expiration Date: " + exp}</font>
-              </p>
-              <p className="centerText">
-                <font color="black" size="20px">{"CVC: " + CVC}</font>
-              </p>
-              <p className="centerText">
-                <font color="black" size="20px">{"Billing Address: " + address}</font>
-              </p>
-              <p className="centerText">
-                <font color="black" size="20px">{"Billing Date: " + date + " of every month"}</font>
-              </p>
-              <p className="centerText">
-                <a href="/editBilling">
-                  <font color="#d7e2e9">Click here to edit it!</font>
-                </a>
-              </p>
-            </div>)
-            : (<div>
-              <h2 className="centerText">
-                <font color="black" size="50">
-                  {"Billing Information"}
-                </font>
-              </h2>
-              <p className="centerText">
-                <font color="red" size="20px">{"You do not have any billing information in file"}</font>
-              </p>
-              <p className="centerText">
-                <a href="/editBilling">
-                  <font color="#d7e2e9">Click here to add it!</font>
-                </a>
-              </p>
-            </div>)
-        }
+    return (
+      <div className ="bg2_center">
+        <div>
+          {hasBillingInfo ? (
+            <div>
+              <h2 className="centerText"><font  color = "black" size = "50"> {"Billing Information"} </font></h2>
+              <p className="centerText"><font  color ="black" size = "20px">{"Name on card: " + name}</font></p>
+              <p className="centerText"><font  color ="black" size = "20px">{"Credit Card Number: " + censoredCCN}</font></p>
+              <p className="centerText"><font  color ="black" size = "20px">{"Expiration Date: " + exp}</font></p>
+              <p className="centerText"><font  color ="black" size = "20px">{"CVC: " + CVC}</font></p>
+              <p className="centerText"><font  color ="black" size = "20px">{"Billing Address: " + address}</font></p>
+              <p className="centerText"><font  color ="black" size = "20px">{"Billing Date: " + date + " of every month"}</font></p>
+              <p className="centerText"><a href="/editBilling" ><font color= "#d7e2e9">Click here to edit it!</font></a></p>
+            </div>
+          ) : (
+    				<div>
+      				<h2 className="centerText"><font  color = "black" size = "50"> {"Billing Information"} </font></h2>
+      				<p className="centerText"><font  color ="red" size = "20px">{"You do not have any billing information in file"}</font></p>
+      				<p className="centerText"><a href="/editBilling" ><font color= "#d7e2e9">Click here to add it!</font></a></p>
+    				</div>
+          )}
+        </div>
       </div>
     </div>);
   }
