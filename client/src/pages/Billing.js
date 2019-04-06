@@ -92,7 +92,7 @@ class Billing extends React.Component {
           )}
         </div>
       </div>
-    </div>);
+    );
   }
 }
 function checkParams() {

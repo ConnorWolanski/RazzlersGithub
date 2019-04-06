@@ -130,10 +130,10 @@ function getUsersMessages(username) {
     }).catch(err => {
       throw new Error(err);
     });
-  }
+  });
 }
 
-function searchUsers(search) {
+/*function searchUsers(search) {
   return new Promise(function(resolve, reject) {
     var users = getUserList();
     var s = search.toLowerCase();
@@ -144,6 +144,6 @@ function searchUsers(search) {
     }
     resolve({users});
   });
-}
+}*/
 
 export default Footer
