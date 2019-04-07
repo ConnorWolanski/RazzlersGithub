@@ -22,6 +22,32 @@ function getMovieList()
   });
 }
 
+exports.getUsersFriends = function(user)
+{
+  return getUsersFriends(user);
+}
+
+function getUsersFriends(user) {
+  return new Promise(function(resolve, reject) {
+    var data = '{"username": "' + user + '"}';
+    data = JSON.parse(data);
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    };
+    const url = "http://localhost:3001/api/getData/getUsersFriends";
+    fetch(url, transport).then(result => result.json()).then(json => {
+      //console.log(json);
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+
 exports.getShowList = function()
 {
   return getShowList();

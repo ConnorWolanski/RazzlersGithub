@@ -6,6 +6,8 @@ import close from '../images/close.png';
 import addfriend from '../images/add-friend.png';
 import FriendsList from './FriendsList.js'
 
+const utilFunc = require('../Helpers/UtilityFunctions');
+
 class Footer extends React.Component {
   constructor(props) {
     super(props);
@@ -14,17 +16,17 @@ class Footer extends React.Component {
       IDs: null
     };
     var username = window.localStorage.getItem("Razzlers_Username");
+
     if (username !== null) {
-      getUsersFriends(username).then(friendsList => {
-        //console.log(friendsList.friends[0]);
+      utilFunc.getUsersFriends(username).then(friendsList => {
+        console.log(friendsList);
         this.setState({friends: friendsList.friends, IDs: friendsList.IDs});
       });
     }
   }
   render() {
     const {friends, IDs} = this.state;
-    console.log(getUserList());
-    //console.log(friends + " : " + IDs);
+    console.log(getUserList().username);
     if (Array.isArray(friends)) {
       return (<div>
 
@@ -54,6 +56,7 @@ class Footer extends React.Component {
           <form role="search">
             <input type="text" className="userSearch" placeholder="Search Users" id="search"/>
           </form>
+          <FriendsList friends={friends} IDs={IDs}></FriendsList>
         </div>
 
         <div className="footerMenu" hidden={true} id="messages">
@@ -91,26 +94,6 @@ class Footer extends React.Component {
     }
     return (<div></div>)
   }
-}
-function getUsersFriends(user) {
-  return new Promise(function(resolve, reject) {
-    var data = '{"username": "' + user + '"}';
-    data = JSON.parse(data);
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(data)
-    };
-    const url = "http://localhost:3001/api/getData/getUsersFriends";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      //console.log(json);
-      resolve(json);
-    }).catch(err => {
-      throw new Error(err);
-    });
-  });
 }
 
 function getUsersMessages(username) {
@@ -152,17 +135,17 @@ function getUserList() {
   });
 }
 
-/*function searchUsers(search) {
-  return new Promise(function(resolve, reject) {
-    var users = getUserList();
-    var s = search.toLowerCase();
-    for (var i = users.length - 1; i >= 0; i--) {
-      if (!movies[i].movie_name.toLowerCase().includes(s)) {
-        users.splice(i, 1);
-      }
-    }
-    resolve({users});
-  });
-}*/
+// function searchUsers(search) {
+//   return new Promise(function(resolve, reject) {
+//     var users = getUserList();
+//     var s = search.toLowerCase();
+//     for (var i = users.length - 1; i >= 0; i--) {
+//       if (!movies[i].movie_name.toLowerCase().includes(s)) {
+//         users.splice(i, 1);
+//       }
+//     }
+//     resolve({users});
+//   });
+// }
 
 export default Footer

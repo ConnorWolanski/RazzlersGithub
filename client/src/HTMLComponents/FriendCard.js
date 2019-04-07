@@ -1,4 +1,5 @@
 import React from 'react';
+const utilFunc = require('../Helpers/UtilityFunctions');
 
 class FriendCard extends React.Component {
   constructor(props) {
@@ -17,4 +18,12 @@ class FriendCard extends React.Component {
     );
   }
 }
+// function checkIfFriends(){
+//   var areFriends=false;
+//   var friends = utilFunc.getUsersFriends(window.localStorage.getItem("Razzlers_Username"));
+//   if(friends.friends.includes(this.props)){
+//     areFriends= true;
+//   }
+//   return areFriends;
+// }
 export default FriendCard;
