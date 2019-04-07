@@ -23,6 +23,7 @@ class Footer extends React.Component {
   }
   render() {
     const {friends, IDs} = this.state;
+    console.log(getUserList());
     //console.log(friends + " : " + IDs);
     if (Array.isArray(friends)) {
       return (<div>
@@ -124,6 +125,24 @@ function getUsersMessages(username) {
       body: JSON.stringify(data)
     };
     const url = "http://localhost:3001/api/getData/getUsersMessages";
+    fetch(url, transport).then(result => result.json()).then(json => {
+      console.log(json);
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+
+function getUserList() {
+  return new Promise(function(resolve, reject) {
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "GET"
+    };
+    const url = "http://localhost:3001/api/getData/getUserList";
     fetch(url, transport).then(result => result.json()).then(json => {
       console.log(json);
       resolve(json);

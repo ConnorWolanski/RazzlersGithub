@@ -38,7 +38,7 @@ connection.connect(function(err) {
 })
 
 // goes to MySQL DB and fetches WHOLE list of users
-function getUserListLength()
+function getUserList()
 {
   return new Promise(function(resolve, reject)
   {
@@ -50,8 +50,19 @@ function getUserListLength()
         throw err;
         return;
       } else {
-        resolve(result.length);
+        resolve(JSON.parse(JSON.stringify(result)));
       }
+    });
+  });
+}
+
+// goes to MySQL DB and fetches WHOLE list of users
+function getUserListLength()
+{
+  return new Promise(function(resolve, reject)
+  {
+    getUserList().then(result => {
+      resolve(result.length);
     });
   });
 }
@@ -553,6 +564,24 @@ router.put("/getData/getVideoInfo", function(req, response)
       }
     });
   }
+});
+
+router.get("/getData/getUserList", function(req, response)
+{
+  getUserList().then(result =>
+  {
+    var list = "";
+    for(var i = 0; i < result.length; i++)
+    {
+      if(i !== result.length - 1)
+      {
+        list += JSON.stringify(result[i]) + ",";
+      } else {
+        list += JSON.stringify(result[i]);
+      }
+    }
+    response.send('{"users": [' + list + ']}');
+  });
 });
 
 router.put("/getData/getUserInfo", function(req, response)
