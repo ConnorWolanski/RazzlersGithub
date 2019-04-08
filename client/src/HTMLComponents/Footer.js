@@ -129,7 +129,7 @@ function sendMessage(recipient, messageText)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/sendMessage";
+    const url = "http://razzlers.me:3001/api/sendMessage";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -168,7 +168,7 @@ function getUsersMessages(username) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getUsersMessages";
+    const url = "http://razzlers.me:3001/api/getData/getUsersMessages";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -185,7 +185,7 @@ function getUserList() {
       },
       method: "GET"
     };
-    const url = "http://localhost:3001/api/getData/getUserList";
+    const url = "http://razzlers.me:3001/api/getData/getUserList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {

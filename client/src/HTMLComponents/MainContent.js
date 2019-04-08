@@ -13,7 +13,7 @@ function MainContent()
         var test = "321";
         console.log(test);
         var testData = "123";
-        fetch("http://localhost:3001/api/getData", {mode: 'no-cors'}).then(function(response){
+        fetch("http://razzlers.me:3001/api/getData", {mode: 'no-cors'}).then(function(response){
           console.log(response.text());
           // testData = JSON.stringify(response);
         });

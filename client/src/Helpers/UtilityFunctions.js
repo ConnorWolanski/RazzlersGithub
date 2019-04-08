@@ -38,7 +38,7 @@ function getUsersFriends(user) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getUsersFriends";
+    const url = "http://razzlers.me:3001/api/getData/getUsersFriends";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -93,7 +93,7 @@ function getSubscribedMList()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//localhost:3001/api/getData/getSubscribedMovies";
+    const url = "http://razzlers.me:3001/api/getData/getSubscribedMovies";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -122,7 +122,7 @@ function getSubscribedSList()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//localhost:3001/api/getData/getSubscribedShows";
+    const url = "http://razzlers.me:3001/api/getData/getSubscribedShows";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
