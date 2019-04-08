@@ -18,6 +18,7 @@ class FriendCard extends React.Component {
       <button className="iconButton" hidden={!areFriends}>+</button>
       <button className="iconButton" hidden ={areFriends} onClick={() => {
           document.getElementById("messages").hidden = !document.getElementById("messages").hidden;
+          document.getElementById("messagetitle").innerHTML = username;
           document.getElementById("friends").hidden = true;
           document.getElementById("addFriends").hidden = true;
         }}>

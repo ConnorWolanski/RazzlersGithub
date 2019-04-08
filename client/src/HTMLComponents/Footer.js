@@ -69,7 +69,7 @@ class Footer extends React.Component {
 
         <div className="footerMenu" hidden={true} id="messages">
           <h1 className="menuTitle">
-            <font color="white">Messages</font>
+            <font color="white" id ="messagetitle">Messages</font>
             <button className="iconButton" onClick={() => document.getElementById("messages").hidden = true}>
               <img src={close} alt="close"/>
             </button>
