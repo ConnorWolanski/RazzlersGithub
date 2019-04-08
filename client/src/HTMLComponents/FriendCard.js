@@ -11,6 +11,7 @@ class FriendCard extends React.Component {
 
   render() {
     const {username} = this.props;
+    //console.log(checkIfFriends());
     return (
       <div className ="friendCard">
         <font>{username}</font>

@@ -5,7 +5,8 @@ import Friends from '../images/friends.png';
 import close from '../images/close.png';
 import addfriend from '../images/add-friend.png';
 import FriendsList from './FriendsList.js'
-
+import FriendCard from './FriendCard';
+import ReactDOMServer from 'react-dom/server';
 const utilFunc = require('../Helpers/UtilityFunctions');
 
 class Footer extends React.Component {
@@ -13,20 +14,20 @@ class Footer extends React.Component {
     super(props);
     this.state = {
       friends: null,
-      IDs: null
+      IDs: null,
+      users: null,
+      ids: null
     };
     var username = window.localStorage.getItem("Razzlers_Username");
 
     if (username !== null) {
       utilFunc.getUsersFriends(username).then(friendsList => {
-        this.setState({friends: friendsList.friends, IDs: friendsList.IDs});
+        this.setState({friends: friendsList.friends, IDs: friendsList.IDs, users: friendsList.friends, ids: friendsList.IDs});
       });
     }
   }
   render() {
-    const {friends, IDs} = this.state;
-    var users = friends;
-    var ids = IDs;
+    var {friends, IDs, users, ids} = this.state;
     if (Array.isArray(friends)) {
       return (<div>
 
@@ -54,13 +55,15 @@ class Footer extends React.Component {
               <img src={close} alt="close"/>
             </button>
           </h1>
-          <input type="text" className="userSearch" placeholder="Search Users" id="search" onChange={()=>
-              searchUsers("con").then(userlist => {
-                console.log(userlist.users.users);
+          <input type="text" className="userSearch" placeholder="Search Users" id="search1" onChange={()=>
+              searchUsers(document.getElementById("search1").value).then(userlist => {
                 users = userlist.users.users;
                 ids = userlist.users.IDs;
+                document.getElementById("dhold").innerHTML= ReactDOMServer.renderToStaticMarkup(userList(users, ids));
               })}/>
-            <FriendsList id="searchedUsers" friends={users} IDs={ids}></FriendsList>
+            <div id="dhold">
+              <FriendsList friends={users} IDs={ids}></FriendsList>
+            </div>
         </div>
 
 
@@ -83,6 +86,7 @@ class Footer extends React.Component {
               document.getElementById("friends").hidden = !document.getElementById("friends").hidden;
               document.getElementById("messages").hidden = true;
               document.getElementById("addFriends").hidden = true;
+              console.log(document.getElementById("dhold").hidden);
             }}>
             <img src={Friends} alt="friends"/>
           </button>
@@ -99,6 +103,24 @@ class Footer extends React.Component {
     }
     return (<div></div>)
   }
+}
+function userList(friends, IDs)
+{
+  var friendsList = [];
+  for(var i = 0; i < friends.length; i++)
+  {
+    friendsList[friendsList.length] = JSON.parse('{"username": "' + friends[i] + '", "key": "' + IDs[i] + '"}')
+  }
+  const finfriends = friendsList ? friendsList.map(current => (
+    <div key={current.key}>
+      <FriendCard username={current.username}/>
+    </div>
+  )) : null;
+  return (
+    <div>
+      {finfriends}
+    </div>
+  );
 }
 
 function getUsersMessages(username) {
@@ -148,10 +170,10 @@ function searchUsers(search) {
   return new Promise(function(resolve, reject) {
     getUserList().then(users => {
     var s = search.toLowerCase();
-    console.log(s);
-    for (var i = users.length - 1; i >= 0; i--) {
+    for (var i = users.users.length - 1; i >= 0; i--) {
       if (!users.users[i].toLowerCase().includes(s)) {
-        users.splice(i, 1);
+        users.users.splice(i, 1);
+        users.IDs.splice(i, 1);
       }
     }
     resolve({users});})
