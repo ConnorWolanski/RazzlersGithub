@@ -86,7 +86,6 @@ class Footer extends React.Component {
               document.getElementById("friends").hidden = !document.getElementById("friends").hidden;
               document.getElementById("messages").hidden = true;
               document.getElementById("addFriends").hidden = true;
-              console.log(document.getElementById("dhold").hidden);
             }}>
             <img src={Friends} alt="friends"/>
           </button>
@@ -158,13 +157,6 @@ function getUserList() {
       throw new Error(err);
     });
   });
-}
-function applySearch(search){
-  searchUsers(search).then(userlist => {
-    document.getElementById("searchedUsers").friends = userlist.users.users;
-    document.getElementById("searchedUsers").IDs = userlist.users.IDs;
-    document.getElementById("searchedUsers").hidden = false;
-  })
 }
 function searchUsers(search) {
   return new Promise(function(resolve, reject) {

@@ -1,4 +1,5 @@
 import React from 'react';
+import envelope from '../images/envelope.png';
 const utilFunc = require('../Helpers/UtilityFunctions');
 
 class FriendCard extends React.Component {
@@ -11,20 +12,27 @@ class FriendCard extends React.Component {
 
   render() {
     const {username} = this.props;
-    //console.log(checkIfFriends());
-    return (
-      <div className ="friendCard">
-        <font>{username}</font>
-      </div>
-    );
+    var areFriends = checkIfFriends(username);
+    return (<div className="friendCard">
+      <font>{username}</font>
+      <button className="iconButton" hidden={!areFriends}>+</button>
+      <button className="iconButton" hidden ={areFriends} onClick={() => {
+          document.getElementById("messages").hidden = !document.getElementById("messages").hidden;
+          document.getElementById("friends").hidden = true;
+          document.getElementById("addFriends").hidden = true;
+        }}>
+        <img src={envelope} alt="envelope"/>
+      </button>
+    </div>);
   }
 }
-// function checkIfFriends(){
-//   var areFriends=false;
-//   var friends = utilFunc.getUsersFriends(window.localStorage.getItem("Razzlers_Username"));
-//   if(friends.friends.includes(this.props)){
-//     areFriends= true;
-//   }
-//   return areFriends;
-// }
+function checkIfFriends(username) {
+  utilFunc.getUsersFriends(window.localStorage.getItem("Razzlers_Username")).then(friendsList => {
+    var areFriends = false;
+    if (friendsList.friends.includes(username) || username.toLowerCase() === window.localStorage.getItem("Razzlers_Username").toLowerCase()) {
+      areFriends = true;
+    }
+    return areFriends;
+  })
+}
 export default FriendCard;
