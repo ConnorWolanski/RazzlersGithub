@@ -59,7 +59,9 @@ class Footer extends React.Component {
               searchUsers(document.getElementById("search1").value).then(userlist => {
                 users = userlist.users.users;
                 ids = userlist.users.IDs;
-                document.getElementById("dhold").innerHTML= ReactDOMServer.renderToStaticMarkup(userList(users, ids));
+                var here = ReactDOMServer.renderToString(userList(users, ids));
+                console.log(userList(users, ids));
+                document.getElementById("dhold").innerHTML= here;
               })}/>
             <div id="dhold">
               <FriendsList friends={users} IDs={ids}></FriendsList>
@@ -69,15 +71,26 @@ class Footer extends React.Component {
 
         <div className="footerMenu" hidden={true} id="messages">
           <h1 className="menuTitle">
-            <font color="white" id ="messagetitle">Messages</font>
+            <font color="white" id ="messageTitle">{window.localStorage.getItem("Razzlers_Username")}</font>
             <button className="iconButton" onClick={() => document.getElementById("messages").hidden = true}>
               <img src={close} alt="close"/>
             </button>
           </h1>
-          <font>hello this is a message from the devolpers</font>
+          <font id="textMessages">hello this is a message from the devolpers</font>
           <form className="typeMessage">
-            <input type="text" className="messageText" placeholder="text message"/>
-            <button type="button" className="sendButton">Send</button>
+            <input type="text" id="messageTyped" className="messageText" placeholder="text message"/>
+            <button type="button" className="sendButton" onClick={() => {
+                sendMessage(document.getElementById("messageTitle").innerHTML, document.getElementById("messageTyped").value).then(result => {
+                  getUsersMessages(window.localStorage.getItem("Razzlers_Username")).then(json => {
+                    var messages = "";
+                    json.messages.forEach(function(message)
+                    {
+                      messages += message.user_id + " => " + message.recipient_user_id + ": " + message.message_body + "<br>";
+                    });
+                    document.getElementById("textMessages").innerHTML = messages;
+                  });
+                });
+              }}>Send</button>
           </form>
         </div>
 
@@ -103,6 +116,28 @@ class Footer extends React.Component {
     return (<div></div>)
   }
 }
+
+function sendMessage(recipient, messageText)
+{
+  return new Promise(function(resolve, reject) {
+    var data = '{"sender": "' + window.localStorage.getItem("Razzlers_Username") + '", "recipient": "' + recipient + '", "message": "' + messageText + '"}';
+    data = JSON.parse(data);
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    };
+    const url = "http://localhost:3001/api/sendMessage";
+    fetch(url, transport).then(result => result.json()).then(json => {
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+
 function userList(friends, IDs)
 {
   var friendsList = [];

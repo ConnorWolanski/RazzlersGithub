@@ -67,6 +67,34 @@ function getUserListLength()
   });
 }
 
+function getMessageList()
+{
+  return new Promise(function(resolve, reject)
+  {
+    var sql = "SELECT * FROM message";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        resolve(JSON.parse(JSON.stringify(result)));
+      }
+    });
+  });
+}
+
+function getMessageListLength()
+{
+  return new Promise(function(resolve, reject)
+  {
+    getMessageList().then(result => {
+      resolve(result.length);
+    });
+  });
+}
+
 // goes to MySQL DB and fetches userID of username
 function getUserID(username)
 {
@@ -237,36 +265,73 @@ function getMovieList(idList)
   });
 }
 
-// function for checking logins
-// returns true for correct username : password
-// returns false for invalid credentials
-router.post("/getData/checkLogin", function(req, response)
+router.put("/getData/getMessages", function(req, response)
 {
-  var json = req.body;
-  var username = json.username;
-  var password = json.password;
-  console.log("Received Login request (" + username + " : " + password + ")...");
-  var sql = "SELECT * FROM users WHERE username = \'" + username + "\'";
-  connection.query(sql, function(err, result, fields)
-  {
-    if(err)
+  getMessageList().then(result => {
+    var messageList = "";
+    for(var i = 0; i < result.length; i++)
     {
-      throw err;
-      return;
-    } else {
-      //console.log(result);
-      var isCorrect = false;
-      if(utilFunc.objectIsEmpty(result) === true)
+      if(i == result.length - 1)
       {
-        // here if username did not exist in DB
-        isCorrect = '{"result": "' + isCorrect + '"}';
-        response.send(isCorrect);
+        messageList += JSON.stringify(message);
       } else {
-        isCorrect = (result[0].password === password);
-        isCorrect =  '{"result": "' + isCorrect + '"}';
-        response.send(isCorrect);
+        messageList += JSON.stringify(message) + ",";
       }
     }
+    response.send('{"messages": [' + messageList + ']}')
+  });
+});
+
+router.put("/sendMessage", function(req, response)
+{
+  var sender = req.body.sender;
+  var recipient = req.body.recipient;
+  var message = req.body.message;
+  getMessageListLength().then(messageID => {
+    getUserID(sender).then(senderID => {
+      getUserID(recipient).then(recipientID => {
+        var date = new Date();
+        var month = date.getMonth();
+        if(month< 10)
+        {
+          month = "0" + month;
+        }
+        var day = date.getDate();
+        if(day < 10)
+        {
+          day = "0" + day;
+        }
+        var hour = date.getHours();
+        if(hour < 10)
+        {
+          hour = "0" + hour;
+        }
+        var minutes = date.getMinutes();
+        if(minutes < 10)
+        {
+          minutes = "0" + minutes;
+        }
+        var seconds = date.getSeconds();
+        if(seconds < 10)
+        {
+          seconds = "0" + seconds;
+        }
+        var dateString = date.getFullYear() + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds;
+        //console.log(messageID + ")" + senderID + " => " + recipientID + " : " + message + " D: " + dateString);
+        var sql = "INSERT INTO message (message_id, user_id, recipient_user_id, message_body, time, message_status) VALUES (\'" + messageID + "\', \'" + senderID  + "\', \'" + recipientID + "\', \'" + message + "\', \'" + dateString + "\', \'0\')";
+        connection.query(sql, function(err, result)
+        {
+          if(err)
+          {
+            console.log(err);
+            response.send('{"result": "false"}');
+          } else {
+            console.log("Message sent successfully!");
+            response.send('{"result": "true"}');
+          }
+        });
+      });
+    });
   });
 });
 
@@ -299,9 +364,8 @@ router.put("/register", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-        var returned = '{"result": "true"}';
         console.log("Record inserted correctly!");
-        response.send(returned);
+        response.send('{"result": "true"}');
       }
     });
   });
@@ -360,6 +424,39 @@ router.put("/addBilling", function(req, response)
         response.send('{"result": "true"}');
       }
     });
+  });
+});
+
+// function for checking logins
+// returns true for correct username : password
+// returns false for invalid credentials
+router.post("/getData/checkLogin", function(req, response)
+{
+  var json = req.body;
+  var username = json.username;
+  var password = json.password;
+  console.log("Received Login request (" + username + " : " + password + ")...");
+  var sql = "SELECT * FROM users WHERE username = \'" + username + "\'";
+  connection.query(sql, function(err, result, fields)
+  {
+    if(err)
+    {
+      throw err;
+      return;
+    } else {
+      //console.log(result);
+      var isCorrect = false;
+      if(utilFunc.objectIsEmpty(result) === true)
+      {
+        // here if username did not exist in DB
+        isCorrect = '{"result": "' + isCorrect + '"}';
+        response.send(isCorrect);
+      } else {
+        isCorrect = (result[0].password === password);
+        isCorrect =  '{"result": "' + isCorrect + '"}';
+        response.send(isCorrect);
+      }
+    }
   });
 });
 
