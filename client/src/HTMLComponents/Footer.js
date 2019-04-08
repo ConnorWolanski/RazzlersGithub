@@ -19,14 +19,14 @@ class Footer extends React.Component {
 
     if (username !== null) {
       utilFunc.getUsersFriends(username).then(friendsList => {
-        console.log(friendsList);
         this.setState({friends: friendsList.friends, IDs: friendsList.IDs});
       });
     }
   }
   render() {
     const {friends, IDs} = this.state;
-    console.log(getUserList().username);
+    var users = friends;
+    var ids = IDs;
     if (Array.isArray(friends)) {
       return (<div>
 
@@ -46,6 +46,7 @@ class Footer extends React.Component {
           <FriendsList friends={friends} IDs={IDs}/>
         </div>
 
+
         <div className="footerMenu" hidden={true} id="addFriends">
           <h1 className="menuTitle">
             <font color="white">Add Friends</font>
@@ -53,11 +54,15 @@ class Footer extends React.Component {
               <img src={close} alt="close"/>
             </button>
           </h1>
-          <form role="search">
-            <input type="text" className="userSearch" placeholder="Search Users" id="search"/>
-          </form>
-          <FriendsList friends={friends} IDs={IDs}></FriendsList>
+          <input type="text" className="userSearch" placeholder="Search Users" id="search" onChange={()=>
+              searchUsers("con").then(userlist => {
+                console.log(userlist.users.users);
+                users = userlist.users.users;
+                ids = userlist.users.IDs;
+              })}/>
+            <FriendsList id="searchedUsers" friends={users} IDs={ids}></FriendsList>
         </div>
+
 
         <div className="footerMenu" hidden={true} id="messages">
           <h1 className="menuTitle">
@@ -109,7 +114,6 @@ function getUsersMessages(username) {
     };
     const url = "http://localhost:3001/api/getData/getUsersMessages";
     fetch(url, transport).then(result => result.json()).then(json => {
-      console.log(json);
       resolve(json);
     }).catch(err => {
       throw new Error(err);
@@ -127,25 +131,31 @@ function getUserList() {
     };
     const url = "http://localhost:3001/api/getData/getUserList";
     fetch(url, transport).then(result => result.json()).then(json => {
-      console.log(json);
       resolve(json);
     }).catch(err => {
       throw new Error(err);
     });
   });
 }
-
-// function searchUsers(search) {
-//   return new Promise(function(resolve, reject) {
-//     var users = getUserList();
-//     var s = search.toLowerCase();
-//     for (var i = users.length - 1; i >= 0; i--) {
-//       if (!movies[i].movie_name.toLowerCase().includes(s)) {
-//         users.splice(i, 1);
-//       }
-//     }
-//     resolve({users});
-//   });
-// }
+function applySearch(search){
+  searchUsers(search).then(userlist => {
+    document.getElementById("searchedUsers").friends = userlist.users.users;
+    document.getElementById("searchedUsers").IDs = userlist.users.IDs;
+    document.getElementById("searchedUsers").hidden = false;
+  })
+}
+function searchUsers(search) {
+  return new Promise(function(resolve, reject) {
+    getUserList().then(users => {
+    var s = search.toLowerCase();
+    console.log(s);
+    for (var i = users.length - 1; i >= 0; i--) {
+      if (!users.users[i].toLowerCase().includes(s)) {
+        users.splice(i, 1);
+      }
+    }
+    resolve({users});})
+  });
+}
 
 export default Footer

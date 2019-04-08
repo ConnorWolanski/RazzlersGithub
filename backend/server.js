@@ -570,7 +570,6 @@ router.get("/getData/getUserList", function(req, response)
 {
   getUserList().then(result =>
   {
-    console.log(result);
     var usernames = [];
     var ids = [];
     result.forEach(function(userInfo)
@@ -578,7 +577,6 @@ router.get("/getData/getUserList", function(req, response)
       usernames[usernames.length] = '"' + userInfo.username + '"';
       ids[ids.length] = '"' + userInfo.user_id + '"';
     });
-    console.log('{"users": [' + usernames + '], "IDs": [' + ids + ']}');
     response.send('{"users": [' + usernames + '], "IDs": [' + ids + ']}');
   });
 });
