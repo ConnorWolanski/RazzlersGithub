@@ -35,18 +35,35 @@
   border-style: ridge;
   border-color: grey;
 }
+.time{
+  font-size: 8px;
+}
 .autoFlow{
   height: 399px;
   overflow:auto;
 }
-.messageBubble{
+.leftmessageBubble{
   background-image: url('./images/back2.png');
   border-color: white;
   border: 2px;
   border-style: ridge;
   border-radius: 6px;
   padding: 3px;
-  margin: 2px;
+  margin-right: 75px;
+  margin-left: 3px;
+  margin-top: 4px;
+  font-size: 14px;
+}
+.rightmessageBubble{
+  background-image: url('./images/back2.png');
+  margin-left: 75px;
+  border-color: white;
+  border: 2px;
+  border-style: ridge;
+  border-radius: 6px;
+  padding: 3px;
+  margin-right: 3px;
+  margin-top: 4px;
   font-size: 14px;
 }
 .menuTitle{

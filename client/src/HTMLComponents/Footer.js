@@ -95,9 +95,7 @@ class Footer extends React.Component {
               <img src={close} alt="close"/>
             </button>
           </h1>
-          <div className="messageBubble">
-            <MessageList id="textMessages" messageList={this.state.defaultMessage} ></MessageList>
-          </div>
+          <MessageList id="textMessages" messageList={this.state.defaultMessage} ></MessageList>
           <form className="typeMessage">
             <input type="text" id="messageTyped" className="messageText" placeholder="text message"/>
             <button type="button" className="sendButton" onClick={() => {
