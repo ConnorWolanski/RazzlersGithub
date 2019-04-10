@@ -166,19 +166,8 @@ exports.updateLocalSubscribedLists = function()
   });
 }
 
-exports.forceUpdateMessages = function()
+exports.getUsersMessages = function(sender, recipient)
 {
-  var sender = window.localStorage.getItem("Razzlers_Username");
-  var recip = document.getElementById("messageTitle").innerHTML;
-  if(sender !== recip)
-  {
-    getUsersMessages(sender, recip).then(result => {
-      document.getElementById("textMessages").innerHTML = JSON.stringify(result);
-    });
-  }
-}
-
-function getUsersMessages(sender, recipient) {
   return new Promise(function(resolve, reject) {
     var data = '{"sender": "' + sender + '", "recipient": "' + recipient + '"}';
     data = JSON.parse(data);
@@ -197,3 +186,36 @@ function getUsersMessages(sender, recipient) {
     });
   });
 }
+
+exports.getUsernameFromID = function(id)
+{
+  return new Promise(function(resolve, reject) {
+    var data = '{"id": "' + id + '"}';
+    data = JSON.parse(data);
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    };
+    const url = "http://localhost:3001/api/getData/getUsernameOfID";
+    fetch(url, transport).then(result => result.json()).then(json => {
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+
+/*exports.forceUpdateMessages = function()
+{
+  var sender = window.localStorage.getItem("Razzlers_Username");
+  var recip = document.getElementById("messageTitle").innerHTML;
+  if(sender !== recip)
+  {
+    getUsersMessages(sender, recip).then(result => {
+      document.getElementById("textMessages").innerHTML = JSON.stringify(result);
+    });
+  }
+}*/

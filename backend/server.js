@@ -265,76 +265,6 @@ function getMovieList(idList)
   });
 }
 
-router.put("/getData/getMessages", function(req, response)
-{
-  getMessageList().then(result => {
-    var messageList = "";
-    for(var i = 0; i < result.length; i++)
-    {
-      if(i == result.length - 1)
-      {
-        messageList += JSON.stringify(message);
-      } else {
-        messageList += JSON.stringify(message) + ",";
-      }
-    }
-    response.send('{"messages": [' + messageList + ']}')
-  });
-});
-
-router.put("/sendMessage", function(req, response)
-{
-  var sender = req.body.sender;
-  var recipient = req.body.recipient;
-  var message = req.body.message;
-  getMessageListLength().then(messageID => {
-    getUserID(sender).then(senderID => {
-      getUserID(recipient).then(recipientID => {
-        var date = new Date();
-        var month = date.getMonth();
-        if(month< 10)
-        {
-          month = "0" + month;
-        }
-        var day = date.getDate();
-        if(day < 10)
-        {
-          day = "0" + day;
-        }
-        var hour = date.getHours();
-        if(hour < 10)
-        {
-          hour = "0" + hour;
-        }
-        var minutes = date.getMinutes();
-        if(minutes < 10)
-        {
-          minutes = "0" + minutes;
-        }
-        var seconds = date.getSeconds();
-        if(seconds < 10)
-        {
-          seconds = "0" + seconds;
-        }
-        var dateString = date.getFullYear() + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds;
-        //console.log(messageID + ")" + senderID + " => " + recipientID + " : " + message + " D: " + dateString);
-        var sql = "INSERT INTO message (message_id, user_id, recipient_user_id, message_body, time, message_status) VALUES (\'" + messageID + "\', \'" + senderID  + "\', \'" + recipientID + "\', \'" + message + "\', \'" + dateString + "\', \'0\')";
-        connection.query(sql, function(err, result)
-        {
-          if(err)
-          {
-            console.log(err);
-            response.send('{"result": "false"}');
-          } else {
-            console.log("Message sent successfully!");
-            response.send('{"result": "true"}');
-          }
-        });
-      });
-    });
-  });
-});
-
 // put function to register the user to the SQL DB
 // Needs to deal with if username already exists
 // here on server side and return {result: false}
@@ -427,6 +357,28 @@ router.put("/addBilling", function(req, response)
   });
 });
 
+router.put("/addFriend", function(req, response)
+{
+  getUserID(req.body.username).then(userID =>
+  {
+    getUserID(req.body.friend_username).then(friendID =>
+    {
+      var sql = 'INSERT INTO friends (user_id, friend_id) VALUES (' + userID + ', ' + friendID + ')';
+      connection.query(sql, function(err, result)
+      {
+        if(err)
+        {
+          console.log(err);
+          response.send('{"result": "false"}');
+        } else {
+          console.log("User (" + userID + ") added user (" + friendID + ") as a friend!");
+          response.send('{"result": "true"}');
+        }
+      });
+    });
+  });
+});
+
 // function for checking logins
 // returns true for correct username : password
 // returns false for invalid credentials
@@ -457,6 +409,59 @@ router.post("/getData/checkLogin", function(req, response)
         response.send(isCorrect);
       }
     }
+  });
+});
+
+router.put("/sendMessage", function(req, response)
+{
+  var sender = req.body.sender;
+  var recipient = req.body.recipient;
+  var message = req.body.message;
+  getMessageListLength().then(messageID => {
+    getUserID(sender).then(senderID => {
+      getUserID(recipient).then(recipientID => {
+        var date = new Date();
+        var month = date.getMonth();
+        if(month< 10)
+        {
+          month = "0" + month;
+        }
+        var day = date.getDate();
+        if(day < 10)
+        {
+          day = "0" + day;
+        }
+        var hour = date.getHours();
+        if(hour < 10)
+        {
+          hour = "0" + hour;
+        }
+        var minutes = date.getMinutes();
+        if(minutes < 10)
+        {
+          minutes = "0" + minutes;
+        }
+        var seconds = date.getSeconds();
+        if(seconds < 10)
+        {
+          seconds = "0" + seconds;
+        }
+        var dateString = date.getFullYear() + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds;
+        //console.log(messageID + ")" + senderID + " => " + recipientID + " : " + message + " D: " + dateString);
+        var sql = "INSERT INTO message (message_id, user_id, recipient_user_id, message_body, time, message_status) VALUES (\'" + messageID + "\', \'" + senderID  + "\', \'" + recipientID + "\', \'" + message + "\', \'" + dateString + "\', \'0\')";
+        connection.query(sql, function(err, result)
+        {
+          if(err)
+          {
+            console.log(err);
+            response.send('{"result": "false"}');
+          } else {
+            console.log("Message sent successfully!");
+            response.send('{"result": "true"}');
+          }
+        });
+      });
+    });
   });
 });
 
@@ -611,6 +616,23 @@ router.put("/getData/subscribe", function(req, response)
         }
       });
     });
+  });
+});
+
+router.put("/getData/getMessages", function(req, response)
+{
+  getMessageList().then(result => {
+    var messageList = "";
+    for(var i = 0; i < result.length; i++)
+    {
+      if(i == result.length - 1)
+      {
+        messageList += JSON.stringify(message);
+      } else {
+        messageList += JSON.stringify(message) + ",";
+      }
+    }
+    response.send('{"messages": [' + messageList + ']}')
   });
 });
 
@@ -814,6 +836,14 @@ router.put("/getData/getUserBilling", function(req, response)
 		response.send(back);
       }
     });
+});
+
+router.put("/getData/getUsernameOfID", function(req, response)
+{
+  getUsername(req.body.id).then(result =>
+  {
+    response.send('{"username": "' + result + '"}');
+  });
 });
 
 router.get("/getData/getMovieList", function(req, response)

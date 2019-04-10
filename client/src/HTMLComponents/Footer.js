@@ -5,10 +5,10 @@ import Friends from '../images/friends.png';
 import close from '../images/close.png';
 import addfriend from '../images/add-friend.png';
 import FriendsList from './FriendsList.js';
+import MessageList from './MessageList.js'
 const utilFunc = require('../Helpers/UtilityFunctions');
 
-var fList = null;
-var iList = null;
+var thisref = null;
 
 class Footer extends React.Component {
   constructor(props) {
@@ -17,17 +17,17 @@ class Footer extends React.Component {
       friends: null,
       IDs: null,
       users: null,
-      ids: null
+      ids: null,
+      defaultMessage: []
     };
     var username = window.localStorage.getItem("Razzlers_Username");
 
     if (username !== null) {
       utilFunc.getUsersFriends(username).then(friendsList => {
         this.setState({friends: friendsList.friends, IDs: friendsList.IDs, users: friendsList.friends, ids: friendsList.IDs});
-        fList = friendsList.friends;
-        iList = friendsList.IDs;
       });
     }
+    thisref = this;
   }
   componentDidMount()
   {
@@ -63,7 +63,16 @@ class Footer extends React.Component {
         <div className="footerMenu" hidden={true} id="addFriends">
           <h1 className="menuTitle">
             <font color="white">Add Friends</font>
-            <button className="iconButton" onClick={() => document.getElementById("addFriends").hidden = true}>
+            <button className="iconButton" onClick={() =>
+              {
+                var username = window.localStorage.getItem("Razzlers_Username");
+                if (username !== null) {
+                  utilFunc.getUsersFriends(username).then(friendsList => {
+                    this.setState({friends: friendsList.friends, IDs: friendsList.IDs, users: friendsList.friends, ids: friendsList.IDs});
+                  });
+                }
+                document.getElementById("addFriends").hidden = true;
+              }}>
               <img src={close} alt="close"/>
             </button>
           </h1>
@@ -87,19 +96,14 @@ class Footer extends React.Component {
             </button>
           </h1>
           <div className="messageBubble">
-            <font id="textMessages" color="white">hello this is a message from the devolpers</font>
+            <MessageList id="textMessages" messageList={this.state.defaultMessage} ></MessageList>
           </div>
           <form className="typeMessage">
             <input type="text" id="messageTyped" className="messageText" placeholder="text message"/>
             <button type="button" className="sendButton" onClick={() => {
                 sendMessage(document.getElementById("messageTitle").innerHTML, document.getElementById("messageTyped").value).then(result => {
                   utilFunc.getUsersMessages(window.localStorage.getItem("Razzlers_Username"), document.getElementById("messageTitle").innerHTML).then(json => {
-                    var messages = "";
-                    json.messages.forEach(function(message)
-                    {
-                      messages += message.user_id + " => " + message.recipient_user_id + ": " + message.message_body + "<br>";
-                    });
-                    document.getElementById("textMessages").innerHTML = messages;
+                    console.log(json);
                   });
                 });
               }}>Send</button>
@@ -107,10 +111,15 @@ class Footer extends React.Component {
         </div>
 
         <div className="footer">
-          <button className="iconButton" onClick={() => {
-              document.getElementById("friends").hidden = !document.getElementById("friends").hidden;
-              document.getElementById("messages").hidden = true;
-              document.getElementById("addFriends").hidden = true;
+          <button className="iconButton" onClick={() =>
+              {
+                var username = window.localStorage.getItem("Razzlers_Username");
+                if (username !== null) {
+                  forceUpdateMessages();
+                }
+                document.getElementById("friends").hidden = !document.getElementById("friends").hidden;
+                document.getElementById("messages").hidden = true;
+                document.getElementById("addFriends").hidden = true;
             }}>
             <img src={Friends} alt="friends"/>
           </button>
@@ -131,11 +140,23 @@ class Footer extends React.Component {
 
 function updateMessages()
 {
-  utilFunc.forceUpdateMessages();
+  forceUpdateMessages();
   setTimeout(function()
   {
    updateMessages();
   }, 1000);
+}
+
+function forceUpdateMessages()
+{
+  var sender = window.localStorage.getItem("Razzlers_Username");
+  var recip = document.getElementById("messageTitle").innerHTML;
+  if(sender !== recip)
+  {
+    utilFunc.getUsersMessages(sender, recip).then(messages => {
+      thisref.setState({defaultMessage: messages.messages});
+    });
+  }
 }
 
 function sendMessage(recipient, messageText)
