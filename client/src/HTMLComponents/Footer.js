@@ -33,7 +33,12 @@ class Footer extends React.Component {
   {
     setTimeout(function()
     {
-      updateMessages();
+      if(document.getElementById("messageTitle") !== null)
+      {
+        updateMessages();
+      } else {
+        console.log("Is not logged in.");
+      }
     }, 1000);
   }
   render() {
