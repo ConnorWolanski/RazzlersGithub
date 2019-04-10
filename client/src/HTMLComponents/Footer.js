@@ -7,6 +7,9 @@ import addfriend from '../images/add-friend.png';
 import FriendsList from './FriendsList.js';
 const utilFunc = require('../Helpers/UtilityFunctions');
 
+var fList = null;
+var iList = null;
+
 class Footer extends React.Component {
   constructor(props) {
     super(props);
@@ -21,8 +24,17 @@ class Footer extends React.Component {
     if (username !== null) {
       utilFunc.getUsersFriends(username).then(friendsList => {
         this.setState({friends: friendsList.friends, IDs: friendsList.IDs, users: friendsList.friends, ids: friendsList.IDs});
+        fList = friendsList.friends;
+        iList = friendsList.IDs;
       });
     }
+  }
+  componentDidMount()
+  {
+    setTimeout(function()
+    {
+      updateMessages();
+    }, 1000);
   }
   render() {
     var {friends, IDs, users, ids} = this.state;
@@ -65,12 +77,12 @@ class Footer extends React.Component {
               <FriendsList friends={users} IDs={ids}></FriendsList>
             </div>
         </div>
-
-
         <div className="footerMenu" hidden={true} id="messages">
           <h1 className="menuTitle">
             <font color="white" id ="messageTitle">{window.localStorage.getItem("Razzlers_Username")}</font>
-            <button className="iconButton" onClick={() => document.getElementById("messages").hidden = true}>
+            <button className="iconButton" onClick={() => {
+                document.getElementById("messages").hidden = true;
+              }}>
               <img src={close} alt="close"/>
             </button>
           </h1>
@@ -81,7 +93,7 @@ class Footer extends React.Component {
             <input type="text" id="messageTyped" className="messageText" placeholder="text message"/>
             <button type="button" className="sendButton" onClick={() => {
                 sendMessage(document.getElementById("messageTitle").innerHTML, document.getElementById("messageTyped").value).then(result => {
-                  getUsersMessages(window.localStorage.getItem("Razzlers_Username")).then(json => {
+                  utilFunc.getUsersMessages(window.localStorage.getItem("Razzlers_Username"), document.getElementById("messageTitle").innerHTML).then(json => {
                     var messages = "";
                     json.messages.forEach(function(message)
                     {
@@ -117,6 +129,15 @@ class Footer extends React.Component {
   }
 }
 
+function updateMessages()
+{
+  utilFunc.forceUpdateMessages();
+  setTimeout(function()
+  {
+   updateMessages();
+  }, 1000);
+}
+
 function sendMessage(recipient, messageText)
 {
   return new Promise(function(resolve, reject) {
@@ -130,26 +151,6 @@ function sendMessage(recipient, messageText)
       body: JSON.stringify(data)
     };
     const url = "http://razzlers.me:3001/api/sendMessage";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      resolve(json);
-    }).catch(err => {
-      throw new Error(err);
-    });
-  });
-}
-
-function getUsersMessages(username) {
-  return new Promise(function(resolve, reject) {
-    var data = '{"username": "' + username + '"}';
-    data = JSON.parse(data);
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(data)
-    };
-    const url = "http://razzlers.me:3001/api/getData/getUsersMessages";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {

@@ -29,6 +29,7 @@ class FriendCard extends React.Component {
             document.getElementById("messageTitle").innerHTML = username;
             document.getElementById("friends").hidden = true;
             document.getElementById("addFriends").hidden = true;
+            utilFunc.forceUpdateMessages();
           }}>
           <img src={envelope} alt="envelope"/>
         </button>
