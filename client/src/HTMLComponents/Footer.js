@@ -55,7 +55,7 @@ class Footer extends React.Component {
             </button>
           </h1>
           <div className="autoFlow">
-            <FriendsList friends={friends} IDs={IDs}/>
+            <FriendsList friends={friends} IDs={IDs} parent={this}/>
           </div>
         </div>
 
@@ -83,7 +83,7 @@ class Footer extends React.Component {
                 this.setState({users:users, ids: ids});
               })}/>
             <div id="dhold">
-              <FriendsList friends={users} IDs={ids}></FriendsList>
+              <FriendsList friends={users} IDs={ids} parent={this}/>
             </div>
         </div>
         <div className="footerMenu" hidden={true} id="messages">
@@ -103,7 +103,8 @@ class Footer extends React.Component {
             <button type="button" className="sendButton" onClick={() => {
                 sendMessage(document.getElementById("messageTitle").innerHTML, document.getElementById("messageTyped").value).then(result => {
                   utilFunc.getUsersMessages(window.localStorage.getItem("Razzlers_Username"), document.getElementById("messageTitle").innerHTML).then(json => {
-                    console.log(json);
+                    forceUpdateMessages();
+                    document.getElementById('messageTyped').value = "";
                   });
                 });
               }}>Send</button>

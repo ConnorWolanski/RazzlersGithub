@@ -6,8 +6,9 @@ class FriendCard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: props,
-      isFriends: false
+      username: props.username,
+      isFriends: false,
+      container: props.container
     };
     checkIfFriends(this.props).then(boolFriend => {
       this.setState({isFriends: boolFriend.areFriends});
@@ -18,6 +19,8 @@ class FriendCard extends React.Component {
   {
     const {username} = this.props;
     const areFriends = this.state.isFriends;
+    // can be changed to const {username, areFriends} = this.state; ?????
+    const container = this.state.container;
     return (
       <div className="friendCard">
         <font>{username}</font>
@@ -33,6 +36,9 @@ class FriendCard extends React.Component {
             document.getElementById("messageTitle").innerHTML = username;
             document.getElementById("friends").hidden = true;
             document.getElementById("addFriends").hidden = true;
+            container.forceUpdate();
+            container.setState(container.state);
+            console.log(container.state);
           }}>
           <img src={envelope} alt="envelope"/>
         </button>
