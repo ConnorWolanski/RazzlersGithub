@@ -178,7 +178,7 @@ exports.getUsersMessages = function(sender, recipient)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getUsersMessages";
+    const url = "http://razzlers.me:3001/api/getData/getUsersMessages";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -199,7 +199,7 @@ exports.getUsernameFromID = function(id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getUsernameOfID";
+    const url = "http://razzlers.me:3001/api/getData/getUsernameOfID";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
