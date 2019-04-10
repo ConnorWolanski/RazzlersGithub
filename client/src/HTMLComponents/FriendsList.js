@@ -14,7 +14,7 @@ const FriendsList = ({friends, IDs}) =>
     </div>
   )) : null;
   return (
-    <div>
+    <div className="autoFlow">
       {finfriends}
     </div>
   );

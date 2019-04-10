@@ -27,13 +27,27 @@
   background-image: url('./images/background.png');
   background-size:cover;
   position: fixed;
-  height: 40%;
-  width: 17%;
+  height: 380px;
+  width: 270px;
   right: .3%;
   bottom: 58px;
   border: 7px;
   border-style: ridge;
   border-color: grey;
+}
+.autoFlow{
+  height: 309px;
+  overflow:auto;
+}
+.messageBubble{
+  background-image: url('./images/back2.png');
+  border-color: white;
+  border: 2px;
+  border-style: ridge;
+  border-radius: 6px;
+  padding: 3px;
+  margin: 2px;
+  font-size: 14px;
 }
 .menuTitle{
   background-image: url('./images/back2.png');
@@ -176,6 +190,15 @@
     background-image: url('./images/background.png');
     border: 1;
     height: auto;
+    border-color: grey;
+    border-radius: 2px;
+    float: right;
+ }
+ .addButton{
+    background-image: url('./images/background.png');
+    border: 1;
+    height: 100%;
+    width: 48px;
     border-color: grey;
     border-radius: 2px;
     float: right;

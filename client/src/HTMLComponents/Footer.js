@@ -4,9 +4,7 @@ import envelope from '../images/envelope.png';
 import Friends from '../images/friends.png';
 import close from '../images/close.png';
 import addfriend from '../images/add-friend.png';
-import FriendsList from './FriendsList.js'
-import FriendCard from './FriendCard';
-import ReactDOMServer from 'react-dom/server';
+import FriendsList from './FriendsList.js';
 const utilFunc = require('../Helpers/UtilityFunctions');
 
 class Footer extends React.Component {
@@ -44,7 +42,9 @@ class Footer extends React.Component {
               <img src={addfriend} alt="add friends"/>
             </button>
           </h1>
-          <FriendsList friends={friends} IDs={IDs}/>
+          <div className="autoFlow">
+            <FriendsList friends={friends} IDs={IDs}/>
+          </div>
         </div>
 
 
@@ -59,9 +59,7 @@ class Footer extends React.Component {
               searchUsers(document.getElementById("search1").value).then(userlist => {
                 users = userlist.users.users;
                 ids = userlist.users.IDs;
-                var here = ReactDOMServer.renderToString(userList(users, ids));
-                console.log(userList(users, ids));
-                document.getElementById("dhold").innerHTML= here;
+                this.setState({users:users, ids: ids});
               })}/>
             <div id="dhold">
               <FriendsList friends={users} IDs={ids}></FriendsList>
@@ -76,7 +74,9 @@ class Footer extends React.Component {
               <img src={close} alt="close"/>
             </button>
           </h1>
-          <font id="textMessages">hello this is a message from the devolpers</font>
+          <div className="messageBubble">
+            <font id="textMessages" color="white">hello this is a message from the devolpers</font>
+          </div>
           <form className="typeMessage">
             <input type="text" id="messageTyped" className="messageText" placeholder="text message"/>
             <button type="button" className="sendButton" onClick={() => {
@@ -136,25 +136,6 @@ function sendMessage(recipient, messageText)
       throw new Error(err);
     });
   });
-}
-
-function userList(friends, IDs)
-{
-  var friendsList = [];
-  for(var i = 0; i < friends.length; i++)
-  {
-    friendsList[friendsList.length] = JSON.parse('{"username": "' + friends[i] + '", "key": "' + IDs[i] + '"}')
-  }
-  const finfriends = friendsList ? friendsList.map(current => (
-    <div key={current.key}>
-      <FriendCard username={current.username}/>
-    </div>
-  )) : null;
-  return (
-    <div>
-      {finfriends}
-    </div>
-  );
 }
 
 function getUsersMessages(username) {
