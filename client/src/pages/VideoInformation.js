@@ -132,11 +132,11 @@ class PlayVideo extends React.Component {
               {
                 console.log("result");
                 // result is either true or false based on if subbing went correctly or note
-                if(result.value === "true")
+                if(result.result === "true")
                 {
                   // refresh page so they can watch the subbed show/movie
                   window.location.reload();
-                } else if(result.value === "full") {
+                } else if(result.result === "full") {
                   // they are at capacity for subscriptions!
                   document.getElementById("capacityMessage").hidden=false;
                 } else {
