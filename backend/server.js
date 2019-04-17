@@ -37,6 +37,40 @@ connection.connect(function(err) {
   console.log("Connected to MySQL database!");
 })
 
+// fetches the current date and returns it as string
+function getDateAsString(date)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var month = date.getMonth();
+    if(month< 10)
+    {
+      month = "0" + month;
+    }
+    var day = date.getDate();
+    if(day < 10)
+    {
+      day = "0" + day;
+    }
+    var hour = date.getHours();
+    if(hour < 10)
+    {
+      hour = "0" + hour;
+    }
+    var minutes = date.getMinutes();
+    if(minutes < 10)
+    {
+      minutes = "0" + minutes;
+    }
+    var seconds = date.getSeconds();
+    if(seconds < 10)
+    {
+      seconds = "0" + seconds;
+    }
+    resolve(date.getFullYear() + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds);
+  });
+}
+
 // goes to MySQL DB and fetches WHOLE list of users
 function getUserList()
 {
@@ -420,35 +454,8 @@ router.put("/sendMessage", function(req, response)
   getMessageListLength().then(messageID => {
     getUserID(sender).then(senderID => {
       getUserID(recipient).then(recipientID => {
-        var date = new Date();
-        var month = date.getMonth();
-        if(month< 10)
-        {
-          month = "0" + month;
-        }
-        var day = date.getDate();
-        if(day < 10)
-        {
-          day = "0" + day;
-        }
-        var hour = date.getHours();
-        if(hour < 10)
-        {
-          hour = "0" + hour;
-        }
-        var minutes = date.getMinutes();
-        if(minutes < 10)
-        {
-          minutes = "0" + minutes;
-        }
-        var seconds = date.getSeconds();
-        if(seconds < 10)
-        {
-          seconds = "0" + seconds;
-        }
-        var dateString = date.getFullYear() + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds;
         //console.log(messageID + ")" + senderID + " => " + recipientID + " : " + message + " D: " + dateString);
-        var sql = "INSERT INTO message (message_id, user_id, recipient_user_id, message_body, time, message_status) VALUES (\'" + messageID + "\', \'" + senderID  + "\', \'" + recipientID + "\', \'" + message + "\', \'" + dateString + "\', \'0\')";
+        var sql = "INSERT INTO message (message_id, user_id, recipient_user_id, message_body, time, message_status) VALUES (\'" + messageID + "\', \'" + senderID  + "\', \'" + recipientID + "\', \'" + message + "\', \'" + getDateAsString(new Date()) + "\', \'0\')";
         connection.query(sql, function(err, result)
         {
           if(err)
@@ -465,59 +472,86 @@ router.put("/sendMessage", function(req, response)
   });
 });
 
-router.put("/getData/setSubs", function(req, response)
-{
-  // sets sub total to 10 for user.
-  var username = req.body.username;
-  getUserID(username).then(result =>
-  {
-    var sql = "UPDATE users SET subscription_slots=10 WHERE user_id='" + result + "'";
-    connection.query(sql, function(err, sqlresult)
-    {
-      if(err)
-      {
-        console.log(err);
-        response.send('{"value": "false"}');
-      } else {
-        response.send('{"value": "true"}');
-      }
-    });
-  });
-});
-
 router.put("/getData/resetSubs", function(req, response)
 {
   var username = req.body.username;
-  getUserID(username).then(result =>
+  getUserID(username).then(userID =>
   {
-    console.log(result);
-    var sql = "DELETE FROM user_shows_selected WHERE user_id='" + result + "'";
+    var sql = "DELETE FROM user_shows_selected WHERE user_id='" + userID + "'";
     connection.query(sql, function(err, sqlresult)
     {
       if(err)
       {
         console.log(err);
-        response.send('{"value": "false"}');
+        response.send('{"result": "false"}');
       } else {
-        console.log("Deleted subbed shows for userID: " + result);
+        console.log("Deleted subbed shows for userID: " + userID);
       }
     });
-    var sql = "DELETE FROM user_movies_selected WHERE user_id='" + result + "'";
+    var sql = "DELETE FROM user_movies_selected WHERE user_id='" + userID + "'";
     connection.query(sql, function(err, sqlresult)
     {
       if(err)
       {
         console.log(err);
-        response.send('{"value": "false"}');
+        response.send('{"result": "false"}');
       } else {
-        console.log("Deleted subbed movies for userID: " + result);
-        response.send('{"value": "true"}');
+        console.log("Deleted subbed movies for userID: " + userID);
+      }
+    });
+    var sql = "DELETE FROM membership_details WHERE user_id='" + userID + "'";
+    connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        console.log("Deleted membership for userID: " + userID);
+        response.send('{"result": "true"}');
       }
     });
   });
 });
 
 router.put("/getData/subscribe", function(req, response)
+{
+  var username = req.body.username;
+  getUserID(username).then(userID =>
+  {
+    var monthAheadDate = new Date();
+    getDateAsString(monthAheadDate).then(currentMonth =>
+    {
+      monthAheadDate.setMonth(monthAheadDate.getMonth() + 1);
+      getDateAsString(monthAheadDate).then(monthAfter =>
+      {
+        sql = 'INSERT INTO membership_details (user_id, membership_start_date, membership_end_date, active) VALUES ("' + userID + '", "' + currentMonth + '", "' + monthAfter + '", "' + 1 + '")';
+        connection.query(sql, function(err, sqlresult)
+        {
+          if(err)
+          {
+            // gets here if there is a duplicate entry
+            response.send('{"result": "false"}');
+          } else {
+          }
+        });
+        var sql = "UPDATE users SET subscription_slots=10 WHERE user_id='" + userID + "'";
+        connection.query(sql, function(err, sqlresult)
+        {
+          if(err)
+          {
+            console.log(err);
+            response.send('{"result": "false"}');
+          } else {
+            response.send('{"result": "true"}');
+          }
+        });
+      });
+    });
+  });
+});
+
+router.put("/getData/subscribeToShow", function(req, response)
 {
   var username = req.body.username;
   var isMovie = req.body.isMovie;
@@ -536,14 +570,13 @@ router.put("/getData/subscribe", function(req, response)
           // they can still sub
           if(isMovie === "true")
           {
-            console.log("isMovie: true");
             var sql = "SELECT movie_id FROM user_movies_selected WHERE user_id='" + result + "'";
             connection.query(sql, function(err, sqlresult)
             {
               if(err)
               {
                 console.log(err);
-                response.send('{"value": "false"}');
+                response.send('{"result": "false"}');
               } else {
                 // result = tv_show_id array
                 getMovieList(sqlresult).then(listResult => {
@@ -551,36 +584,35 @@ router.put("/getData/subscribe", function(req, response)
                   if(!returned)
                   {
                     // list does not contain the subbed movie
-                    // add it to movie db and return {value:true}
+                    // add it to movie db and return {result:true}
                     var sql = "INSERT INTO user_movies_selected (user_id, movie_id) VALUES (\'" + result + "\', \'" + id + "\')";
                     connection.query(sql, function(err, result)
                     {
                       if(err)
                       {
                         console.log(err);
-                        response.send('{"value": "false"}');
+                        response.send('{"result": "false"}');
                       } else {
                         console.log(username + " has subscribed to movie " + id);
-                        response.send('{"value": "true"}');
+                        response.send('{"result": "true"}');
                       }
                     });
                   } else {
                     // list does contain the subbed movie
-                    // return {value:true}
-                    response.send('{"value": "true"}');
+                    // return {result:true}
+                    response.send('{"result": "true"}');
                   }
                 });
               }
             });
           } else {
-            console.log("isMovie: false");
             var sql = "SELECT tv_show_id FROM user_shows_selected WHERE user_id='" + result + "'";
             connection.query(sql, function(err, sqlresult)
             {
               if(err)
               {
                 console.log(err);
-                response.send('{"value": "false"}');
+                response.send('{"result": "false"}');
               } else {
                 // result = tv_show_id array
                 getShowList(sqlresult).then(listResult => {
@@ -588,23 +620,23 @@ router.put("/getData/subscribe", function(req, response)
                   if(!returned)
                   {
                     // list does not contain the subbed movie
-                    // add it to movie db and return {value:true}
+                    // add it to movie db and return {result:true}
                     var sql = "INSERT INTO user_shows_selected (user_id, tv_show_id) VALUES (\'" + result + "\', \'" + id + "\')";
                     connection.query(sql, function(err, result)
                     {
                       if(err)
                       {
                         console.log(err);
-                        response.send('{"value": "false"}');
+                        response.send('{"result": "false"}');
                       } else {
                         console.log(username + " has subscribed to show " + id);
-                        response.send('{"value": "true"}');
+                        response.send('{"result": "true"}');
                       }
                     });
                   } else {
                     // list does contain the subbed movie
-                    // return {value:true}
-                    response.send('{"value": "true"}');
+                    // return {result:true}
+                    response.send('{"result": "true"}');
                   }
                 });
               }
@@ -612,7 +644,7 @@ router.put("/getData/subscribe", function(req, response)
           }
         } else {
           // they are at capacity!
-          response.send('{"value": "full"}')
+          response.send('{"result": "full"}')
         }
       });
     });

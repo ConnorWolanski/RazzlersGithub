@@ -46,16 +46,7 @@ class Profile extends React.Component {
     });
   }
   render() {
-    const {
-      id,
-      user,
-      firstName,
-      lastName,
-      Email,
-      Status,
-      displayName
-    } = this.state;
-    console.log(id);
+    const { user, firstName, lastName, Email, Status, displayName } = this.state;
     return (<div className="bg2">
       <h2 className="centerText">
         <font color="black" size="50">{"Hello, " + user + "!"}</font>
@@ -80,12 +71,28 @@ class Profile extends React.Component {
           <font color="#d7e2e9" size="20px">Click here to view billing information</font>
         </a>
       </p>
+      <button className="button2" onClick={() =>
+        {
+          startSubscription().then(result =>
+          {
+            console.log(result);
+          });
+        }}> Start Subscriptions </button>
+      <button className="button2" onClick={() =>
+        {
+          resetSubs().then(result =>
+          {
+            console.log(result);
+          });
+        }}> Reset Subscriptions </button>
     </div>);
   }
 }
 
-function checkParams() {
-  return new Promise(function(resolve, reject) {
+function checkParams()
+{
+  return new Promise(function(resolve, reject)
+  {
     var user = window.localStorage.getItem("Razzlers_Username");
     resolve({user});
   });
@@ -103,6 +110,58 @@ function getUserInfo(user) {
     };
     const url = "http://razzlers.me:3001/api/getData/getUserInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+
+function startSubscription()
+{
+  var username = window.localStorage.getItem("Razzlers_Username");
+  var data = '{"username": "' + username + '"}';
+  data = JSON.parse(data);
+  return new Promise(function(resolve, reject)
+  {
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    };
+    const url = "//razzlers.me:3001/api/getData/subscribe";
+    fetch(url, transport).then(result => result.json()).then(json =>
+    {
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+
+function resetSubs()
+{
+  // clears subscriptions
+  return new Promise(function(resolve, reject)
+  {
+    // resolves with object in format {result: true|false} which comes directly from server
+    var username = window.localStorage.getItem("Razzlers_Username");
+    var data = '{"username": "' + username + '"}';
+    data = JSON.parse(data);
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    };
+    const url = "//razzlers.me:3001/api/getData/resetSubs";
+    fetch(url, transport).then(result => result.json()).then(json =>
+    {
+      window.localStorage.setItem("Razzlers_Subscribed_Shows", null);
+      window.localStorage.setItem("Razzlers_Subscribed_Movies", null);
       resolve(json);
     }).catch(err => {
       throw new Error(err);

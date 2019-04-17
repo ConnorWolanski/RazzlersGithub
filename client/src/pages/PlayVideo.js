@@ -62,8 +62,11 @@ class PlayVideo extends React.Component {
         var movieList = JSON.parse(localStorage.getItem("Razzlers_Subscribed_Movies"));
         if(movieList !== null)
         {
-          isSubscribed = movieList.includes(parseInt(id,10));
-          loc = "//assets.razzlers.me/assets/videos/movies/" + id + ".mp4";
+          if(typeof movieList !== typeof 0)
+          {
+            isSubscribed = movieList.includes(parseInt(id,10));
+            loc = "//assets.razzlers.me/assets/videos/movies/" + id + ".mp4";
+          }
         }
       } else {
         var showList = JSON.parse(localStorage.getItem("Razzlers_Subscribed_Shows"));
@@ -113,7 +116,7 @@ class PlayVideo extends React.Component {
                   document.getElementById("capacityMessage").hidden=false;
                 } else {
                   // subbing failed
-                  // display error message!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                  // display error message!
                   document.getElementById("invalidMessage1").hidden=false;
                 }
               })
@@ -152,7 +155,7 @@ function subscribe(isMovie, id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me:3001/api/getData/subscribe";
+    const url = "//razzlers.me:3001/api/getData/subscribeToShow";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
       utilFunc.updateLocalSubscribedLists().then(output =>
