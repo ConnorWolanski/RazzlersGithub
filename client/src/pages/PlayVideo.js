@@ -105,13 +105,12 @@ class PlayVideo extends React.Component {
             {
               subscribe(isMovie, id).then(result =>
               {
-                console.log("result");
                 // result is either true or false based on if subbing went correctly or note
-                if(result.value === "true")
+                if(result.result === "true")
                 {
                   // refresh page so they can watch the subbed show/movie
                   window.location.reload();
-                } else if(result.value === "full") {
+                } else if(result.result === "full") {
                   // they are at capacity for subscriptions!
                   document.getElementById("capacityMessage").hidden=false;
                 } else {
@@ -193,7 +192,7 @@ function getVideoInfo(isMovie, id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me:3001/api/getData/getVideoInfo";
+    const url = "//razzlers.me:3001/api/getData/getVideoInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
