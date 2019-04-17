@@ -454,18 +454,21 @@ router.put("/sendMessage", function(req, response)
   getMessageListLength().then(messageID => {
     getUserID(sender).then(senderID => {
       getUserID(recipient).then(recipientID => {
-        //console.log(messageID + ")" + senderID + " => " + recipientID + " : " + message + " D: " + dateString);
-        var sql = "INSERT INTO message (message_id, user_id, recipient_user_id, message_body, time, message_status) VALUES (\'" + messageID + "\', \'" + senderID  + "\', \'" + recipientID + "\', \'" + message + "\', \'" + getDateAsString(new Date()) + "\', \'0\')";
-        connection.query(sql, function(err, result)
+        getDateAsString(new Date()).then(currentDate =>
         {
-          if(err)
+          //console.log(messageID + ")" + senderID + " => " + recipientID + " : " + message + " D: " + dateString);
+          var sql = "INSERT INTO message (message_id, user_id, recipient_user_id, message_body, time, message_status) VALUES (\'" + messageID + "\', \'" + senderID  + "\', \'" + recipientID + "\', \'" + message + "\', \'" + currentDate + "\', \'0\')";
+          connection.query(sql, function(err, result)
           {
-            console.log(err);
-            response.send('{"result": "false"}');
-          } else {
-            console.log("Message sent successfully!");
-            response.send('{"result": "true"}');
-          }
+            if(err)
+            {
+              console.log(err);
+              response.send('{"result": "false"}');
+            } else {
+              console.log("Message sent successfully!");
+              response.send('{"result": "true"}');
+            }
+          });
         });
       });
     });
