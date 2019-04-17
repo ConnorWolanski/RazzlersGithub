@@ -92,7 +92,6 @@ class PlayVideo extends React.Component {
       return (
         <div>
           <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
-          <p className="centerText"><font  color ="white" size = "20px">{"(" + release_year + ") " + rating + "/10, " + description + "\n" + actors}</font></p>
           <img className="center" src={loc} alt="background"/>
           <p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
           <p className="centerText">
@@ -105,6 +104,7 @@ class PlayVideo extends React.Component {
             {
               subscribe(isMovie, id).then(result =>
               {
+                console.log("result");
                 // result is either true or false based on if subbing went correctly or note
                 if(result.result === "true")
                 {
@@ -131,7 +131,6 @@ class PlayVideo extends React.Component {
           <video className="center" width="720" height="480"   controls>
             <source src={loc} type="video/mp4"/>
           </video>
-          <p className="centerText"><font  color ="white" size = "20px">{"(" + release_year + ") " + rating + "/10, " + description + "\n" + actors}</font></p>
         </div>
       );
     }
