@@ -47,7 +47,7 @@ class ShowCard extends React.Component {
           style={styles.card}
           onMouseOver={() => this.setState({isMouseOver: true})}
           onMouseLeave={() => this.setState({isMouseOver: false})}
-          onClick={() => window.location.href="PlayVideo?isMovie=false&id=" + show.tv_show_id}>
+          onClick={() => window.location.href="VideoInformation?isMovie=false&id=" + show.tv_show_id}>
           <CardMedia
             style={styles.cardMedia}
             overlay={
