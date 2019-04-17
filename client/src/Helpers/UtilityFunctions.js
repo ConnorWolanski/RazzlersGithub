@@ -235,7 +235,7 @@ function getTopMovieList()
       },
       method: "GET"
     };
-    const url = "http://localhost:3001/api/getData/getTopMovieList";
+    const url = "http://razzlers.me:3001/api/getData/getTopMovieList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -260,7 +260,7 @@ function getTopShowList()
       },
       method: "GET"
     };
-    const url = "http://localhost:3001/api/getData/getTopShowList";
+    const url = "http://razzlers.me:3001/api/getData/getTopShowList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
