@@ -16,6 +16,7 @@ import Subscriptions from "./pages/Subscriptions.js";
 import Search from "./pages/Search.js";
 import Billing from "./pages/Billing.js";
 import EditBilling from "./pages/EditBilling.js";
+import VideoInformation from "./pages/VideoInformation.js";
 
 class App  extends React.Component
 {
@@ -80,8 +81,9 @@ class App  extends React.Component
             <Route path = "/Subscriptions" component = {Subscriptions} />
             <Route path = "/Search" component = {Search} />
             <Route path = "/profile" component = {Profile} />
-	      		<Route path = "/billing" component = {Billing} />
-	      		<Route path = "/editBilling" component = {EditBilling} />
+	      	<Route path = "/billing" component = {Billing} />
+	      	<Route path = "/editBilling" component = {EditBilling} />
+			<Route path = "/videoInformation" component = {VideoInformation} />
           </Switch>
           <Footer />
         </div>

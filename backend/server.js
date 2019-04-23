@@ -973,6 +973,261 @@ router.put("/getData/getSubscribedMovies", function(req, response)
   });
 });
 
+router.put("/updateUsersVotedMovie", function(req, response)
+{
+	var id = req.body.id;
+	getUsersVotedMovie(id).then(result =>
+    {
+	var users_voted = Number(result) + Number('1');
+	
+	var sql = "UPDATE movie SET users_voted='" + users_voted + "' WHERE movie_id='" + id + "'";
+	
+  	connection.query(sql, function(err, result)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        console.log("users voted movie updated!");
+        response.send('{"result": "true"}');
+      }
+    });
+  });
+});
+
+router.put("/updateUsersVotedShow", function(req, response)
+{
+	var id = req.body.id;
+	getUsersVotedShow(id).then(result =>
+    {
+	var users_voted = Number(result) + Number('1');
+	
+	var sql = "UPDATE tv_show SET users_voted='" + users_voted + "' WHERE tv_show_id='" + id + "'";
+	
+  	connection.query(sql, function(err, result)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        console.log("users voted show updated!");
+        response.send('{"result": "true"}');
+      }
+    });
+  });
+});
+
+
+//update rating value in movie
+router.put("/updateRatingMovie", function(req, response)
+{
+	var rating = req.body.rating;
+	var id = req.body.id;
+	getUsersVotedMovie(id).then(result =>
+  {
+	var users_voted = Number(result) + Number('1');
+	getRatingMovie(id).then(result =>
+	{
+		var oldRating = result;
+		var newRating = (Number(oldRating) +Number(rating)) / Number(users_voted);
+		
+		var sql = "UPDATE movie SET movie_rating='" + newRating + "' WHERE movie_id='" + id + "'";
+
+		connection.query(sql, function(err, result)
+		{
+			if(err)
+			{
+				console.log(err);
+				response.send('{"result": "false"}');
+			} else {
+				console.log("Rating movie updated!");
+				response.send('{"result": "true"}');
+			  }
+		});
+	});
+  });
+});
+
+//update rating value in tv show
+router.put("/updateRating", function(req, response)
+{
+	var rating = req.body.rating;
+	var id = req.body.id;
+	getUsersVotedShow(id).then(result =>
+  {
+	var users_voted = Number(result) + Number('1');
+	getRatingShow(id).then(result =>
+	{
+		var oldRating = result;
+		var newRating = (Number(oldRating) +Number(rating)) / Number(users_voted);
+
+		var sql = "UPDATE tv_show SET tv_show_rating='" + newRating + "' WHERE tv_show_id='" + id + "'";
+  	connection.query(sql, function(err, result)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        console.log("Rating show updated!");
+        response.send('{"result": "true"}');
+      }
+    });
+  });
+});
+});
+
+router.get("/getData/getMovieCommentList", function(req, response)
+{
+  var id = req.body.movieId;
+  
+  getMovieCommentList().then(result =>
+  {
+    console.log(result);
+	var commentIds = [];
+    var userIds = [];
+	var commentBody = [];
+    result.forEach(function(commentInfo)
+    {
+      commentIds[commentIds.length] = '"' + commentInfo.comment_id + '"';
+      userIds[userIds.length] = '"' + commentInfo.user_id + '"';
+	  commentBody[commentBody.length] = '"' + commentInfo.comment_body + '"';
+    });
+    console.log('{"commentIds": [' + commentIds + '], "userIds": [' + userIds + '], "Bodies": [' + commentBody + ']}');
+    response.send('{"commentIds": [' + commentIds + '], "userIds": [' + userIds + '], "Bodies": [' + commentBody + ']}');
+  });
+});
+
+router.get("/getData/getTopMovieList", function(req, response)
+{
+  var sql = "SELECT * FROM movie WHERE movie_rating >= 4";
+  connection.query(sql, function(err, result)
+  {
+    if(err)
+    {
+      console.log(err);
+      response.send('{"result": "false"}');
+    } else {
+      // send JSON array of movies
+      response.send(result);
+    }
+  });
+});
+
+router.get("/getData/getTopShowList", function(req, response)
+{
+  var sql = "SELECT * FROM tv_show WHERE tv_show_rating >= 4";
+  connection.query(sql, function(err, result)
+  {
+    if(err)
+    {
+      console.log(err);
+      response.send('{"result": "false"}');
+    } else {
+      // send JSON array of shows
+      response.send(result);
+    }
+  });
+});
+
+function getMovieCommentList(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var sql = "SELECT * FROM movie_comment WHERE movie_id='" + id + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        resolve(JSON.parse(JSON.stringify(result)));
+      }
+    });
+  });
+}
+
+// goes to MySQL DB and fetches users_voted from movie
+function getUsersVotedMovie(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+	var sql = "SELECT users_voted FROM movie WHERE movie_id='" + id + "'";
+
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+		resolve(result[0].users_voted);
+		} 
+    });
+  });
+}
+
+// goes to MySQL DB and fetches users_voted from tv show
+function getUsersVotedShow(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+	var sql = "SELECT users_voted FROM tv_show WHERE tv_show_id='" + id + "'";
+	
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+		resolve(result[0].users_voted);
+		}
+    });
+  });
+}
+
+// goes to MySQL DB and fetches rating from movie
+function getRatingMovie(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+	var sql = "SELECT movie_rating FROM movie WHERE movie_id='" + id + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+		resolve(result[0].movie_rating); 
+      }
+    });
+  });
+}
+
+// goes to MySQL DB and fetches rating from tv show
+function getRatingShow(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+	var sql = "SELECT tv_show_rating FROM tv_show WHERE tv_show_id='" + id + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+		resolve(result[0].tv_show_rating);	
+      }
+    });
+  });
+}
+
 // start backend on port 3001
 app.listen(3001, function()
 {

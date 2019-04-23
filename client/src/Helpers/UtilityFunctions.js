@@ -220,3 +220,52 @@ exports.getUsernameFromID = function(id)
     });
   }
 }*/
+
+exports.getTopMovieList = function()
+{
+  return getTopMovieList();
+}
+
+function getTopMovieList()
+{
+  return new Promise(function(resolve, reject)
+  {
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "GET"
+    };
+    const url = "http://razzlers.me:3001/api/getData/getTopMovieList";
+    fetch(url, transport).then(result => result.json()).then(json => {
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+
+exports.getTopShowList = function()
+{
+  return getTopShowList();
+}
+
+
+function getTopShowList()
+{
+  return new Promise(function(resolve, reject)
+  {
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "GET"
+    };
+    const url = "http://razzlers.me:3001/api/getData/getTopShowList";
+    fetch(url, transport).then(result => result.json()).then(json => {
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
