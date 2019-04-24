@@ -59,71 +59,11 @@ class PlayVideo extends React.Component {
     {
       if(isMovie === "true")
       {
-        var movieList = JSON.parse(localStorage.getItem("Razzlers_Subscribed_Movies"));
-        if(movieList !== null)
-        {
-          if(typeof movieList !== typeof 0)
-          {
-            isSubscribed = movieList.includes(parseInt(id,10));
-            loc = "//assets.razzlers.me/assets/videos/movies/" + id + ".mp4";
-          }
-        }
+		  loc = "//assets.razzlers.me/assets/videos/movies/" + id + ".mp4";
       } else {
-        var showList = JSON.parse(localStorage.getItem("Razzlers_Subscribed_Shows"));
-        if(showList !== null)
-        {
-          isSubscribed = showList.includes(parseInt(id,10));
-          loc = "//assets.razzlers.me/assets/videos/episodes/" + id + ".mp4";
-        }
+		  loc = "//assets.razzlers.me/assets/videos/episodes/" + id + ".mp4";
       }
     }
-    if(!isSubscribed)
-    {
-      // is NOT subscribed
-      if(id !== 0)
-      {
-        if(isMovie === "true")
-        {
-          loc = "//assets.razzlers.me/assets/thumbnails/movieThumbnails/" + id + ".jpg";
-        } else {
-          loc = "//assets.razzlers.me/assets/thumbnails/showThumbnails/" + id + ".jpg";
-        }
-      }
-      return (
-        <div>
-          <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
-          <img className="center" src={loc} alt="background"/>
-          <p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
-          <p className="centerText">
-            <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
-          </p>
-          <p className="centerText">
-            <font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
-          </p>
-          <button hidden = {isSubscribed} className="subButton" onClick = {() =>
-            {
-              subscribe(isMovie, id).then(result =>
-              {
-                console.log("result");
-                // result is either true or false based on if subbing went correctly or note
-                if(result.result === "true")
-                {
-                  // refresh page so they can watch the subbed show/movie
-                  window.location.reload();
-                } else if(result.result === "full") {
-                  // they are at capacity for subscriptions!
-                  document.getElementById("capacityMessage").hidden=false;
-                } else {
-                  // subbing failed
-                  // display error message!
-                  document.getElementById("invalidMessage1").hidden=false;
-                }
-              })
-            }
-          }>Subscribe</button>
-        </div>
-      );
-    } else {
       // is subscribed
       return (
         <div>
@@ -133,7 +73,6 @@ class PlayVideo extends React.Component {
           </video>
         </div>
       );
-    }
   }
 }
   //<p className="quarterLeft"><button className= "button">Previous Episode</button></p>
