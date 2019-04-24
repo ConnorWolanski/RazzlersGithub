@@ -48,7 +48,7 @@ class MovieCard extends React.Component {
           style={styles.card}
           onMouseOver={() => this.setState({isMouseOver: true})}
           onMouseLeave={() => this.setState({isMouseOver: false})}
-          onClick={() => window.location.href="VideoInformation?isMovie=true&id=" + movie.movie_id}>
+          onClick={() => window.location.href="movieInformation?isMovie=true&id=" + movie.movie_id}>
           <CardMedia
             style={styles.cardMedia}
             overlay={
