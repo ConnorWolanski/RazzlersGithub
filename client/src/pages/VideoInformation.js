@@ -437,7 +437,7 @@ function getMovieCommentList(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localStorage:3001/api/getData/getUserList";
+    const url = "//razzlers.me:3001/api/getData/getUserList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
