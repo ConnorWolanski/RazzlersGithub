@@ -2,28 +2,25 @@ import React from "react";
 import '../style.css';
 import star from '../images/star.png';
 import empty from '../images/starEmpty.png';
-//import CommentsList from '../HTMLComponents/CommentsList.js'
+
 
 const utilFunc = require('../Helpers/UtilityFunctions');
 
-class PlayVideo extends React.Component {
+class VideoInformation extends React.Component {
   constructor(props)
   {
     super(props)
     this.state = {
-	  //TEMP VARIABLES
-	  //IDs: null,
-	  //bodies: null,
-
       isMovie: false,
       id: 0,
       name: "",
       description: "",
       rating: 0,
       actors: "",
-      release_year: 0
+      release_year: 0,
+	  bodies: null,
     };
-
+	
     checkParams().then(json => {
       this.setState({
         isMovie: json.isMovie,
@@ -37,7 +34,7 @@ class PlayVideo extends React.Component {
       var isMovie = json.isMovie;
       var id = json.id;
       var set = {};
-      getVideoInfo(isMovie, id).then(result => {
+      getShowInfo(isMovie, id).then(result => {
         set = result;
         if(set.hasOwnProperty("result"))
         {
@@ -56,21 +53,21 @@ class PlayVideo extends React.Component {
             release_year: set.year
           });
         }
-		/*
-		getComments(id).then(commentsList => {
-			this.setState({bodies: commentsList.bodies, IDs: commentsList.IDs});
+		utilFunc.getShowComments(id).then(bodiesList => {
+			this.setState({bodies: bodiesList.bodies});
+			buildComments(bodiesList.bodies);
+			//console.log(this.state.bodies);
 		});
-		*/
 	 });
     });
 }
-
-
+  
+  
   render() {
 	var ratingInput = -1;
-    const {isMovie, id, name, description, rating, actors, release_year, commentID, userID} = this.state;
+    const {isMovie, id, name, description, rating, actors, release_year, commentID, userID, IDs, bodies} = this.state;
 	//,bodies, IDs
-
+	
     var loc = "";
     var isSubscribed = false;
     if(id !== 0)
@@ -117,7 +114,7 @@ class PlayVideo extends React.Component {
 		  <font  color ="white" size = "20px">{description}</font>
 		  </p>
 		  </div>
-
+		  
 		  <p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
           <p className="centerText">
             <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
@@ -125,11 +122,12 @@ class PlayVideo extends React.Component {
           <p className="centerText">
             <font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
           </p>
-
+		  
           <button hidden = {isSubscribed} className="subButton" onClick = {() =>
             {
               subscribe(isMovie, id).then(result =>
               {
+                console.log("result");
                 // result is either true or false based on if subbing went correctly or note
                 if(result.result === "true")
                 {
@@ -146,19 +144,12 @@ class PlayVideo extends React.Component {
               })
             }
           }>Subscribe</button>
-
-
+		
+		
 		<h2 className="centerText"><font  color = "white" size = "50"> {"Comments"} </font></h2>
-		<p><font color = "white" size = "12px"> {"storment: "}</font>
-		<font color = "white" size = "12px"> {name + " is a cool Movie"}</font></p>
-
-		<p><font color = "white" size = "12px"> {"Scoutzknifez: "}</font>
-		<font color = "white" size = "12px"> {"Eh"}</font></p>
-
-		<p><font color = "white" size = "12px"> {"Connorcon2020: "}</font>
-		<font color = "white" size = "12px"> {"Best movie ever xD"}</font></p>
-
-
+		
+		<div onload="buildComments();" data-role="fieldcontain" class="ui-hide-label" id="bodiesDiv"></div>
+		  
 		</div>
       );
     } else {
@@ -174,14 +165,14 @@ class PlayVideo extends React.Component {
           <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
 		  <div className="clearfix">
 		  <img className="video_info_thumbnail" src={loc} alt="background"/>
-		  <button className="subButton" onClick={() => window.location.href="PlayVideo?isMovie=" + isMovie + "&id=" + id}>Play</button>
+		  <button className="subButton" onClick={() => window.location.href="episodes?isMovie=" + isMovie + "&id=" + id}>View Episodes</button>
           <p className="video_info"><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font>
 		  <font  color ="white" size = "20px">{"Release Year : " + release_year}</font>
 		  <font  color ="white" size = "20px">{description}</font>
 		  </p>
 		  </div>
-
-
+		  
+		  
 		  <p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
           <p className="centerText">
             <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
@@ -189,8 +180,8 @@ class PlayVideo extends React.Component {
           <p className="centerText">
             <font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
           </p>
-
-
+          
+		 
 		 <h2 className="centerText"><font  color = "white" size = "50"> {"Leave Rating"} </font></h2>
 		 <div id="images">
 			 <button hidden className="ratingButton" id="starOneFilled" onClick={() => {
@@ -201,14 +192,14 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starFourFilled").hidden = true;
 				  document.getElementById("starFourEmpty").hidden = false;
 				  document.getElementById("starThreeFilled").hidden = true;
-				  document.getElementById("starThreeEmpty").hidden = false;
+				  document.getElementById("starThreeEmpty").hidden = false;				 
 				  document.getElementById("starTwoFilled").hidden = true;
 				  document.getElementById("starTwoEmpty").hidden = false;
 				  document.getElementById("starOneFilled").hidden = false;
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-
+			 
 			 <button hidden className="ratingButton" id="starTwoFilled" onClick={() => {
 				  ratingInput = 2;
 				  //console.log(ratingInput);
@@ -224,7 +215,7 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-
+			 
 			 <button hidden className="ratingButton" id="starThreeFilled" onClick={() => {
 				  ratingInput = 3;
 				  //console.log(ratingInput);
@@ -240,7 +231,7 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-
+			 
 			 <button hidden className="ratingButton" id="starFourFilled" onClick={() => {
 				  ratingInput = 4;
 				  //console.log(ratingInput);
@@ -256,7 +247,7 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-
+			 
 			 <button hidden className="ratingButton" id="starFiveFilled" onClick={() => {
 				  ratingInput = 4;
 				  //console.log(ratingInput);
@@ -272,7 +263,7 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-
+			 
 			 <button className="ratingButton" id="starOneEmpty" onClick={() => {
 				  ratingInput = 1;
 				  document.getElementById("starOneFilled").hidden = false;
@@ -297,20 +288,20 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={empty} alt="empty"/>
 			 </button>
-
+			 
 			 <button className="ratingButton" id="starFourEmpty" onClick={() => {
 				  ratingInput = 4;
 				  document.getElementById("starFourFilled").hidden = false;
 				  document.getElementById("starFourEmpty").hidden = true;
 				  document.getElementById("starThreeFilled").hidden = false;
-				  document.getElementById("starThreeEmpty").hidden = true;
+				  document.getElementById("starThreeEmpty").hidden = true;				 
 				  document.getElementById("starTwoFilled").hidden = false;
 				  document.getElementById("starTwoEmpty").hidden = true;
 				  document.getElementById("starOneFilled").hidden = false;
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={empty} alt="empty"/>
 			 </button>
-
+			 
 			 <button className="ratingButton" id="starFiveEmpty" onClick={() => {
 				  ratingInput = 5;
 				  document.getElementById("starFiveFilled").hidden = false;
@@ -318,7 +309,7 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starFourFilled").hidden = false;
 				  document.getElementById("starFourEmpty").hidden = true;
 				  document.getElementById("starThreeFilled").hidden = false;
-				  document.getElementById("starThreeEmpty").hidden = true;
+				  document.getElementById("starThreeEmpty").hidden = true;				 
 				  document.getElementById("starTwoFilled").hidden = false;
 				  document.getElementById("starTwoEmpty").hidden = true;
 				  document.getElementById("starOneFilled").hidden = false;
@@ -326,13 +317,13 @@ class PlayVideo extends React.Component {
 			 <img src={empty} alt="empty"/>
 			 </button>
 		 </div>
-
+		 
 		 <p hidden id="invalidMessage">
          <center><font className="error">An error has occurred, please try again!</font></center></p>
 		 <p hidden id="blankSpacesMessage">
          <center><font className="error">Please select a star and try again!</font></center></p>
-
-          <button className="subButton" id="submitButton" onClick={() =>
+		 
+          <button className="subButton" id="submitButton" onClick={() => 
 		  {
 		  var hadError = false;
 		  if(ratingInput === -1) {
@@ -346,30 +337,7 @@ class PlayVideo extends React.Component {
                 return;
           }
 
-		  if(isMovie) {
-			updateRatingMovie(ratingInput, id).then(response => {
-			if(response.result === "true") {
-				// Update was successful
-				window.location.href="VideoInformation?isMovie=" + isMovie + "&id=" + id;
-            } else {
-              // display error, reprompt for information
-              document.getElementById("invalidMessage").hidden=false;
-              }
-          });
-
-		  updateUsersVotedMovie(id).then(response => {
-			if(response.result === "true") {
-				// Update was successful
-			} else {
-			  // display error, reprompt for information
-	     		document.getElementById("invalidMessage").hidden=false;
-			}
-		  });
-
-		  }
-
-		  else if(!isMovie){
-			updateRatingShow(document.getElementById("ratingInput").value, id).then(response => {
+			updateRatingShow(ratingInput, id).then(response => {
 			if(response.result === "true") {
 				// Update was successful
 				window.location.href="VideoInformation?isMovie=" + isMovie + "&id=" + id;
@@ -378,7 +346,7 @@ class PlayVideo extends React.Component {
                     document.getElementById("invalidMessage").hidden=false;
               }
           });
-
+		  
 		  updateUsersVotedShow(id).then(response => {
 			if(response.result === "true") {
 				// Update was successful
@@ -386,11 +354,9 @@ class PlayVideo extends React.Component {
 			  // display error, reprompt for information
 	     		document.getElementById("invalidMessage").hidden=false;
 			}
-		    });
-
-		  }
+		    });			
 	}}>Submit Rating</button>
-
+	
 	<button className="subButton" id="cancelRatingButton" onClick={() => {
 		ratingInput = -1;
 		document.getElementById("starFiveFilled").hidden = true;
@@ -398,33 +364,42 @@ class PlayVideo extends React.Component {
 		document.getElementById("starFourFilled").hidden = true;
 		document.getElementById("starFourEmpty").hidden = false;
 		document.getElementById("starThreeFilled").hidden = true;
-		document.getElementById("starThreeEmpty").hidden = false;
+		document.getElementById("starThreeEmpty").hidden = false;				 
 		document.getElementById("starTwoFilled").hidden = true;
 		document.getElementById("starTwoEmpty").hidden = false;
 		document.getElementById("starOneFilled").hidden = true;
 		document.getElementById("starOneEmpty").hidden = false}
 	}>Cancel Selection</button>
 
-
-
-
 		<h2 className="centerText"><font  color = "white" size = "50"> {"Comments"} </font></h2>
-		<p><font color = "white" size = "12px"> {"storment: "}</font>
-		<font color = "white" size = "12px"> {name + " is a cool Movie"}</font></p>
 
-		<p><font color = "white" size = "12px"> {"Scoutzknifez: "}</font>
-		<font color = "white" size = "12px"> {"Eh"}</font></p>
+		<div onload="buildComments();" data-role="fieldcontain" class="ui-hide-label" id="bodiesDiv"></div>
 
-		<p><font color = "white" size = "12px"> {"Connorcon2020: "}</font>
-		<font color = "white" size = "12px"> {"Best movie ever xD"}</font></p>
-		<p className="centerText"><a href="/" ><font color= "">Click here to add a comment!</font></a></p>
 
+		<textarea id="commentInput" className="largeInput" rows="14" cols="10" wrap="soft"> </textarea>
+		
+		<p hidden id="invalidCommentMessage">
+          <font className="error">Error submitting comment, please try again!</font></p>
+			
+		<button className="commentButton" id="submitComment" onClick={() => {
+			if(document.getElementById("commentInput").value.trim() !== "") {
+				addComment(document.getElementById("commentInput").value, id).then(response => {
+                   if(response.result === "true")
+                   {
+                     // Update was successful
+                     window.location.href="videoInformation?isMovie=" + isMovie + "&id=" + id;
+                   } else {
+                     // display error, reprompt for information
+                     document.getElementById("invalidCommentMessage").hidden=false;
+                   }
+                });
+			}
+		}}>Submit comment</button>	
 		</div>
       );
     }
   }
 }
-  //<p className="quarterLeft"><button className= "button">Previous Episode</button></p>
 
 function getMovieCommentList(id) {
   return new Promise(function(resolve, reject) {
@@ -437,7 +412,7 @@ function getMovieCommentList(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/getUserList";
+    const url = "http://localStorage:3001/api/getData/getUserList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -446,31 +421,8 @@ function getMovieCommentList(id) {
   });
 }
 
-function updateRatingMovie(inRating, videoId)
-{
-  return new Promise(function(resolve, reject)
-  {
-    var data = '{"rating": "' + inRating + '", "id": "' + videoId + '"}';
-    data = JSON.parse(data);
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(data)
-    };
-    const url = "//razzlers.me:3001/api/updateRatingMovie";
-    fetch(url, transport).then(response => response.json()).then(json => {
-      // needs to return true or false based on if registration is successful
-      // if true, return true and set username in localStorage
-      // if false, return what went wrong, if multiple things, put inside array[]
-      resolve(json);
-    });
-  });
-}
-
-function updateUsersVotedShow(videoId)
-{
+function updateUsersVotedShow(videoId) 
+{	
   return new Promise(function(resolve, reject)
   {
     var data = '{"id": "' + videoId + '"}';
@@ -505,7 +457,7 @@ function updateRatingShow(inRating, videoId)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/updateRatingShow";
+    const url = "//razzlers.me:3001/api/updateRating";
     fetch(url, transport).then(response => response.json()).then(json => {
       // needs to return true or false based on if registration is successful
       // if true, return true and set username in localStorage
@@ -514,30 +466,6 @@ function updateRatingShow(inRating, videoId)
     });
   });
 }
-
-function updateUsersVotedMovie(videoId)
-{
-  return new Promise(function(resolve, reject)
-  {
-    var data = '{"id": "' + videoId + '"}';
-    data = JSON.parse(data);
-    var transport = {
-	  headers: {
-		'Content-Type': "application/json"
-	  },
-      method: "PUT",
-	  body: JSON.stringify(data)
-    };
-    const url = "//razzlers.me:3001/api/updateUsersVotedMovie";
-    fetch(url, transport).then(response => response.json()).then(json => {
-      // needs to return true or false based on if registration is successful
-      // if true, return true and set username in localStorage
-      // if false, return what went wrong, if multiple things, put inside array[]
-      resolve(json);
-    });
-  });
-}
-
 
 function subscribe(isMovie, id)
 {
@@ -592,7 +520,7 @@ function getVideoInfo(isMovie, id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/getVideoInfo";
+    const url = "http://razzlers.me:3001/api/getData/getVideoInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -601,9 +529,11 @@ function getVideoInfo(isMovie, id)
   });
 }
 
-function getUserBilling(user) {
-  return new Promise(function(resolve, reject) {
-    var data = '{"user": "' + user + '"}';
+function getShowInfo(isMovie, id)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var data = '{"isMovie": "' + isMovie + '", "id": "' + id + '"}';
     data = JSON.parse(data);
     var transport = {
       headers: {
@@ -612,7 +542,7 @@ function getUserBilling(user) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/getUserBilling";
+    const url = "http://razzlers.me:3001/api/getData/getShowInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -621,28 +551,12 @@ function getUserBilling(user) {
   });
 }
 
-/*
-function getCommentList() {
-  return new Promise(function(resolve, reject) {
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "GET"
-    };
-    const url = "//razzlers.me:3001/api/getData/getCommentList";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      console.log(json);
-      resolve(json);
-    }).catch(err => {
-      throw new Error(err);
-    });
-  });
-}
-
-function getComments(id) {
-  return new Promise(function(resolve, reject) {
-    var data = '{"id": "' + id + '"}';
+function addComment(inBody, id)
+{
+  return new Promise(function(resolve, reject)
+  {
+	var user = window.localStorage.getItem("Razzlers_Username");
+    var data = '{"body": "' + inBody + '", "id": "' + id + '", "username": "' + user + '"}';
     data = JSON.parse(data);
     var transport = {
       headers: {
@@ -651,15 +565,27 @@ function getComments(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/getComments";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      //console.log(json);
+    const url = "http://razzlers.me:3001/api/addCommentShow";
+    fetch(url, transport).then(response => response.json()).then(json => {
+      // needs to return true or false based on if registration is successful
+      // if true, return true and set username in localStorage
+      // if false, return what went wrong, if multiple things, put inside array[]
       resolve(json);
-    }).catch(err => {
-      throw new Error(err);
     });
   });
 }
-*/
 
-export default PlayVideo
+function buildComments(bodies) {
+	//console.log(bodies);
+    var bodiesDiv = document.getElementById("bodiesDiv");
+    var html = "<form>";
+    for (var i = 0; i < bodies.length; i++) {
+		console.log(bodies[0]);
+        html += "<p><font color = 'white'>*" + bodies[i] + "</font></p>";
+    }
+    html += "</form>";
+    bodiesDiv.innerHTML = html;
+}
+
+
+export default VideoInformation
