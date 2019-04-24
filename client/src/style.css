@@ -418,8 +418,8 @@
 
  .ratingButton{
     border: none;
-	background: none;
-	display:inline-block;
+    background: none;
+    display:inline-block;
     height: auto;
     text-align: center;
 	margin-left: auto;
@@ -433,7 +433,7 @@
 .centerTextWithBackLonger{
   background-image: url('./images/background.png');
   background-size:auto;
-  width: 260px;
+  width: fit-content;
   border:6px;
   border-style:groove;
   font-family:serif;
@@ -442,4 +442,23 @@
   text-align: center;
   margin-right:auto;
   margin-left: auto;
+}
+
+.commentButton{
+  display: block;
+  background-image: url('./images/back2.png');
+  border: 1;
+  border-color: white;
+  border-radius: 8px;
+  color: white;
+  margin-top: 5px;
+  padding: 5px 5px;
+}
+
+ .largeInput{
+    padding: 12px 20px;
+    margin: 4px 0;
+	height:20%;
+	width:30%;
+    font-size:11pt;
 }
