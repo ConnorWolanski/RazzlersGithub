@@ -189,7 +189,8 @@ exports.getUsersMessages = function(sender, recipient)
 
 exports.getUsernameFromID = function(id)
 {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve, reject)
+  {
     var data = '{"id": "' + id + '"}';
     data = JSON.parse(data);
     var transport = {
