@@ -4,7 +4,7 @@ import EpisodeList from "../HTMLComponents/EpisodeList";
 
 const utilFunc = require('../Helpers/UtilityFunctions');
 
-class Shows extends React.Component {
+class Episodes extends React.Component {
   constructor(props)
   {
     super(props)
@@ -73,7 +73,7 @@ function getShowInfo(id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getShowInfo";
+    const url = "http://razzlers.me:3001/api/getData/getShowInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -82,4 +82,4 @@ function getShowInfo(id)
   });
 }
 
-export default Shows
+export default Episodes
