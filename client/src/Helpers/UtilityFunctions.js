@@ -269,3 +269,110 @@ function getTopShowList()
     });
   });
 }
+
+exports.getMovieComments = function(id)
+{
+  return getMovieComments(id);
+}
+
+function getMovieComments(id) {
+  return new Promise(function(resolve, reject) {
+    var data = '{"id": "' + id + '"}';
+    data = JSON.parse(data);
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    };
+    const url = "http://razzlers.me:3001/api/getData/getMovieCommentList";
+    fetch(url, transport).then(result => result.json()).then(json => {
+      //console.log(json);
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+
+exports.getShowComments = function(id)
+{
+  return getShowComments(id);
+}
+
+function getShowComments(id) {
+  return new Promise(function(resolve, reject) {
+    var data = '{"id": "' + id + '"}';
+    data = JSON.parse(data);
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    };
+    const url = "http://razzlers.me/api/getData/getShowCommentList";
+    fetch(url, transport).then(result => result.json()).then(json => {
+      //console.log(json);
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+
+exports.getEpisodeComments = function(id)
+{
+  return getEpisodeComments(id);
+}
+
+function getEpisodeComments(id) {
+  return new Promise(function(resolve, reject) {
+    var data = '{"id": "' + id + '"}';
+    data = JSON.parse(data);
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    };
+    const url = "http://razzlers.me/api/getData/getEpisodeCommentList";
+    fetch(url, transport).then(result => result.json()).then(json => {
+      //console.log(json);
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+exports.getEpisodeList = function(id)
+{
+  return getEpisodeList(id);
+}
+
+
+function getEpisodeList(id)
+{
+  return new Promise(function(resolve, reject) {
+	var data = '{"showID": "' + id + '"}';
+	data = JSON.parse(data);
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+	  body: JSON.stringify(data)
+    };
+    const url = "http://razzlers.me/api/getData/getEpisodeList";
+    fetch(url, transport).then(result => result.json()).then(json => {
+      //console.log(json);
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+
+
