@@ -312,7 +312,7 @@ function getShowComments(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me/api/getData/getShowCommentList";
+    const url = "http://razzlers.me:3001/api/getData/getShowCommentList";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -338,7 +338,7 @@ function getEpisodeComments(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me/api/getData/getEpisodeCommentList";
+    const url = "http://razzlers.me:3001/api/getData/getEpisodeCommentList";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -365,7 +365,7 @@ function getEpisodeList(id)
       method: "PUT",
 	  body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me/api/getData/getEpisodeList";
+    const url = "http://razzlers.me:3001/api/getData/getEpisodeList";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
