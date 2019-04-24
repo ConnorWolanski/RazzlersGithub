@@ -110,7 +110,7 @@ class PlayVideo extends React.Component {
       return (
         <div>
           <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
-		  <div class="clearfix">
+		  <div className="clearfix">
 		  <img className="video_info_thumbnail" src={loc} alt="background"/>
           <p className="video_info"><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}</font>
 		  <font  color ="white" size = "20px">{"Release Year : " + release_year}</font>
@@ -172,7 +172,7 @@ class PlayVideo extends React.Component {
       return (
         <div>
           <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
-		  <div class="clearfix">
+		  <div className="clearfix">
 		  <img className="video_info_thumbnail" src={loc} alt="background"/>
 		  <button className="subButton" onClick={() => window.location.href="PlayVideo?isMovie=" + isMovie + "&id=" + id}>Play</button>
           <p className="video_info"><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font>

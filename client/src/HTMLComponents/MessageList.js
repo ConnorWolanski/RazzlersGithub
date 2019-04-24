@@ -9,7 +9,7 @@ const MessageList = ({messageList}) =>
     </div>
   )) : null;
   return (
-    <div className="autoFlow">
+    <div>
       {finMessages}
     </div>
   );
