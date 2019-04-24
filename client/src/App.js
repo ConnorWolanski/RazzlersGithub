@@ -17,6 +17,9 @@ import Search from "./pages/Search.js";
 import Billing from "./pages/Billing.js";
 import EditBilling from "./pages/EditBilling.js";
 import VideoInformation from "./pages/VideoInformation.js";
+import MovieInformation from "./pages/MovieInformation.js";
+import EpisodeInformation from "./pages/EpisodeInformation.js";
+import Episodes from './pages/Episodes.js';
 
 class App  extends React.Component
 {
@@ -81,9 +84,12 @@ class App  extends React.Component
             <Route path = "/Subscriptions" component = {Subscriptions} />
             <Route path = "/Search" component = {Search} />
             <Route path = "/profile" component = {Profile} />
-	      	<Route path = "/billing" component = {Billing} />
-	      	<Route path = "/editBilling" component = {EditBilling} />
-			<Route path = "/videoInformation" component = {VideoInformation} />
+	    <Route path = "/billing" component = {Billing} />
+	    <Route path = "/editBilling" component = {EditBilling} />
+	    <Route path = "/videoInformation" component = {VideoInformation} />
+	    <Route path = "/movieInformation" component = {MovieInformation} />
+	    <Route path = "/episodeInformation" component = {EpisodeInformation} />
+	    <Route path = "/episodes" component = {Episodes} />
           </Switch>
           <Footer />
         </div>
