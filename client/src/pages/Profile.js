@@ -1,4 +1,4 @@
-import React from "react";
+razzlers.meimport React from "react";
 import '../style.css';
 
 class Profile extends React.Component {
@@ -11,7 +11,6 @@ class Profile extends React.Component {
       lastName: "",
       Email: "",
       Status: 0,
-      displayName: ""
     };
     checkParams().then(json => {
       this.setState({
@@ -21,13 +20,12 @@ class Profile extends React.Component {
         lastName: "",
         Email: "",
         Status: 0,
-        displayName: ""
       });
       var user = json.user;
-      var set = {};
-      getUserInfo(user).then(result => {
-        set = result;
-        if (set.hasOwnProperty("result")) {
+      getUserInfo(user).then(set =>
+      {
+        if (set.hasOwnProperty("result"))
+        {
           // result from server didnt pull the correct file and it doesnt exist!
           console.log("file doesnt exist!");
         } else {
@@ -38,15 +36,14 @@ class Profile extends React.Component {
             firstName: set.first,
             lastName: set.last,
             Email: set.email,
-            Status: set.status,
-            displayName: set.display
+            Status: set.status
           });
         }
       });
     });
   }
   render() {
-    const { user, firstName, lastName, Email, Status, displayName } = this.state;
+    const { user, firstName, lastName, Email, Status } = this.state;
     return (<div className="bg2">
       <h2 className="centerText">
         <font color="black" size="50">{"Hello, " + user + "!"}</font>
@@ -64,9 +61,6 @@ class Profile extends React.Component {
         <font color="black" size="20px">{"Account Status: " + Status}</font>
       </p>
       <p className="centerText">
-        <font color="black" size="20px">{"Display Name: " + displayName}</font>
-      </p>
-      <p className="centerText">
         <a href="../billing">
           <font color="#d7e2e9" size="20px">Click here to view billing information</font>
         </a>
@@ -77,14 +71,21 @@ class Profile extends React.Component {
           {
             console.log(result);
           });
-        }}> Start Subscriptions </button>
+        }}>Start Subscriptions</button>
+      <button className="button2" onClick={() =>
+        {
+          addOneToSlots().then(result =>
+          {
+            console.log(result);
+          });
+        }}>Add one to sub slots</button>
       <button className="button2" onClick={() =>
         {
           resetSubs().then(result =>
           {
             console.log(result);
           });
-        }}> Reset Subscriptions </button>
+        }}>Reset Subscriptions</button>
     </div>);
   }
 }
@@ -108,7 +109,7 @@ function getUserInfo(user) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me:3001/api/getData/getUserInfo";
+    const url = "//razzlers.me:3001/api/getData/getUserInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -132,6 +133,30 @@ function startSubscription()
       body: JSON.stringify(data)
     };
     const url = "//razzlers.me:3001/api/getData/subscribe";
+    fetch(url, transport).then(result => result.json()).then(json =>
+    {
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
+
+function addOneToSlots()
+{
+  var username = window.localStorage.getItem("Razzlers_Username");
+  var data = '{"username": "' + username + '"}';
+  data = JSON.parse(data);
+  return new Promise(function(resolve, reject)
+  {
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    };
+    const url = "//razzlers.me:3001/api/getData/addOneSub";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
       resolve(json);

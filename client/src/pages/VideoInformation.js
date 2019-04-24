@@ -23,7 +23,7 @@ class PlayVideo extends React.Component {
       actors: "",
       release_year: 0
     };
-	
+
     checkParams().then(json => {
       this.setState({
         isMovie: json.isMovie,
@@ -64,13 +64,13 @@ class PlayVideo extends React.Component {
 	 });
     });
 }
-  
-  
+
+
   render() {
 	var ratingInput = -1;
     const {isMovie, id, name, description, rating, actors, release_year, commentID, userID} = this.state;
 	//,bodies, IDs
-	
+
     var loc = "";
     var isSubscribed = false;
     if(id !== 0)
@@ -117,7 +117,7 @@ class PlayVideo extends React.Component {
 		  <font  color ="white" size = "20px">{description}</font>
 		  </p>
 		  </div>
-		  
+
 		  <p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
           <p className="centerText">
             <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
@@ -125,12 +125,11 @@ class PlayVideo extends React.Component {
           <p className="centerText">
             <font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
           </p>
-		  
+
           <button hidden = {isSubscribed} className="subButton" onClick = {() =>
             {
               subscribe(isMovie, id).then(result =>
               {
-                console.log("result");
                 // result is either true or false based on if subbing went correctly or note
                 if(result.result === "true")
                 {
@@ -147,19 +146,19 @@ class PlayVideo extends React.Component {
               })
             }
           }>Subscribe</button>
-		
-		
+
+
 		<h2 className="centerText"><font  color = "white" size = "50"> {"Comments"} </font></h2>
 		<p><font color = "white" size = "12px"> {"storment: "}</font>
 		<font color = "white" size = "12px"> {name + " is a cool Movie"}</font></p>
-		
+
 		<p><font color = "white" size = "12px"> {"Scoutzknifez: "}</font>
 		<font color = "white" size = "12px"> {"Eh"}</font></p>
-		
+
 		<p><font color = "white" size = "12px"> {"Connorcon2020: "}</font>
 		<font color = "white" size = "12px"> {"Best movie ever xD"}</font></p>
-		
-		  
+
+
 		</div>
       );
     } else {
@@ -181,8 +180,8 @@ class PlayVideo extends React.Component {
 		  <font  color ="white" size = "20px">{description}</font>
 		  </p>
 		  </div>
-		  
-		  
+
+
 		  <p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
           <p className="centerText">
             <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
@@ -190,8 +189,8 @@ class PlayVideo extends React.Component {
           <p className="centerText">
             <font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
           </p>
-          
-		 
+
+
 		 <h2 className="centerText"><font  color = "white" size = "50"> {"Leave Rating"} </font></h2>
 		 <div id="images">
 			 <button hidden className="ratingButton" id="starOneFilled" onClick={() => {
@@ -202,14 +201,14 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starFourFilled").hidden = true;
 				  document.getElementById("starFourEmpty").hidden = false;
 				  document.getElementById("starThreeFilled").hidden = true;
-				  document.getElementById("starThreeEmpty").hidden = false;				 
+				  document.getElementById("starThreeEmpty").hidden = false;
 				  document.getElementById("starTwoFilled").hidden = true;
 				  document.getElementById("starTwoEmpty").hidden = false;
 				  document.getElementById("starOneFilled").hidden = false;
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button hidden className="ratingButton" id="starTwoFilled" onClick={() => {
 				  ratingInput = 2;
 				  //console.log(ratingInput);
@@ -225,7 +224,7 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button hidden className="ratingButton" id="starThreeFilled" onClick={() => {
 				  ratingInput = 3;
 				  //console.log(ratingInput);
@@ -241,7 +240,7 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button hidden className="ratingButton" id="starFourFilled" onClick={() => {
 				  ratingInput = 4;
 				  //console.log(ratingInput);
@@ -257,7 +256,7 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button hidden className="ratingButton" id="starFiveFilled" onClick={() => {
 				  ratingInput = 4;
 				  //console.log(ratingInput);
@@ -273,7 +272,7 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button className="ratingButton" id="starOneEmpty" onClick={() => {
 				  ratingInput = 1;
 				  document.getElementById("starOneFilled").hidden = false;
@@ -298,20 +297,20 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={empty} alt="empty"/>
 			 </button>
-			 
+
 			 <button className="ratingButton" id="starFourEmpty" onClick={() => {
 				  ratingInput = 4;
 				  document.getElementById("starFourFilled").hidden = false;
 				  document.getElementById("starFourEmpty").hidden = true;
 				  document.getElementById("starThreeFilled").hidden = false;
-				  document.getElementById("starThreeEmpty").hidden = true;				 
+				  document.getElementById("starThreeEmpty").hidden = true;
 				  document.getElementById("starTwoFilled").hidden = false;
 				  document.getElementById("starTwoEmpty").hidden = true;
 				  document.getElementById("starOneFilled").hidden = false;
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={empty} alt="empty"/>
 			 </button>
-			 
+
 			 <button className="ratingButton" id="starFiveEmpty" onClick={() => {
 				  ratingInput = 5;
 				  document.getElementById("starFiveFilled").hidden = false;
@@ -319,7 +318,7 @@ class PlayVideo extends React.Component {
 				  document.getElementById("starFourFilled").hidden = false;
 				  document.getElementById("starFourEmpty").hidden = true;
 				  document.getElementById("starThreeFilled").hidden = false;
-				  document.getElementById("starThreeEmpty").hidden = true;				 
+				  document.getElementById("starThreeEmpty").hidden = true;
 				  document.getElementById("starTwoFilled").hidden = false;
 				  document.getElementById("starTwoEmpty").hidden = true;
 				  document.getElementById("starOneFilled").hidden = false;
@@ -327,13 +326,13 @@ class PlayVideo extends React.Component {
 			 <img src={empty} alt="empty"/>
 			 </button>
 		 </div>
-		 
+
 		 <p hidden id="invalidMessage">
          <center><font className="error">An error has occurred, please try again!</font></center></p>
 		 <p hidden id="blankSpacesMessage">
          <center><font className="error">Please select a star and try again!</font></center></p>
-		 
-          <button className="subButton" id="submitButton" onClick={() => 
+
+          <button className="subButton" id="submitButton" onClick={() =>
 		  {
 		  var hadError = false;
 		  if(ratingInput === -1) {
@@ -346,7 +345,7 @@ class PlayVideo extends React.Component {
           {
                 return;
           }
-		  
+
 		  if(isMovie) {
 			updateRatingMovie(ratingInput, id).then(response => {
 			if(response.result === "true") {
@@ -357,7 +356,7 @@ class PlayVideo extends React.Component {
               document.getElementById("invalidMessage").hidden=false;
               }
           });
-		  
+
 		  updateUsersVotedMovie(id).then(response => {
 			if(response.result === "true") {
 				// Update was successful
@@ -365,10 +364,10 @@ class PlayVideo extends React.Component {
 			  // display error, reprompt for information
 	     		document.getElementById("invalidMessage").hidden=false;
 			}
-		  });  
-		  
+		  });
+
 		  }
-		  
+
 		  else if(!isMovie){
 			updateRatingShow(document.getElementById("ratingInput").value, id).then(response => {
 			if(response.result === "true") {
@@ -379,7 +378,7 @@ class PlayVideo extends React.Component {
                     document.getElementById("invalidMessage").hidden=false;
               }
           });
-		  
+
 		  updateUsersVotedShow(id).then(response => {
 			if(response.result === "true") {
 				// Update was successful
@@ -387,11 +386,11 @@ class PlayVideo extends React.Component {
 			  // display error, reprompt for information
 	     		document.getElementById("invalidMessage").hidden=false;
 			}
-		    });  
-			
+		    });
+
 		  }
 	}}>Submit Rating</button>
-	
+
 	<button className="subButton" id="cancelRatingButton" onClick={() => {
 		ratingInput = -1;
 		document.getElementById("starFiveFilled").hidden = true;
@@ -399,27 +398,27 @@ class PlayVideo extends React.Component {
 		document.getElementById("starFourFilled").hidden = true;
 		document.getElementById("starFourEmpty").hidden = false;
 		document.getElementById("starThreeFilled").hidden = true;
-		document.getElementById("starThreeEmpty").hidden = false;				 
+		document.getElementById("starThreeEmpty").hidden = false;
 		document.getElementById("starTwoFilled").hidden = true;
 		document.getElementById("starTwoEmpty").hidden = false;
 		document.getElementById("starOneFilled").hidden = true;
 		document.getElementById("starOneEmpty").hidden = false}
 	}>Cancel Selection</button>
-				  
-	
-	
-	
+
+
+
+
 		<h2 className="centerText"><font  color = "white" size = "50"> {"Comments"} </font></h2>
 		<p><font color = "white" size = "12px"> {"storment: "}</font>
 		<font color = "white" size = "12px"> {name + " is a cool Movie"}</font></p>
-		
+
 		<p><font color = "white" size = "12px"> {"Scoutzknifez: "}</font>
 		<font color = "white" size = "12px"> {"Eh"}</font></p>
-		
+
 		<p><font color = "white" size = "12px"> {"Connorcon2020: "}</font>
 		<font color = "white" size = "12px"> {"Best movie ever xD"}</font></p>
 		<p className="centerText"><a href="/" ><font color= "">Click here to add a comment!</font></a></p>
-			
+
 		</div>
       );
     }
@@ -470,8 +469,8 @@ function updateRatingMovie(inRating, videoId)
   });
 }
 
-function updateUsersVotedShow(videoId) 
-{	
+function updateUsersVotedShow(videoId)
+{
   return new Promise(function(resolve, reject)
   {
     var data = '{"id": "' + videoId + '"}';
@@ -516,8 +515,8 @@ function updateRatingShow(inRating, videoId)
   });
 }
 
-function updateUsersVotedMovie(videoId) 
-{	
+function updateUsersVotedMovie(videoId)
+{
   return new Promise(function(resolve, reject)
   {
     var data = '{"id": "' + videoId + '"}';
@@ -555,7 +554,7 @@ function subscribe(isMovie, id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/subscribe";
+    const url = "//razzlers.me:3001/api/getData/subscribeToShow";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
       utilFunc.updateLocalSubscribedLists().then(output =>

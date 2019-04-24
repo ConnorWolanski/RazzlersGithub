@@ -313,14 +313,12 @@ router.put("/register", function(req, response)
     var email = req.body.email;
     var first_name = req.body.first_name;
     var last_name = req.body.last_name;
-    var display_name = req.body.display_name;
     var activation_key = utilFunc.createActivationKey();
-    var status = "0";
     var subscription_slots = "0";
     // debug
-    //console.log("Concated: " + currentUserID + " " + username  + " " + first_name + " " + last_name + " " + password + " " + email + " " + activation_key + " " + status + " " + display_name + " ");
+    //console.log("Concated: " + currentUserID + " " + username  + " " + first_name + " " + last_name + " " + password + " " + email + " " + activation_key + " ");
     // then submit to object type
-    var sql = "INSERT INTO users (user_id, username, first_name, last_name, password, email, activation_key, status, display_name, subscription_slots) VALUES (\'" + currentUserID + "\', \'" + username  + "\', \'" + first_name + "\', \'" + last_name + "\', \'" + password + "\', \'" + email + "\', \'" + activation_key + "\', \'" + status + "\', \'" + display_name + "\', \'" + subscription_slots + "\')";
+    var sql = "INSERT INTO users (user_id, username, first_name, last_name, password, email, activation_key, subscription_slots) VALUES (\'" + currentUserID + "\', \'" + username  + "\', \'" + first_name + "\', \'" + last_name + "\', \'" + password + "\', \'" + email + "\', \'" + activation_key + "\', \'" + subscription_slots + "\')";
     connection.query(sql, function(err, result)
     {
       if(err)
@@ -588,17 +586,25 @@ router.put("/getData/subscribeToShow", function(req, response)
                   {
                     // list does not contain the subbed movie
                     // add it to movie db and return {result:true}
-                    var sql = "INSERT INTO user_movies_selected (user_id, movie_id) VALUES (\'" + result + "\', \'" + id + "\')";
-                    connection.query(sql, function(err, result)
+                    var dayAfter = new Date();
+                    dayAfter.setTime(dayAfter.getTime() + 86400000);
+                    getDateAsString(new Date()).then(startDate =>
                     {
-                      if(err)
+                      getDateAsString(dayAfter).then(endDate =>
                       {
-                        console.log(err);
-                        response.send('{"result": "false"}');
-                      } else {
-                        console.log(username + " has subscribed to movie " + id);
-                        response.send('{"result": "true"}');
-                      }
+                        var sql = "INSERT INTO user_movies_selected (user_id, movie_id, start_time, end_time) VALUES (\'" + result + "\', \'" + id + "\', \'" + startDate + "\', \'" + endDate + "\')";
+                        connection.query(sql, function(err, result)
+                        {
+                          if(err)
+                          {
+                            console.log(err);
+                            response.send('{"result": "false"}');
+                          } else {
+                            console.log(username + " has subscribed to movie " + id);
+                            response.send('{"result": "true"}');
+                          }
+                        });
+                      });
                     });
                   } else {
                     // list does contain the subbed movie
@@ -650,6 +656,27 @@ router.put("/getData/subscribeToShow", function(req, response)
           response.send('{"result": "full"}')
         }
       });
+    });
+  });
+});
+
+router.put("/getData/addOneSub", function(req, response)
+{
+  var username = req.body.username;
+  getUserSubscriptionTotal(username).then(currentTotal =>
+  {
+    var newTotal = currentTotal+1;
+    var sql = 'UPDATE users SET subscription_slots=' + newTotal + ' WHERE username="' + username + '"';
+    connection.query(sql, function(err, result)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        console.log("set subslots for user " + username + " to " + newTotal);
+        response.send('{"result": "true"}');
+      }
     });
   });
 });
@@ -747,22 +774,21 @@ router.put("/getData/getUserInfo", function(req, response)
       console.log(err);
       response.send('{"result": "false"}');
 	} else {
-		console.log("Fetched username: " + user);
         // build the response from result
         var back = '{"result": "false"}';
 		var accountStatus = "";
         if(result[0] !== null)
         {
-		  if(result[0].status == 0){
+		  if(result[0].subscription_slots == 0){
 			  accountStatus = "Inactive";
 		  }
-		  else if(result[0].status == 1){
-			  accountStatus = "Active";
+		  else{
+			  accountStatus = "Active with " + result[0].subscription_slots + " subscription slots!";
 		  }
 
           back = '{"id": "' + result[0].user_id + '", "first": "' + result[0].first_name +
                   '", "last": "' + result[0].last_name + '", "email": "' + result[0].email + '", "status": "' +
-				  accountStatus + '", "display": "' + result[0].display_name + '", "user": "' + result[0].username + '"}';
+				  accountStatus + '", "user": "' + result[0].username + '"}';
         }
         response.send(back);
       }
@@ -979,9 +1005,9 @@ router.put("/updateUsersVotedMovie", function(req, response)
 	getUsersVotedMovie(id).then(result =>
     {
 	var users_voted = Number(result) + Number('1');
-	
+
 	var sql = "UPDATE movie SET users_voted='" + users_voted + "' WHERE movie_id='" + id + "'";
-	
+
   	connection.query(sql, function(err, result)
     {
       if(err)
@@ -1002,9 +1028,9 @@ router.put("/updateUsersVotedShow", function(req, response)
 	getUsersVotedShow(id).then(result =>
     {
 	var users_voted = Number(result) + Number('1');
-	
+
 	var sql = "UPDATE tv_show SET users_voted='" + users_voted + "' WHERE tv_show_id='" + id + "'";
-	
+
   	connection.query(sql, function(err, result)
     {
       if(err)
@@ -1032,7 +1058,7 @@ router.put("/updateRatingMovie", function(req, response)
 	{
 		var oldRating = result;
 		var newRating = (Number(oldRating) +Number(rating)) / Number(users_voted);
-		
+
 		var sql = "UPDATE movie SET movie_rating='" + newRating + "' WHERE movie_id='" + id + "'";
 
 		connection.query(sql, function(err, result)
@@ -1082,7 +1108,7 @@ router.put("/updateRating", function(req, response)
 router.get("/getData/getMovieCommentList", function(req, response)
 {
   var id = req.body.movieId;
-  
+
   getMovieCommentList().then(result =>
   {
     console.log(result);
@@ -1165,7 +1191,7 @@ function getUsersVotedMovie(id)
         return;
       } else {
 		resolve(result[0].users_voted);
-		} 
+		}
     });
   });
 }
@@ -1176,7 +1202,7 @@ function getUsersVotedShow(id)
   return new Promise(function(resolve, reject)
   {
 	var sql = "SELECT users_voted FROM tv_show WHERE tv_show_id='" + id + "'";
-	
+
     connection.query(sql, function(err, result, fields)
     {
       if(err)
@@ -1203,7 +1229,7 @@ function getRatingMovie(id)
         throw err;
         return;
       } else {
-		resolve(result[0].movie_rating); 
+		resolve(result[0].movie_rating);
       }
     });
   });
@@ -1222,7 +1248,7 @@ function getRatingShow(id)
         throw err;
         return;
       } else {
-		resolve(result[0].tv_show_rating);	
+		resolve(result[0].tv_show_rating);
       }
     });
   });

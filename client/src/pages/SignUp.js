@@ -41,11 +41,6 @@ class SignUp extends React.Component
           placeholder="Last Name"
           className="input"
           id="lastNameInput"/>
-        <input
-          type="text"
-          placeholder="Display Name"
-          className="input"
-          id="displayNameInput"/>
         <div className="tos">
           <input type="checkbox" name="terms" id="checkboxTOS"></input>
           <font color="black"> I Agree Terms & Conditions</font>
@@ -56,7 +51,7 @@ class SignUp extends React.Component
             var hadError = false;
             if(document.getElementById("usernameInput").value.trim() === "" || document.getElementById("emailInput").value.trim() === "" ||
                 document.getElementById("passwordInput").value.trim() === "" || document.getElementById("firstNameInput").value.trim() === "" ||
-                document.getElementById("lastNameInput").value.trim() === "" || document.getElementById("displayNameInput").value.trim() === "")
+                document.getElementById("lastNameInput").value.trim() === "")
             {
               document.getElementById("blankSpacesMessage").hidden=false;
               hadError = true;
@@ -78,8 +73,7 @@ class SignUp extends React.Component
              document.getElementById("emailInput").value,
              document.getElementById("passwordInput").value,
              document.getElementById("firstNameInput").value,
-             document.getElementById("lastNameInput").value,
-             document.getElementById("displayNameInput").value).then(response => {
+             document.getElementById("lastNameInput").value).then(response => {
                if(response.result === "true")
                {
                  // registration was successful
@@ -99,11 +93,11 @@ class SignUp extends React.Component
   }
 }
 //  function for attempting to register the user to the DB
-function register(inUsername, inEmail, inPassword, inFirstName, inLastName, inDisplayName)
+function register(inUsername, inEmail, inPassword, inFirstName, inLastName)
 {
   return new Promise(function(resolve, reject)
   {
-    var data = '{"username": "' + inUsername + '", "password": "' + inPassword + '", "email": "' + inEmail + '", "first_name": "' + inFirstName + '", "last_name": "' + inLastName + '", "display_name": "' + inDisplayName + '"}';
+    var data = '{"username": "' + inUsername + '", "password": "' + inPassword + '", "email": "' + inEmail + '", "first_name": "' + inFirstName + '", "last_name": "' + inLastName + '"}';
     data = JSON.parse(data);
     var transport = {
       headers: {
@@ -118,7 +112,6 @@ function register(inUsername, inEmail, inPassword, inFirstName, inLastName, inDi
         // needs to return true or false based on if registration is successful
         // if true, return true and set username in localStorage
         // if false, return what went wrong, if multiple things, put inside array[]
-        console.log(json);
         resolve(json);
       });
   });

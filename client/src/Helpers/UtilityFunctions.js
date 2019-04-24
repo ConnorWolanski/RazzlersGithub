@@ -38,7 +38,7 @@ function getUsersFriends(user) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me:3001/api/getData/getUsersFriends";
+    const url = "//razzlers.me:3001/api/getData/getUsersFriends";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
