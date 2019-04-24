@@ -9,7 +9,7 @@ import MessageList from './MessageList.js'
 const utilFunc = require('../Helpers/UtilityFunctions');
 
 var thisref = null;
-
+var counter = 0;
 class Footer extends React.Component {
   constructor(props) {
     super(props);
@@ -45,6 +45,33 @@ class Footer extends React.Component {
     var {friends, IDs, users, ids} = this.state;
     if (Array.isArray(friends)) {
       return (<div>
+        <div className="footerMenu" hidden={true} id="messages">
+          <h1 className="menuTitle">
+            <font color="white" id ="messageTitle">{window.localStorage.getItem("Razzlers_Username")}</font>
+            <button className="iconButton" onClick={() => {
+                document.getElementById("messages").hidden = true;
+              }}>
+              <img src={close} alt="close"/>
+            </button>
+          </h1>
+          <div className="autoFlow" id="messageBox">
+            <MessageList id="textMessages" messageList={this.state.defaultMessage}></MessageList>
+            <div id= "bottom"></div>
+          </div>
+          <form className="typeMessage">
+            <input type="text" id="messageTyped" className="messageText" placeholder="text message"/>
+            <button type="submit" className="sendButton" onClick={() => {
+                window.event.preventDefault();
+                sendMessage(document.getElementById("messageTitle").innerHTML, document.getElementById("messageTyped").value).then(result => {
+                  utilFunc.getUsersMessages(window.localStorage.getItem("Razzlers_Username"), document.getElementById("messageTitle").innerHTML).then(json => {
+                    counter = 0;
+                    forceUpdateMessages();
+                    document.getElementById('messageTyped').value = "";
+                  });
+                });
+              }}>Send</button>
+          </form>
+        </div>
 
         <div className="footerMenu" hidden={true} id="friends">
           <h1 className="menuTitle">
@@ -91,28 +118,6 @@ class Footer extends React.Component {
               <FriendsList friends={users} IDs={ids} parent={this}/>
             </div>
         </div>
-        <div className="footerMenu" hidden={true} id="messages">
-          <h1 className="menuTitle">
-            <font color="white" id ="messageTitle">{window.localStorage.getItem("Razzlers_Username")}</font>
-            <button className="iconButton" onClick={() => {
-                document.getElementById("messages").hidden = true;
-              }}>
-              <img src={close} alt="close"/>
-            </button>
-          </h1>
-          <MessageList id="textMessages" messageList={this.state.defaultMessage} ></MessageList>
-          <form className="typeMessage">
-            <input type="text" id="messageTyped" className="messageText" placeholder="text message"/>
-            <button type="button" className="sendButton" onClick={() => {
-                sendMessage(document.getElementById("messageTitle").innerHTML, document.getElementById("messageTyped").value).then(result => {
-                  utilFunc.getUsersMessages(window.localStorage.getItem("Razzlers_Username"), document.getElementById("messageTitle").innerHTML).then(json => {
-                    forceUpdateMessages();
-                    document.getElementById('messageTyped').value = "";
-                  });
-                });
-              }}>Send</button>
-          </form>
-        </div>
 
         <div className="footer">
           <button className="iconButton" onClick={() =>
@@ -131,6 +136,7 @@ class Footer extends React.Component {
               document.getElementById("messages").hidden = !document.getElementById("messages").hidden;
               document.getElementById("friends").hidden = true;
               document.getElementById("addFriends").hidden = true;
+              document.getElementById('bottom').scrollIntoView({behavior: "smooth"});
             }}>
             <img src={envelope} alt="envelope"/>
           </button>
@@ -144,11 +150,15 @@ class Footer extends React.Component {
 
 function updateMessages()
 {
+  counter++;
+  if(counter < 2){
+    document.getElementById('bottom').scrollIntoView({behavior: "smooth"});
+  }
   forceUpdateMessages();
   setTimeout(function()
   {
    updateMessages();
-  }, 1000);
+ }, 100);
 }
 
 function forceUpdateMessages()

@@ -32,13 +32,11 @@ class FriendCard extends React.Component {
             });
           }}>+</button>
         <button className="iconButton" hidden ={!areFriends} onClick={() => {
-            document.getElementById("messages").hidden = !document.getElementById("messages").hidden;
             document.getElementById("messageTitle").innerHTML = username;
             document.getElementById("friends").hidden = true;
             document.getElementById("addFriends").hidden = true;
-            container.forceUpdate();
-            container.setState(container.state);
-            console.log(container.state);
+            document.getElementById("messages").hidden = false;
+            document.getElementById('bottom').scrollIntoView({behavior: "smooth"});
           }}>
           <img src={envelope} alt="envelope"/>
         </button>
