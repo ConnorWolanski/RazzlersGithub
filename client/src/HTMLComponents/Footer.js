@@ -9,7 +9,6 @@ import MessageList from './MessageList.js'
 const utilFunc = require('../Helpers/UtilityFunctions');
 
 var thisref = null;
-var counter = 0;
 class Footer extends React.Component {
   constructor(props) {
     super(props);
@@ -64,9 +63,12 @@ class Footer extends React.Component {
                 window.event.preventDefault();
                 sendMessage(document.getElementById("messageTitle").innerHTML, document.getElementById("messageTyped").value).then(result => {
                   utilFunc.getUsersMessages(window.localStorage.getItem("Razzlers_Username"), document.getElementById("messageTitle").innerHTML).then(json => {
-                    counter = 0;
                     forceUpdateMessages();
                     document.getElementById('messageTyped').value = "";
+                    setTimeout(function()
+                    {
+                      document.getElementById('bottom').scrollIntoView({behavior: "smooth"});
+                    }, 150);
                   });
                 });
               }}>Send</button>
@@ -150,10 +152,6 @@ class Footer extends React.Component {
 
 function updateMessages()
 {
-  counter++;
-  if(counter < 2){
-    document.getElementById('bottom').scrollIntoView({behavior: "smooth"});
-  }
   forceUpdateMessages();
   setTimeout(function()
   {
