@@ -54,12 +54,12 @@ class Footer extends React.Component {
               <img src={close} alt="close"/>
             </button>
           </h1>
-          <div className="autoFlow" id="messageBox">
+          <div className="autoFlow" id="messageBox" >
             <MessageList id="textMessages" messageList={this.state.defaultMessage}></MessageList>
-            <div id= "bottom"></div>
+            <div id= "bottom" ></div>
           </div>
-          <form className="typeMessage">
-            <input type="text" id="messageTyped" className="messageText" placeholder="text message"/>
+          <form className="typeMessage" >
+            <input type="text" id="messageTyped" className="messageText" placeholder="text message" />
             <button type="submit" className="sendButton" onClick={() => {
                 window.event.preventDefault();
                 sendMessage(document.getElementById("messageTitle").innerHTML, document.getElementById("messageTyped").value).then(result => {

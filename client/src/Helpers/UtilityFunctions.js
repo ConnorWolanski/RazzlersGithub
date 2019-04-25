@@ -13,7 +13,7 @@ function getMovieList()
       },
       method: "GET"
     };
-    const url = "http://razzlers.me:3001/api/getData/getMovieList";
+    const url = "http://localhost:3001/api/getData/getMovieList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -38,7 +38,7 @@ function getUsersFriends(user) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/getUsersFriends";
+    const url = "http://localhost:3001/api/getData/getUsersFriends";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -64,7 +64,7 @@ function getShowList()
       },
       method: "GET"
     };
-    const url = "http://razzlers.me:3001/api/getData/getShowList";
+    const url = "http://localhost:3001/api/getData/getShowList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -93,7 +93,7 @@ function getSubscribedMList()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me:3001/api/getData/getSubscribedMovies";
+    const url = "http://localhost:3001/api/getData/getSubscribedMovies";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -122,7 +122,7 @@ function getSubscribedSList()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me:3001/api/getData/getSubscribedShows";
+    const url = "http://localhost:3001/api/getData/getSubscribedShows";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -178,7 +178,7 @@ exports.getUsersMessages = function(sender, recipient)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me:3001/api/getData/getUsersMessages";
+    const url = "http://localhost:3001/api/getData/getUsersMessages";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -189,8 +189,7 @@ exports.getUsersMessages = function(sender, recipient)
 
 exports.getUsernameFromID = function(id)
 {
-  return new Promise(function(resolve, reject)
-  {
+  return new Promise(function(resolve, reject) {
     var data = '{"id": "' + id + '"}';
     data = JSON.parse(data);
     var transport = {
@@ -200,7 +199,7 @@ exports.getUsernameFromID = function(id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me:3001/api/getData/getUsernameOfID";
+    const url = "http://localhost:3001/api/getData/getUsernameOfID";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -261,7 +260,7 @@ function getTopShowList()
       },
       method: "GET"
     };
-    const url = "http://razzlers.me:3001/api/getData/getTopShowList";
+    const url = "http://localhost:3001/api/getData/getTopShowList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -269,110 +268,3 @@ function getTopShowList()
     });
   });
 }
-
-exports.getMovieComments = function(id)
-{
-  return getMovieComments(id);
-}
-
-function getMovieComments(id) {
-  return new Promise(function(resolve, reject) {
-    var data = '{"id": "' + id + '"}';
-    data = JSON.parse(data);
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(data)
-    };
-    const url = "http://razzlers.me:3001/api/getData/getMovieCommentList";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      //console.log(json);
-      resolve(json);
-    }).catch(err => {
-      throw new Error(err);
-    });
-  });
-}
-
-exports.getShowComments = function(id)
-{
-  return getShowComments(id);
-}
-
-function getShowComments(id) {
-  return new Promise(function(resolve, reject) {
-    var data = '{"id": "' + id + '"}';
-    data = JSON.parse(data);
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(data)
-    };
-    const url = "http://razzlers.me:3001/api/getData/getShowCommentList";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      //console.log(json);
-      resolve(json);
-    }).catch(err => {
-      throw new Error(err);
-    });
-  });
-}
-
-exports.getEpisodeComments = function(id)
-{
-  return getEpisodeComments(id);
-}
-
-function getEpisodeComments(id) {
-  return new Promise(function(resolve, reject) {
-    var data = '{"id": "' + id + '"}';
-    data = JSON.parse(data);
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(data)
-    };
-    const url = "http://razzlers.me:3001/api/getData/getEpisodeCommentList";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      //console.log(json);
-      resolve(json);
-    }).catch(err => {
-      throw new Error(err);
-    });
-  });
-}
-exports.getEpisodeList = function(id)
-{
-  return getEpisodeList(id);
-}
-
-
-function getEpisodeList(id)
-{
-  return new Promise(function(resolve, reject) {
-	var data = '{"showID": "' + id + '"}';
-	data = JSON.parse(data);
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "PUT",
-	  body: JSON.stringify(data)
-    };
-    const url = "http://razzlers.me:3001/api/getData/getEpisodeList";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      //console.log(json);
-      resolve(json);
-    }).catch(err => {
-      throw new Error(err);
-    });
-  });
-}
-
-

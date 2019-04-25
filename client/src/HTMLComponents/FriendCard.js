@@ -36,7 +36,10 @@ class FriendCard extends React.Component {
             document.getElementById("friends").hidden = true;
             document.getElementById("addFriends").hidden = true;
             document.getElementById("messages").hidden = false;
-            document.getElementById('bottom').scrollIntoView({behavior: "smooth"});
+            setTimeout(function()
+            {
+              document.getElementById('bottom').scrollIntoView({behavior: "auto"});
+            }, 150);
           }}>
           <img src={envelope} alt="envelope"/>
         </button>

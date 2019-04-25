@@ -1,4 +1,4 @@
-razzlers.meimport React from "react";
+import React from "react";
 import '../style.css';
 
 class Profile extends React.Component {
