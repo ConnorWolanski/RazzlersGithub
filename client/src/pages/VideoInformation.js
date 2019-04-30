@@ -479,7 +479,7 @@ function updateRatingShow(inRating, videoId)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/updateRating";
+    const url = "http://razzlers.me:3001/api/updateRating";
     fetch(url, transport).then(response => response.json()).then(json => {
       // needs to return true or false based on if registration is successful
       // if true, return true and set username in localStorage
@@ -587,7 +587,7 @@ function addComment(inBody, id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/addCommentShow";
+    const url = "http://razzlers.me:3001/api/addCommentShow";
     fetch(url, transport).then(response => response.json()).then(json => {
       // needs to return true or false based on if registration is successful
       // if true, return true and set username in localStorage
