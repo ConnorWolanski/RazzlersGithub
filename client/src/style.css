@@ -463,6 +463,8 @@
   width: calc(100% - 75px);
  }
 
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css);
+
 .user_avatar {
   color:white;
   display: inline-block;
