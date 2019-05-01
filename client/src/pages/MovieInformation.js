@@ -20,9 +20,9 @@ class MovieInformation extends React.Component {
 	  bodies: null,
 	  usernames: null,
 	  times: null,
-	  dates:null	  
+	  dates:null
     };
-	
+
     checkParams().then(json => {
       this.setState({
         isMovie: json.isMovie,
@@ -57,16 +57,16 @@ class MovieInformation extends React.Component {
         }
 		utilFunc.getMovieComments(id).then(bodiesList => {
 			this.setState({bodies: bodiesList.bodies});
-			
+
 			utilFunc.getMovieCommentsUsername(id).then(usernamesList => {
 			this.setState({usernames: usernamesList.usernames});
-			
+
 				utilFunc.getMovieCommentsTime(id).then(timesList => {
 				this.setState({times: timesList.times});
-				
+
 					utilFunc.getMovieCommentsDate(id).then(datesList => {
 					this.setState({dates: datesList.dates});
-				
+
 					buildComments(bodiesList.bodies, usernamesList.usernames, timesList.times, datesList.dates);
 					});
 				});
@@ -75,16 +75,16 @@ class MovieInformation extends React.Component {
 	 });
     });
 }
-  
-  
+
+
   render() {
 	var ratingInput = -1;
-    const {isMovie, id, name, description, rating, actors, release_year} = this.state;
+    const {isMovie, id, name, description, rating, release_year} = this.state;
 	var isUserNotLoggedIn = true;
 	if (window.localStorage.getItem("Razzlers_Username") != null) {
 		isUserNotLoggedIn = false;
 	}
-	
+
     var loc = "";
     var isSubscribed = false;
 
@@ -110,7 +110,7 @@ class MovieInformation extends React.Component {
         }
       }
     }
-	
+
     if(!isSubscribed)
     {
       // is NOT subscribed
@@ -125,16 +125,16 @@ class MovieInformation extends React.Component {
       }
       return (
         <div>
-		  <div className="container">  
+		  <div className="container">
 			<img className="container__image" src={loc} alt="background"/>
-			
-			<div className="container__text"> 
+
+			<div className="container__text">
 				<h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
 				<p><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font></p>
 				<p><font  color ="white" size = "20px">{"Release Year : " + release_year}</font></p>
 				<p><font  color ="white" size = "20px">{description}</font></p>
 			</div>
-			
+
 			<p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
 			<p className="centerText">
             <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
@@ -142,7 +142,7 @@ class MovieInformation extends React.Component {
 			<p className="centerText">
 				<font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
 			</p>
-		  
+
 			<button hidden = {isSubscribed} className="subButton" onClick = {() =>
 			{
 				subscribe(isMovie, id).then(result =>
@@ -165,18 +165,18 @@ class MovieInformation extends React.Component {
             }
 			}>Subscribe</button>
 		  </div>
-		  
+
 		<h2 className="centerText"><font  color = "white" size = "50"> {"Comments"} </font></h2>
-		
+
 		<div onload="buildComments();" data-role="fieldcontain" class="ui-hide-label" id="bodiesDiv"></div>
-		
+
 		<div class="new_comment">
-			<ul class="user_comment">	
+			<ul class="user_comment">
 				<font  color = "white" size = "50" hidden = {isUserNotLoggedIn}> {"Leave a comment"} </font>
 				<textarea id="commentInput" className="largeInput" rows="14" cols="10" wrap="soft" hidden = {isUserNotLoggedIn}> </textarea>
 				<p hidden id="invalidCommentMessage">
 				<font className="error">Error submitting comment, please try again!</font></p>
-			
+
 				<button className="commentButton" id="submitComment" hidden = {isUserNotLoggedIn} onClick={() => {
 					if(document.getElementById("commentInput").value.trim() !== "") {
 						addComment(document.getElementById("commentInput").value.replace(/\n/g, '\\n'), id).then(response => {
@@ -190,13 +190,13 @@ class MovieInformation extends React.Component {
 							}
 						});
 					}
-				}}>Submit comment</button>	
+				}}>Submit comment</button>
 			</ul>
 		</div>
-		  
+
 		</div>
       );
-	  
+
     } else {
       // is subscribed
 	  if(isMovie === "true")
@@ -208,17 +208,17 @@ class MovieInformation extends React.Component {
 	  }
       return (
         <div>
-		  <div className="container">  
+		  <div className="container">
 			<img className="container__image" src={loc} alt="background"/>
-			
-			<div className="container__text"> 
+
+			<div className="container__text">
 				<h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
 				<button className="subButton" onClick={() => window.location.href="playVideo?isMovie=" + isMovie + "&id=" + id}>Watch Movie</button>
 				<p><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font></p>
 				<p><font  color ="white" size = "20px">{"Release Year : " + release_year}</font></p>
 				<p><font  color ="white" size = "20px">{description}</font></p>
 			</div>
-			
+
 			<p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
 			<p className="centerText">
             <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
@@ -226,7 +226,7 @@ class MovieInformation extends React.Component {
 			<p className="centerText">
 				<font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
 			</p>
-		  
+
 			<button hidden = {isSubscribed} className="subButton" onClick = {() =>
 			{
 				subscribe(isMovie, id).then(result =>
@@ -249,8 +249,8 @@ class MovieInformation extends React.Component {
             }
 			}>Subscribe</button>
 		  </div>
-          
-		 
+
+
 		 <h2 className="centerText"><font  color = "white" size = "50"> {"Leave Rating"} </font></h2>
 		 <div id="images">
 			 <button hidden className="ratingButton" id="starOneFilled" onClick={() => {
@@ -261,14 +261,14 @@ class MovieInformation extends React.Component {
 				  document.getElementById("starFourFilled").hidden = true;
 				  document.getElementById("starFourEmpty").hidden = false;
 				  document.getElementById("starThreeFilled").hidden = true;
-				  document.getElementById("starThreeEmpty").hidden = false;				 
+				  document.getElementById("starThreeEmpty").hidden = false;
 				  document.getElementById("starTwoFilled").hidden = true;
 				  document.getElementById("starTwoEmpty").hidden = false;
 				  document.getElementById("starOneFilled").hidden = false;
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button hidden className="ratingButton" id="starTwoFilled" onClick={() => {
 				  ratingInput = 2;
 				  //console.log(ratingInput);
@@ -284,7 +284,7 @@ class MovieInformation extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button hidden className="ratingButton" id="starThreeFilled" onClick={() => {
 				  ratingInput = 3;
 				  //console.log(ratingInput);
@@ -300,7 +300,7 @@ class MovieInformation extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button hidden className="ratingButton" id="starFourFilled" onClick={() => {
 				  ratingInput = 4;
 				  //console.log(ratingInput);
@@ -316,7 +316,7 @@ class MovieInformation extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button hidden className="ratingButton" id="starFiveFilled" onClick={() => {
 				  ratingInput = 4;
 				  //console.log(ratingInput);
@@ -332,7 +332,7 @@ class MovieInformation extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button className="ratingButton" id="starOneEmpty" onClick={() => {
 				  ratingInput = 1;
 				  document.getElementById("starOneFilled").hidden = false;
@@ -357,20 +357,20 @@ class MovieInformation extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={empty} alt="empty"/>
 			 </button>
-			 
+
 			 <button className="ratingButton" id="starFourEmpty" onClick={() => {
 				  ratingInput = 4;
 				  document.getElementById("starFourFilled").hidden = false;
 				  document.getElementById("starFourEmpty").hidden = true;
 				  document.getElementById("starThreeFilled").hidden = false;
-				  document.getElementById("starThreeEmpty").hidden = true;				 
+				  document.getElementById("starThreeEmpty").hidden = true;
 				  document.getElementById("starTwoFilled").hidden = false;
 				  document.getElementById("starTwoEmpty").hidden = true;
 				  document.getElementById("starOneFilled").hidden = false;
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={empty} alt="empty"/>
 			 </button>
-			 
+
 			 <button className="ratingButton" id="starFiveEmpty" onClick={() => {
 				  ratingInput = 5;
 				  document.getElementById("starFiveFilled").hidden = false;
@@ -378,7 +378,7 @@ class MovieInformation extends React.Component {
 				  document.getElementById("starFourFilled").hidden = false;
 				  document.getElementById("starFourEmpty").hidden = true;
 				  document.getElementById("starThreeFilled").hidden = false;
-				  document.getElementById("starThreeEmpty").hidden = true;				 
+				  document.getElementById("starThreeEmpty").hidden = true;
 				  document.getElementById("starTwoFilled").hidden = false;
 				  document.getElementById("starTwoEmpty").hidden = true;
 				  document.getElementById("starOneFilled").hidden = false;
@@ -386,13 +386,13 @@ class MovieInformation extends React.Component {
 			 <img src={empty} alt="empty"/>
 			 </button>
 		 </div>
-		 
+
 		 <p hidden id="invalidMessage">
          <center><font className="error">An error has occurred, please try again!</font></center></p>
 		 <p hidden id="blankSpacesMessage">
          <center><font className="error">Please select a star and try again!</font></center></p>
-		 
-          <button className="subButton" id="submitButton" onClick={() => 
+
+          <button className="subButton" id="submitButton" onClick={() =>
 		  {
 		  var hadError = false;
 		  if(ratingInput === -1) {
@@ -405,8 +405,8 @@ class MovieInformation extends React.Component {
           {
                 return;
           }
-		  
-		  
+
+
 			updateRatingMovie(ratingInput, id).then(response => {
 			if(response.result === "true") {
 				// Update was successful
@@ -426,11 +426,11 @@ class MovieInformation extends React.Component {
 			}
 		  });
 		  */
-  
-		  
-		  
+
+
+
 	}}>Submit Rating</button>
-	
+
 	<button className="subButton" id="cancelRatingButton" onClick={() => {
 		ratingInput = -1;
 		document.getElementById("starFiveFilled").hidden = true;
@@ -438,25 +438,25 @@ class MovieInformation extends React.Component {
 		document.getElementById("starFourFilled").hidden = true;
 		document.getElementById("starFourEmpty").hidden = false;
 		document.getElementById("starThreeFilled").hidden = true;
-		document.getElementById("starThreeEmpty").hidden = false;				 
+		document.getElementById("starThreeEmpty").hidden = false;
 		document.getElementById("starTwoFilled").hidden = true;
 		document.getElementById("starTwoEmpty").hidden = false;
 		document.getElementById("starOneFilled").hidden = true;
 		document.getElementById("starOneEmpty").hidden = false}
 	}>Cancel Selection</button>
-				  
-	
+
+
 		<h2 className="centerText"><font  color = "white" size = "30"> {"Comments"} </font></h2>
-		
+
 		<div onload="buildComments();" data-role="fieldcontain" class="ui-hide-label" id="bodiesDiv"></div>
-			
+
 		<div class="new_comment">
-			<ul class="user_comment">	
+			<ul class="user_comment">
 				<font  color = "white" size = "50" hidden = {isUserNotLoggedIn}> {"Leave a comment"} </font>
 				<textarea id="commentInput" className="largeInput" rows="14" cols="10" wrap="soft" hidden = {isUserNotLoggedIn}> </textarea>
 				<p hidden id="invalidCommentMessage">
 				<font className="error">Error submitting comment, please try again!</font></p>
-			
+
 				<button className="commentButton" id="submitComment" hidden = {isUserNotLoggedIn} onClick={() => {
 					if(document.getElementById("commentInput").value.trim() !== "") {
 						addComment(document.getElementById("commentInput").value.replace(/\n/g, '\\n'), id).then(response => {
@@ -470,7 +470,7 @@ class MovieInformation extends React.Component {
 							}
 						});
 					}
-				}}>Submit comment</button>	
+				}}>Submit comment</button>
 			</ul>
 		</div>
 		</div>

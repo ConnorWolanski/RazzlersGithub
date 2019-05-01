@@ -79,7 +79,7 @@ class VideoInformation extends React.Component {
 
   render() {
 	var ratingInput = -1;
-    const {isMovie, id, name, description, rating, actors, release_year} = this.state;
+    const {isMovie, id, name, description, rating, release_year} = this.state;
 	var isUserNotLoggedIn = true;
 	if (window.localStorage.getItem("Razzlers_Username") != null) {
 		isUserNotLoggedIn = false;
@@ -529,7 +529,7 @@ function checkParams()
     resolve({isMovie, id});
   });
 }
-function getVideoInfo(isMovie, id)
+/*function getVideoInfo(isMovie, id)
 {
   return new Promise(function(resolve, reject)
   {
@@ -549,7 +549,7 @@ function getVideoInfo(isMovie, id)
       throw new Error(err);
     });
   });
-}
+}*/
 
 function getShowInfo(isMovie, id)
 {

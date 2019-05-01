@@ -65,7 +65,7 @@ class EpisodeInformation extends React.Component {
 
   render() {
 	var ratingInput = -1;
-    const {isMovie, id, name, description, rating, actors, release_year} = this.state;
+    const {isMovie, id, name, description, rating} = this.state;
 
     var loc = "";
 

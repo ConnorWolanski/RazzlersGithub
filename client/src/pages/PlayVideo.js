@@ -1,11 +1,8 @@
 import React from "react";
 import '../style.css';
 
-const utilFunc = require('../Helpers/UtilityFunctions');
-
 class PlayVideo extends React.Component {
-  constructor(props)
-  {
+  constructor(props) {
     super(props)
     this.state = {
       isMovie: false,
@@ -31,8 +28,7 @@ class PlayVideo extends React.Component {
       var set = {};
       getVideoInfo(isMovie, id).then(result => {
         set = result;
-        if(set.hasOwnProperty("result"))
-        {
+        if (set.hasOwnProperty("result")) {
           // result from server didnt pull the correct file and it doesnt exist!
           console.log("file doesnt exist!");
         } else {
@@ -52,32 +48,45 @@ class PlayVideo extends React.Component {
     });
   }
   render() {
-    const {isMovie, id, name, description, rating, actors, release_year} = this.state;
+    const {isMovie, id, name} = this.state;
     var loc = "";
     var isSubscribed = false;
-    if(id !== 0)
-    {
-      if(isMovie === "true")
-      {
-		  loc = "//assets.razzlers.me/assets/videos/movies/" + id + ".mp4";
+
+    if (id !== 0) {
+      if (isMovie === "true") {
+        var movieList = JSON.parse(localStorage.getItem("Razzlers_Subscribed_Movies"));
+        if (movieList !== null) {
+          if (typeof movieList !== typeof 0) {
+            isSubscribed = movieList.includes(parseInt(id, 10));
+            loc = "//assets.razzlers.me/assets/videos/movies/" + id + ".mp4";
+          }
+        }
       } else {
-		  loc = "//assets.razzlers.me/assets/videos/episodes/" + id + ".mp4";
+        var showList = JSON.parse(localStorage.getItem("Razzlers_Subscribed_Shows"));
+        if (showList !== null) {
+          isSubscribed = showList.includes(parseInt(id, 10));
+          loc = "//assets.razzlers.me/assets/videos/episodes/" + id + ".mp4";
+        }
       }
     }
-      // is subscribed
-      return (
-        <div>
-          <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
-          <video className="center" width="720" height="480"   controls>
-            <source src={loc} type="video/mp4"/>
-          </video>
-        </div>
-      );
+    console.log(isSubscribed);
+    return (
+      <div hidden={!isSubscribed}>
+        <h2 className="centerText">
+          <font color="white" size="50">
+            {name}
+          </font>
+        </h2>
+        <video className="center" width="720" height="480" controls="controls">
+          <source src={loc} type="video/mp4"/>
+        </video>
+      </div>
+    );
   }
 }
-  //<p className="quarterLeft"><button className= "button">Previous Episode</button></p>
+//<p className="quarterLeft"><button className= "button">Previous Episode</button></p>
 
-function subscribe(isMovie, id)
+/*function subscribe(isMovie, id)
 {
   return new Promise(function(resolve, reject)
   {
@@ -103,13 +112,11 @@ function subscribe(isMovie, id)
       throw new Error(err);
     });
   });
-}
+}*/
 
 // checks the params in the URL
-function checkParams()
-{
-  return new Promise(function(resolve, reject)
-  {
+function checkParams() {
+  return new Promise(function(resolve, reject) {
     var url = window.location.href;
     url = new URL(url);
     var isMovie = url.searchParams.get("isMovie");
@@ -117,10 +124,8 @@ function checkParams()
     resolve({isMovie, id});
   });
 }
-function getVideoInfo(isMovie, id)
-{
-  return new Promise(function(resolve, reject)
-  {
+function getVideoInfo(isMovie, id) {
+  return new Promise(function(resolve, reject) {
     var data = '{"isMovie": "' + isMovie + '", "id": "' + id + '"}';
     data = JSON.parse(data);
     var transport = {

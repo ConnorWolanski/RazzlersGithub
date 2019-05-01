@@ -244,7 +244,7 @@ function forceUpdateMessages()
     utilFunc.getUsersMessages(sender, recip).then(messages => {
       thisref.setState({defaultMessage: messages.messages});
     });
-    if(thisref.state.unreadMessages.length!= 0 && sender != null && recip != null && document.getElementById("messages").hidden == false){
+    if(thisref.state.unreadMessages.length !== 0 && sender !== null && recip !== null && document.getElementById("messages").hidden === false){
       utilFunc.readUserMessages(recip, sender);
     }
   }

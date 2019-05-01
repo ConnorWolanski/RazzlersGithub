@@ -198,7 +198,7 @@ exports.getUnreadUsersMessages = function(user)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getUnreadUsersMessages";
+    const url = "//razzlers.me:3001/api/getData/getUnreadUsersMessages";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -238,7 +238,7 @@ exports.readUserMessages = function(sender, recipient){
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/readUserMessages";
+    const url = "//razzlers.me:3001/api/readUserMessages";
     fetch(url, transport).catch(err => {
       throw new Error(err);
     });
@@ -646,4 +646,3 @@ function getEpisodeCommentsDate(id) {
     });
   });
 }
-
