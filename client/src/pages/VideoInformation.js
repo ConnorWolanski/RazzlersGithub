@@ -3,7 +3,6 @@ import '../style.css';
 import star from '../images/star.png';
 import empty from '../images/starEmpty.png';
 
-
 const utilFunc = require('../Helpers/UtilityFunctions');
 
 class VideoInformation extends React.Component {
@@ -19,8 +18,11 @@ class VideoInformation extends React.Component {
       actors: "",
       release_year: 0,
 	  bodies: null,
+	  usernames: null,
+	  times: null,
+	  dates:null
     };
-	
+
     checkParams().then(json => {
       this.setState({
         isMovie: json.isMovie,
@@ -55,21 +57,37 @@ class VideoInformation extends React.Component {
         }
 		utilFunc.getShowComments(id).then(bodiesList => {
 			this.setState({bodies: bodiesList.bodies});
-			buildComments(bodiesList.bodies);
-			//console.log(this.state.bodies);
+
+			utilFunc.getShowCommentsUsername(id).then(usernamesList => {
+			this.setState({usernames: usernamesList.usernames});
+
+				utilFunc.getShowCommentsTime(id).then(timesList => {
+				this.setState({times: timesList.times});
+
+					utilFunc.getShowCommentsDate(id).then(datesList => {
+					this.setState({dates: datesList.dates});
+
+					buildComments(bodiesList.bodies, usernamesList.usernames, timesList.times, datesList.dates);
+					});
+				});
+			});
 		});
 	 });
     });
 }
-  
-  
+
+
   render() {
 	var ratingInput = -1;
-    const {isMovie, id, name, description, rating, actors, release_year, commentID, userID, IDs, bodies} = this.state;
-	//,bodies, IDs
-	
+    const {isMovie, id, name, description, rating, actors, release_year} = this.state;
+	var isUserNotLoggedIn = true;
+	if (window.localStorage.getItem("Razzlers_Username") != null) {
+		isUserNotLoggedIn = false;
+	}
+
     var loc = "";
     var isSubscribed = false;
+
     if(id !== 0)
     {
       if(isMovie === "true")
@@ -92,6 +110,7 @@ class VideoInformation extends React.Component {
         }
       }
     }
+
     if(!isSubscribed)
     {
       // is NOT subscribed
@@ -106,50 +125,77 @@ class VideoInformation extends React.Component {
       }
       return (
         <div>
-          <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
-		  <div className="clearfix">
-		  <img className="video_info_thumbnail" src={loc} alt="background"/>
-          <p className="video_info"><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}</font>
-		  <font  color ="white" size = "20px">{"Release Year : " + release_year}</font>
-		  <font  color ="white" size = "20px">{description}</font>
-		  </p>
-		  </div>
-		  
-		  <p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
-          <p className="centerText">
+		  <div className="container">
+			<img className="container__image" src={loc} alt="background"/>
+
+			<div className="container__text">
+				<h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
+				<p><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font></p>
+				<p><font  color ="white" size = "20px">{"Release Year : " + release_year}</font></p>
+				<p><font  color ="white" size = "20px">{description}</font></p>
+			</div>
+
+			<p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
+			<p className="centerText">
             <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
-          </p>
-          <p className="centerText">
-            <font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
-          </p>
-		  
-          <button hidden = {isSubscribed} className="subButton" onClick = {() =>
-            {
-              subscribe(isMovie, id).then(result =>
-              {
-                console.log("result");
-                // result is either true or false based on if subbing went correctly or note
-                if(result.result === "true")
-                {
-                  // refresh page so they can watch the subbed show/movie
-                  window.location.reload();
-                } else if(result.result === "full") {
-                  // they are at capacity for subscriptions!
-                  document.getElementById("capacityMessage").hidden=false;
-                } else {
-                  // subbing failed
-                  // display error message!
-                  document.getElementById("invalidMessage1").hidden=false;
-                }
-              })
+			</p>
+			<p className="centerText">
+				<font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
+			</p>
+
+			<button hidden = {isSubscribed} className="subButton" onClick = {() =>
+			{
+				subscribe(isMovie, id).then(result =>
+				{
+					console.log("result");
+					// result is either true or false based on if subbing went correctly or note
+					if(result.result === "true")
+					{
+						// refresh page so they can watch the subbed show/movie
+						window.location.reload();
+						} else if(result.result === "full") {
+							// they are at capacity for subscriptions!
+							document.getElementById("capacityMessage").hidden=false;
+						} else {
+							// subbing failed
+							// display error message!
+							document.getElementById("invalidMessage1").hidden=false;
+						}
+				})
             }
-          }>Subscribe</button>
-		
-		
+			}>Subscribe</button>
+		  </div>
+
+
+
 		<h2 className="centerText"><font  color = "white" size = "50"> {"Comments"} </font></h2>
-		
+
 		<div onload="buildComments();" data-role="fieldcontain" class="ui-hide-label" id="bodiesDiv"></div>
-		  
+
+		<div class="new_comment">
+			<ul class="user_comment">
+				<font  color = "white" size = "50" hidden = {isUserNotLoggedIn}> {"Leave a comment"} </font>
+				<textarea id="commentInput" className="largeInput" rows="14" cols="10" wrap="soft" hidden = {isUserNotLoggedIn}> </textarea>
+				<p hidden id="invalidCommentMessage">
+				<font className="error">Error submitting comment, please try again!</font></p>
+
+				<button className="commentButton" id="submitComment" hidden = {isUserNotLoggedIn} onClick={() => {
+					if(document.getElementById("commentInput").value.trim() !== "") {
+						addComment(document.getElementById("commentInput").value.replace(/\n/g, '\\n'), id).then(response => {
+							if(response.result === "true")
+							{
+								// Update was successful
+								window.location.href="videoInformation?isMovie=" + isMovie + "&id=" + id;
+							} else {
+								// display error, reprompt for information
+								document.getElementById("invalidCommentMessage").hidden=false;
+							}
+						});
+					}
+				}}>Submit comment</button>
+			</ul>
+		</div>
+
 		</div>
       );
     } else {
@@ -162,26 +208,49 @@ class VideoInformation extends React.Component {
         }
       return (
         <div>
-          <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
-		  <div className="clearfix">
-		  <img className="video_info_thumbnail" src={loc} alt="background"/>
-		  <button className="subButton" onClick={() => window.location.href="episodes?isMovie=" + isMovie + "&id=" + id}>View Episodes</button>
-          <p className="video_info"><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font>
-		  <font  color ="white" size = "20px">{"Release Year : " + release_year}</font>
-		  <font  color ="white" size = "20px">{description}</font>
-		  </p>
-		  </div>
-		  
-		  
-		  <p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
-          <p className="centerText">
+		  <div className="container">
+			<img className="container__image" src={loc} alt="background"/>
+
+			<div className="container__text">
+				<h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
+				<button className="subButton" onClick={() => window.location.href="episodes?isMovie=" + isMovie + "&id=" + id}>View Episodes</button>
+				<p><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font></p>
+				<p><font  color ="white" size = "20px">{"Release Year : " + release_year}</font></p>
+				<p><font  color ="white" size = "20px">{description}</font></p>
+			</div>
+
+			<p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
+			<p className="centerText">
             <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
-          </p>
-          <p className="centerText">
-            <font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
-          </p>
-          
-		 
+			</p>
+			<p className="centerText">
+				<font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
+			</p>
+
+			<button hidden = {isSubscribed} className="subButton" onClick = {() =>
+			{
+				subscribe(isMovie, id).then(result =>
+				{
+					console.log("result");
+					// result is either true or false based on if subbing went correctly or note
+					if(result.result === "true")
+					{
+						// refresh page so they can watch the subbed show/movie
+						window.location.reload();
+						} else if(result.result === "full") {
+							// they are at capacity for subscriptions!
+							document.getElementById("capacityMessage").hidden=false;
+						} else {
+							// subbing failed
+							// display error message!
+							document.getElementById("invalidMessage1").hidden=false;
+						}
+				})
+            }
+			}>Subscribe</button>
+		  </div>
+
+
 		 <h2 className="centerText"><font  color = "white" size = "50"> {"Leave Rating"} </font></h2>
 		 <div id="images">
 			 <button hidden className="ratingButton" id="starOneFilled" onClick={() => {
@@ -192,14 +261,14 @@ class VideoInformation extends React.Component {
 				  document.getElementById("starFourFilled").hidden = true;
 				  document.getElementById("starFourEmpty").hidden = false;
 				  document.getElementById("starThreeFilled").hidden = true;
-				  document.getElementById("starThreeEmpty").hidden = false;				 
+				  document.getElementById("starThreeEmpty").hidden = false;
 				  document.getElementById("starTwoFilled").hidden = true;
 				  document.getElementById("starTwoEmpty").hidden = false;
 				  document.getElementById("starOneFilled").hidden = false;
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button hidden className="ratingButton" id="starTwoFilled" onClick={() => {
 				  ratingInput = 2;
 				  //console.log(ratingInput);
@@ -215,7 +284,7 @@ class VideoInformation extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button hidden className="ratingButton" id="starThreeFilled" onClick={() => {
 				  ratingInput = 3;
 				  //console.log(ratingInput);
@@ -231,7 +300,7 @@ class VideoInformation extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button hidden className="ratingButton" id="starFourFilled" onClick={() => {
 				  ratingInput = 4;
 				  //console.log(ratingInput);
@@ -247,7 +316,7 @@ class VideoInformation extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button hidden className="ratingButton" id="starFiveFilled" onClick={() => {
 				  ratingInput = 4;
 				  //console.log(ratingInput);
@@ -263,7 +332,7 @@ class VideoInformation extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={star} alt="star"/>
 			 </button>
-			 
+
 			 <button className="ratingButton" id="starOneEmpty" onClick={() => {
 				  ratingInput = 1;
 				  document.getElementById("starOneFilled").hidden = false;
@@ -288,20 +357,20 @@ class VideoInformation extends React.Component {
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={empty} alt="empty"/>
 			 </button>
-			 
+
 			 <button className="ratingButton" id="starFourEmpty" onClick={() => {
 				  ratingInput = 4;
 				  document.getElementById("starFourFilled").hidden = false;
 				  document.getElementById("starFourEmpty").hidden = true;
 				  document.getElementById("starThreeFilled").hidden = false;
-				  document.getElementById("starThreeEmpty").hidden = true;				 
+				  document.getElementById("starThreeEmpty").hidden = true;
 				  document.getElementById("starTwoFilled").hidden = false;
 				  document.getElementById("starTwoEmpty").hidden = true;
 				  document.getElementById("starOneFilled").hidden = false;
 				  document.getElementById("starOneEmpty").hidden = true}}>
 			 <img src={empty} alt="empty"/>
 			 </button>
-			 
+
 			 <button className="ratingButton" id="starFiveEmpty" onClick={() => {
 				  ratingInput = 5;
 				  document.getElementById("starFiveFilled").hidden = false;
@@ -309,7 +378,7 @@ class VideoInformation extends React.Component {
 				  document.getElementById("starFourFilled").hidden = false;
 				  document.getElementById("starFourEmpty").hidden = true;
 				  document.getElementById("starThreeFilled").hidden = false;
-				  document.getElementById("starThreeEmpty").hidden = true;				 
+				  document.getElementById("starThreeEmpty").hidden = true;
 				  document.getElementById("starTwoFilled").hidden = false;
 				  document.getElementById("starTwoEmpty").hidden = true;
 				  document.getElementById("starOneFilled").hidden = false;
@@ -317,13 +386,13 @@ class VideoInformation extends React.Component {
 			 <img src={empty} alt="empty"/>
 			 </button>
 		 </div>
-		 
+
 		 <p hidden id="invalidMessage">
          <center><font className="error">An error has occurred, please try again!</font></center></p>
 		 <p hidden id="blankSpacesMessage">
          <center><font className="error">Please select a star and try again!</font></center></p>
-		 
-          <button className="subButton" id="submitButton" onClick={() => 
+
+          <button className="subButton" id="submitButton" onClick={() =>
 		  {
 		  var hadError = false;
 		  if(ratingInput === -1) {
@@ -337,26 +406,18 @@ class VideoInformation extends React.Component {
                 return;
           }
 
+
 			updateRatingShow(ratingInput, id).then(response => {
 			if(response.result === "true") {
 				// Update was successful
-				window.location.href="VideoInformation?isMovie=" + isMovie + "&id=" + id;
+				window.location.href="videoInformation?isMovie=" + isMovie + "&id=" + id;
             } else {
               // display error, reprompt for information
-                    document.getElementById("invalidMessage").hidden=false;
+              document.getElementById("invalidMessage").hidden=false;
               }
           });
-		  
-		  updateUsersVotedShow(id).then(response => {
-			if(response.result === "true") {
-				// Update was successful
-			} else {
-			  // display error, reprompt for information
-	     		document.getElementById("invalidMessage").hidden=false;
-			}
-		    });			
 	}}>Submit Rating</button>
-	
+
 	<button className="subButton" id="cancelRatingButton" onClick={() => {
 		ratingInput = -1;
 		document.getElementById("starFiveFilled").hidden = true;
@@ -364,84 +425,45 @@ class VideoInformation extends React.Component {
 		document.getElementById("starFourFilled").hidden = true;
 		document.getElementById("starFourEmpty").hidden = false;
 		document.getElementById("starThreeFilled").hidden = true;
-		document.getElementById("starThreeEmpty").hidden = false;				 
+		document.getElementById("starThreeEmpty").hidden = false;
 		document.getElementById("starTwoFilled").hidden = true;
 		document.getElementById("starTwoEmpty").hidden = false;
 		document.getElementById("starOneFilled").hidden = true;
 		document.getElementById("starOneEmpty").hidden = false}
 	}>Cancel Selection</button>
 
-		<h2 className="centerText"><font  color = "white" size = "50"> {"Comments"} </font></h2>
+
+		<h2 className="centerText"><font  color = "white" size = "30"> {"Comments"} </font></h2>
 
 		<div onload="buildComments();" data-role="fieldcontain" class="ui-hide-label" id="bodiesDiv"></div>
 
+		<div class="new_comment">
+			<ul class="user_comment">
+				<font  color = "white" size = "50" hidden = {isUserNotLoggedIn}> {"Leave a comment"} </font>
+				<textarea id="commentInput" className="largeInput" rows="14" cols="10" wrap="soft" hidden = {isUserNotLoggedIn}> </textarea>
+				<p hidden id="invalidCommentMessage">
+				<font className="error">Error submitting comment, please try again!</font></p>
 
-		<textarea id="commentInput" className="largeInput" rows="14" cols="10" wrap="soft"> </textarea>
-		
-		<p hidden id="invalidCommentMessage">
-          <font className="error">Error submitting comment, please try again!</font></p>
-			
-		<button className="commentButton" id="submitComment" onClick={() => {
-			if(document.getElementById("commentInput").value.trim() !== "") {
-				addComment(document.getElementById("commentInput").value, id).then(response => {
-                   if(response.result === "true")
-                   {
-                     // Update was successful
-                     window.location.href="videoInformation?isMovie=" + isMovie + "&id=" + id;
-                   } else {
-                     // display error, reprompt for information
-                     document.getElementById("invalidCommentMessage").hidden=false;
-                   }
-                });
-			}
-		}}>Submit comment</button>	
+				<button className="commentButton" id="submitComment" hidden = {isUserNotLoggedIn} onClick={() => {
+					if(document.getElementById("commentInput").value.trim() !== "") {
+						addComment(document.getElementById("commentInput").value.replace(/\n/g, '\\n'), id).then(response => {
+							if(response.result === "true")
+							{
+								// Update was successful
+								window.location.href="videoInformation?isMovie=" + isMovie + "&id=" + id;
+							} else {
+								// display error, reprompt for information
+								document.getElementById("invalidCommentMessage").hidden=false;
+							}
+						});
+					}
+				}}>Submit comment</button>
+			</ul>
+		</div>
 		</div>
       );
     }
   }
-}
-
-function getMovieCommentList(id) {
-  return new Promise(function(resolve, reject) {
-    var data = '{"movieId": "' + id + '"}';
-    data = JSON.parse(data);
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(data)
-    };
-    const url = "http://localStorage:3001/api/getData/getUserList";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      resolve(json);
-    }).catch(err => {
-      throw new Error(err);
-    });
-  });
-}
-
-function updateUsersVotedShow(videoId) 
-{	
-  return new Promise(function(resolve, reject)
-  {
-    var data = '{"id": "' + videoId + '"}';
-    data = JSON.parse(data);
-    var transport = {
-	  headers: {
-		'Content-Type': "application/json"
-	  },
-      method: "PUT",
-	  body: JSON.stringify(data)
-    };
-    const url = "//razzlers.me:3001/api/updateUsersVotedShow";
-    fetch(url, transport).then(response => response.json()).then(json => {
-      // needs to return true or false based on if registration is successful
-      // if true, return true and set username in localStorage
-      // if false, return what went wrong, if multiple things, put inside array[]
-      resolve(json);
-    });
-  });
 }
 
 function updateRatingShow(inRating, videoId)
@@ -457,7 +479,7 @@ function updateRatingShow(inRating, videoId)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/updateRating";
+    const url = "http://razzlers.me:3001/api/updateRating";
     fetch(url, transport).then(response => response.json()).then(json => {
       // needs to return true or false based on if registration is successful
       // if true, return true and set username in localStorage
@@ -575,17 +597,16 @@ function addComment(inBody, id)
   });
 }
 
-function buildComments(bodies) {
+function buildComments(bodies, usernames, times, dates) {
 	//console.log(bodies);
     var bodiesDiv = document.getElementById("bodiesDiv");
     var html = "<form>";
     for (var i = 0; i < bodies.length; i++) {
-		console.log(bodies[0]);
-        html += "<p><font color = 'white'>*" + bodies[i] + "</font></p>";
+		console.log(bodies[i]);
+		html += "<div class='new_comment'><ul class='user_comment'><div class='user_avatar'>" + usernames[i] + " <p><i class='fa fa-calendar'></i> " + dates[i].replace('T07:00:00.000Z','') + " <i class='fa fa-clock-o'></i> " + times[i] + "</p></div><div class='comment_body'><p>" + bodies[i].replace(/\n/g, "<br />") + "</p></div></ul></div>";
     }
     html += "</form>";
     bodiesDiv.innerHTML = html;
 }
-
 
 export default VideoInformation

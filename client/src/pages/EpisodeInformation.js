@@ -2,7 +2,6 @@ import React from "react";
 import '../style.css';
 import star from '../images/star.png';
 import empty from '../images/starEmpty.png';
-//import CommentsList from '../HTMLComponents/CommentsList.js'
 
 const utilFunc = require('../Helpers/UtilityFunctions');
 
@@ -18,7 +17,10 @@ class EpisodeInformation extends React.Component {
       rating: 0,
       actors: "",
       release_year: 0,
-	  bodies: null
+	  bodies: null,
+	  usernames: null,
+	  times: null,
+	  dates:null
     };
 	
     checkParams().then(json => {
@@ -55,8 +57,20 @@ class EpisodeInformation extends React.Component {
         }
 		utilFunc.getEpisodeComments(id).then(bodiesList => {
 			this.setState({bodies: bodiesList.bodies});
-			buildComments(bodiesList.bodies);
-			//console.log(this.state.bodies);
+			
+			utilFunc.getEpisodeCommentsUsername(id).then(usernamesList => {
+			this.setState({usernames: usernamesList.usernames});
+
+				utilFunc.getEpisodeCommentsTime(id).then(timesList => {
+				this.setState({times: timesList.times});
+				
+					utilFunc.getEpisodeCommentsDate(id).then(datesList => {
+					this.setState({dates: datesList.dates});
+				
+					buildComments(bodiesList.bodies, usernamesList.usernames, timesList.times, datesList.dates);
+					});
+				});
+			});
 		});
 	 });
     });
@@ -66,6 +80,10 @@ class EpisodeInformation extends React.Component {
   render() {
 	var ratingInput = -1;
     const {isMovie, id, name, description, rating, actors, release_year} = this.state;
+	var isUserNotLoggedIn = true;
+	if (window.localStorage.getItem("Razzlers_Username") != null) {
+		isUserNotLoggedIn = false;
+	}
 	
     var loc = "";
 	
@@ -74,13 +92,15 @@ class EpisodeInformation extends React.Component {
        
       return (
         <div>
-          <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
-		  <div className="clearfix">
-		  <img className="video_info_thumbnail" src={loc} alt="background"/>
-		  <button className="subButton" onClick={() => window.location.href="playVideo?isMovie=" + isMovie + "&id=" + id}>Play Episode</button>
-          <p className="video_info"><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font>
-		  <font  color ="white" size = "20px">{description}</font>
-		  </p>
+		  <div className="container">  
+			<img className="container__image" src={loc} alt="background"/>
+			
+			<div className="container__text"> 
+				<h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
+				<button className="subButton" onClick={() => window.location.href="playVideo?isMovie=" + isMovie + "&id=" + id}>Play Episode</button>
+				<p><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font></p>
+				<p><font  color ="white" size = "20px">{description}</font></p>
+			</div>
 		  </div>
           
 		 
@@ -249,16 +269,6 @@ class EpisodeInformation extends React.Component {
               }
           });
 		  
-		  updateUsersVotedEpisode(id).then(response => {
-			if(response.result === "true") {
-				// Update was successful
-			} else {
-			  // display error, reprompt for information
-	     		document.getElementById("invalidMessage").hidden=false;
-			}
-		    });  
-			
-		  
 		  }}>Submit Rating</button>
 	
 	<button className="subButton" id="cancelRatingButton" onClick={() => {
@@ -275,59 +285,37 @@ class EpisodeInformation extends React.Component {
 		document.getElementById("starOneEmpty").hidden = false}
 	}>Cancel Selection</button>
 				  
-		<h2 className="centerText"><font  color = "white" size = "50"> {"Comments"} </font></h2>
+		<h2 className="centerText"><font  color = "white" size = "30"> {"Comments"} </font></h2>
 
 		<div onload="buildComments();" data-role="fieldcontain" class="ui-hide-label" id="bodiesDiv"></div>
 
-		<textarea id="commentInput" className="largeInput" rows="14" cols="10" wrap="soft"> </textarea>
-		
-		<p hidden id="invalidCommentMessage">
-          <font className="error">Error submitting comment, please try again!</font></p>
+		<div class="new_comment">
+			<ul class="user_comment">	
+				<font  color = "white" size = "50" hidden = {isUserNotLoggedIn}> {"Leave a comment"} </font>
+				<textarea id="commentInput" className="largeInput" rows="14" cols="10" wrap="soft" hidden = {isUserNotLoggedIn}> </textarea>
+				<p hidden id="invalidCommentMessage">
+				<font className="error">Error submitting comment, please try again!</font></p>
 			
-		<button className="commentButton" id="submitComment" onClick={() => {
-			if(document.getElementById("commentInput").value.trim() !== "") {
-				addComment(document.getElementById("commentInput").value, id).then(response => {
-                   if(response.result === "true")
-                   {
-                     // Update was successful
-                     window.location.href="episodeInformation?isMovie=" + isMovie + "&id=" + id;
-                   } else {
-                     // display error, reprompt for information
-                     document.getElementById("invalidCommentMessage").hidden=false;
-                   }
-                });
-			}
-		}}>Submit comment</button>
-			
+				<button className="commentButton" id="submitComment" hidden = {isUserNotLoggedIn} onClick={() => {
+					if(document.getElementById("commentInput").value.trim() !== "") {
+						addComment(document.getElementById("commentInput").value.replace(/\n/g, '\\n'), id).then(response => {
+							if(response.result === "true")
+							{
+								// Update was successful
+								window.location.href="episodeInformation?isMovie=" + isMovie + "&id=" + id;
+							} else {
+								// display error, reprompt for information
+								document.getElementById("invalidCommentMessage").hidden=false;
+							}
+						});
+					}
+				}}>Submit comment</button>	
+			</ul>
+		</div>
 		</div>
       );
     }
   }
-
-  //<p className="quarterLeft"><button className= "button">Previous Episode</button></p>
-
-function updateUsersVotedEpisode(videoId) 
-{	
-  return new Promise(function(resolve, reject)
-  {
-    var data = '{"id": "' + videoId + '"}';
-    data = JSON.parse(data);
-    var transport = {
-	  headers: {
-		'Content-Type': "application/json"
-	  },
-      method: "PUT",
-	  body: JSON.stringify(data)
-    };
-    const url = "http://razzlers.me:3001/api/updateUsersVotedEpisode";
-    fetch(url, transport).then(response => response.json()).then(json => {
-      // needs to return true or false based on if registration is successful
-      // if true, return true and set username in localStorage
-      // if false, return what went wrong, if multiple things, put inside array[]
-      resolve(json);
-    });
-  });
-}
 
 function updateRatingEpisode(inRating, videoId)
 {
@@ -411,13 +399,13 @@ function addComment(inBody, id)
   });
 }
 
-function buildComments(bodies) {
+function buildComments(bodies, usernames, times, dates) {
 	//console.log(bodies);
     var bodiesDiv = document.getElementById("bodiesDiv");
     var html = "<form>";
     for (var i = 0; i < bodies.length; i++) {
-		console.log(bodies[0]);
-        html += "<p><font color = 'white'>*" + bodies[i] + "</font></p>";
+		console.log(bodies[i]);
+		html += "<div class='new_comment'><ul class='user_comment'><div class='user_avatar'>" + usernames[i] + " <p><i class='fa fa-calendar'></i> " + dates[i].replace('T07:00:00.000Z','') + " <i class='fa fa-clock-o'></i> " + times[i] + "</p></div><div class='comment_body'><p>" + bodies[i].replace(/\n/g, "<br />") + "</p></div></ul></div>";
     }
     html += "</form>";
     bodiesDiv.innerHTML = html;
