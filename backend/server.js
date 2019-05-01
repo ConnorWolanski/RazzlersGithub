@@ -307,28 +307,40 @@ router.put("/register", function(req, response)
   getUserListLength().then(result => {
     // set vars to text fields
     // inside the project so it knows what index of USER_ID we are at
-    var currentUserID = result;
     var username = req.body.username;
+    var currentUserID = result;
     var password = req.body.password;
     var email = req.body.email;
     var first_name = req.body.first_name;
     var last_name = req.body.last_name;
     var activation_key = utilFunc.createActivationKey();
     var subscription_slots = "0";
-    // debug
-    //console.log("Concated: " + currentUserID + " " + username  + " " + first_name + " " + last_name + " " + password + " " + email + " " + activation_key + " ");
-    // then submit to object type
-    var sql = "INSERT INTO users (user_id, username, first_name, last_name, password, email, activation_key, subscription_slots) VALUES (\'" + currentUserID + "\', \'" + username  + "\', \'" + first_name + "\', \'" + last_name + "\', \'" + password + "\', \'" + email + "\', \'" + activation_key + "\', \'" + subscription_slots + "\')";
-    connection.query(sql, function(err, result)
-    {
-      if(err)
+    var userList = [];
+    getUserList().then(listOfUsers => {
+      listOfUsers.forEach(function(user)
       {
-        console.log(err);
-        response.send('{"result": "false"}');
-      } else {
-        console.log("Record inserted correctly!");
-        response.send('{"result": "true"}');
+        userList[userList.length] = user.username.toLowerCase();
+      });
+      if(userList.includes(username.toLowerCase()))
+      {
+        response.send('{"result": "duplicate"}');
+        return;
       }
+      // debug
+      //console.log("Concated: " + currentUserID + " " + username  + " " + first_name + " " + last_name + " " + password + " " + email + " " + activation_key + " ");
+      // then submit to object type
+      var sql = "INSERT INTO users (user_id, username, first_name, last_name, password, email, activation_key, subscription_slots) VALUES (\'" + currentUserID + "\', \'" + username  + "\', \'" + first_name + "\', \'" + last_name + "\', \'" + password + "\', \'" + email + "\', \'" + activation_key + "\', \'" + subscription_slots + "\')";
+      connection.query(sql, function(err, result)
+      {
+        if(err)
+        {
+          console.log(err);
+          response.send('{"result": "false"}');
+        } else {
+          console.log("Record inserted correctly!");
+          response.send('{"result": "true"}');
+        }
+      });
     });
   });
 });

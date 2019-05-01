@@ -24,23 +24,70 @@ class Login extends React.Component
           className="input"
           id="passwordInput"/>
         <button type="submit" id="loginButton" className = "button2" onClick={() => {
-          loginVerification(document.getElementById("usernameInput").value, document.getElementById("passwordInput").value).then(result => {
-            if(result === true)
+          window.event.preventDefault();
+          checkForInvalid(document.getElementById("usernameInput").value.trim()).then(usernameInvalidity =>
+          {
+            checkForInvalid(document.getElementById("passwordInput").value.trim()).then(passwordInvalidity =>
             {
-              window.location.href='/';
-            } else {
-              document.getElementById("invalidMessage").hidden=false;
-            }
+              var validity = !usernameInvalidity && !passwordInvalidity;
+              if(validity)
+              {
+                loginVerification(document.getElementById("usernameInput").value, document.getElementById("passwordInput").value).then(result => {
+                  if(result === true)
+                  {
+                    window.location.href='/';
+                  } else {
+                    document.getElementById("invalidMessage").hidden=false;
+                  }
+                });
+              } else {
+                document.getElementById("invalidMessage").hidden=false;
+              }
+            });
           });
         }}>Login</button>
     </form>
     );
   }
 }
+
+function checkForInvalid(input)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var containsInvalid = false;
+    if(input.length > 32)
+    {
+      containsInvalid = true;
+    }
+    for(var i = 0; i < input.length; i++)
+    {
+      if(input.charCodeAt(i) < 48 && input.charCodeAt(i) !== 46)
+      {
+        containsInvalid = true;
+      }
+      else if(input.charCodeAt(i) > 57 && input.charCodeAt(i) < 64)
+      {
+        // : - @
+        containsInvalid = true;
+      }
+      else if(input.charCodeAt(i) > 90 && input.charCodeAt(i) < 97)
+      {
+        // [ - `
+        containsInvalid = true;
+      }
+      else if(input.charCodeAt(i) > 122)
+      {
+        containsInvalid = true;
+      }
+    }
+    resolve(containsInvalid);
+  });
+}
+
 // checks if username and password are valid with backend server
 function loginVerification(inUsername, inPassword)
 {
-  window.event.preventDefault();
   return new Promise(function(resolve, reject)
   {
     var data = '{"username": "' + inUsername + '", "password": "' + inPassword + '"}';
