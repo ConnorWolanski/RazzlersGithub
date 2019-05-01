@@ -10,7 +10,7 @@ const FriendsList = ({friends, IDs, parent}) =>
   }
   const finfriends = friendsList ? friendsList.map(current => (
     <div key={current.key}>
-      <FriendCard username={current.username} container={parent}/>
+      <FriendCard username={current.username}/>
     </div>
   )) : null;
   return (

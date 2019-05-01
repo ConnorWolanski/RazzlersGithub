@@ -42,6 +42,30 @@
   height: 399px;
   overflow:auto;
 }
+.messageCount{
+  color: white;
+  border-radius: 8px;
+  padding: 2px;
+  font-size: 11px;
+  min-width: 17px;
+  background-color: #DC143C;
+  position: absolute;
+  top: 1%;
+  right: 52px;
+  text-align: center;
+}
+.innermessageCount{
+  color: white;
+  border-radius: 8px;
+  padding: 2px;
+  font-size: 11px;
+  min-width: 17px;
+  background-color: #DC143C;
+  float: right;
+  text-align: center;
+  margin-right: 10px;
+  margin-top: 3px;
+}
 .leftmessageBubble{
   background-image: url('./images/back2.png');
   border-color: white;
@@ -110,6 +134,17 @@
   height: 40px;
   font-size: 16px;
   border: 1px;
+  border-style: ridge;
+  border-color: grey;
+}
+.messageCard{
+  background-image: url('./images/background.png');
+  padding: 0px;
+  padding-left: 3px;
+  height: 50px;
+  font-size: 16px;
+  border: 1px;
+  overflow: hidden;
   border-style: ridge;
   border-color: grey;
 }
@@ -433,7 +468,7 @@
 .centerTextWithBackLonger{
   background-image: url('./images/background.png');
   background-size:auto;
-  width: 260px;
+  width: fit-content;
   border:6px;
   border-style:groove;
   font-family:serif;
@@ -442,4 +477,84 @@
   text-align: center;
   margin-right:auto;
   margin-left: auto;
+}
+
+.commentButton{
+  display: block;
+  background-image: url('./images/back2.png');
+  border: 1;
+  border-color: white;
+  border-radius: 8px;
+  color: white;
+  margin-top: 5px;
+  padding: 5px 5px;
+}
+
+ .largeInput{
+  display: inline-block;
+  vertical-align: middle;
+  resize: none;
+  margin-left: 10px;
+  width: calc(100% - 75px);
+ }
+
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css);
+
+.user_avatar {
+  color:white;
+  display: inline-block;
+  width: calc(100% - 75px);
+  margin-left: 10px;
+  padding: 2px 10px 1px;
+  border-top: 2px solid #FFD700;
+  border-left: 2px solid #FFD700;
+  border-right: 2px solid #FFD700;
+  border-bottom: 1px dashed #FFD700;
+  margin-top:10px;
+  background-color: rgba(255, 255, 0, 0.1);
+
+}
+
+.comment_body {
+  display: inline-block;
+  vertical-align: middle;
+  width: calc(100% - 75px);
+  min-height: 65px;
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-image: url('./images/background.png');
+  color: black;
+  border-bottom: 2px solid #FFD700;
+  border-left: 2px solid #FFD700;
+  border-right: 2px solid #FFD700;
+  border-top: 1px dashed #FFD700;
+}
+
+.comment_details {
+  display: inline-block;
+  vertical-align: middle;
+  width: 70%;
+  text-align: left;
+}
+
+
+.container {
+  width: calc(100% - 75px);
+  margin-left: 10px;
+  padding: 5px 10px;
+  
+}
+.container__image {
+  background-image: url('./images/background.png');
+  background-size: cover;
+  max-width: 40%;
+  margin: 3%;
+  padding: 1%;
+  float: left;
+  border: 7px;
+  border-style: ridge;
+  border-color: grey;
+}
+.container__text {
+  display: inline;
 }

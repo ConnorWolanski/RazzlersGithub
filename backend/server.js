@@ -737,7 +737,7 @@ router.put("/getData/getVideoInfo", function(req, response)
       }
     });
   } else {
-    var sql = "SELECT * FROM tv_show WHERE tv_show_id = \'" + id + "\'";
+    var sql = "SELECT * FROM episode WHERE episode_id = \'" + id + "\'";
     connection.query(sql, function(err, result)
     {
       if(err)
@@ -750,8 +750,8 @@ router.put("/getData/getVideoInfo", function(req, response)
         var back = '{"result": "false"}'
         if(result[0] !== null)
         {
-          back = '{"title": "' + result[0].tv_show_title + '", "desc": "' + result[0].tv_show_description +
-                  '", "rate": "' + result[0].tv_show_rating + '", "act": "' + "" + '", "year": "' + result[0].tv_show_release_year + '"}';
+          back = '{"title": "' + result[0].episode_name + '", "desc": "' + result[0].episode_description +
+                  '", "rate": "' + result[0].episode_rating + '", "act": "' + "" + '", "year": "' + result[0].tv_show_release_year + '"}';
         }
         response.send(back);
       }
@@ -875,6 +875,37 @@ router.put("/getData/getUsersMessages", function(req, response)
           }
         }
       });
+    });
+  });
+});
+
+router.put("/getData/getUnreadUsersMessages", function(req, response)
+{
+  //console.log(req.body.user + "!!!!");
+  getUserID(req.body.user).then(user => {
+      var receivedMessages = [];
+      var sql = 'SELECT * FROM message WHERE (recipient_user_id="' + user + '" AND message_status="' + 0 + '")';
+      connection.query(sql, function(err, sqlresult)
+      {
+        if(err)
+        {
+          console.log(err);
+          response.send('{"messages": "false"}');
+        } else {
+          // sqlresult = friend_id array
+          if(sqlresult.length === 0)
+          {
+            // respond with no messages like connor talking to girls
+            response.send('{"messages": []}');
+          } else {
+            var messageList = [];
+            sqlresult.forEach(function(message)
+            {
+              messageList[messageList.length] = JSON.parse(JSON.stringify(message));
+            });
+            response.send('{"messages": ' + JSON.stringify(messageList) + '}');
+          }
+        }
     });
   });
 });
@@ -1011,6 +1042,27 @@ router.put("/getData/getSubscribedMovies", function(req, response)
   });
 });
 
+router.put("/readUserMessages", function(req, response)
+{
+	var senderUser = req.body.sender;
+  var recipientUser = req.body.recipient;
+  getUserID(senderUser).then(sender => {
+    getUserID(recipientUser).then(recipient=>{
+      var sql = "UPDATE message SET message_status='" + 1 + "' WHERE (recipient_user_id='" + recipient + "' AND user_id='" + sender + "')";
+    	connection.query(sql, function(err, result)
+      {
+        if(err)
+        {
+          console.log(err);
+          response.send('{"result": "false"}');
+        } else {
+          response.send('{"result": "true"}');
+        }
+      });
+    });
+  });
+});
+
 router.put("/updateUsersVotedMovie", function(req, response)
 {
 	var id = req.body.id;
@@ -1033,6 +1085,7 @@ router.put("/updateUsersVotedMovie", function(req, response)
     });
   });
 });
+
 
 router.put("/updateUsersVotedShow", function(req, response)
 {
@@ -1057,35 +1110,34 @@ router.put("/updateUsersVotedShow", function(req, response)
   });
 });
 
-
 //update rating value in movie
 router.put("/updateRatingMovie", function(req, response)
 {
 	var rating = req.body.rating;
 	var id = req.body.id;
 	getUsersVotedMovie(id).then(result =>
-  {
-	var users_voted = Number(result) + Number('1');
-	getRatingMovie(id).then(result =>
 	{
-		var oldRating = result;
-		var newRating = (Number(oldRating) +Number(rating)) / Number(users_voted);
-
-		var sql = "UPDATE movie SET movie_rating='" + newRating + "' WHERE movie_id='" + id + "'";
-
-		connection.query(sql, function(err, result)
+		var users_voted = Number(result) + Number('1');
+		getTotalRatingValuesMovie(id).then(result =>
 		{
-			if(err)
+			var total_rating_values = Number(result) + Number(rating);
+			var newRating = Number(total_rating_values) / Number(users_voted);
+			newRating = Number((newRating).toFixed(1));
+
+			var sql = "UPDATE movie SET movie_rating='" + newRating + "', total_rating_values='" + total_rating_values + "', users_voted='" + users_voted + "' WHERE movie_id='" + id + "'";
+			connection.query(sql, function(err, result)
 			{
-				console.log(err);
-				response.send('{"result": "false"}');
-			} else {
-				console.log("Rating movie updated!");
-				response.send('{"result": "true"}');
-			  }
+				if(err)
+				{
+					console.log(err);
+					response.send('{"result": "false"}');
+				} else {
+					console.log("Rating movie updated!");
+					response.send('{"result": "true"}');
+				}
+			});
 		});
 	});
-  });
 });
 
 //update rating value in tv show
@@ -1094,48 +1146,29 @@ router.put("/updateRating", function(req, response)
 	var rating = req.body.rating;
 	var id = req.body.id;
 	getUsersVotedShow(id).then(result =>
-  {
-	var users_voted = Number(result) + Number('1');
-	getRatingShow(id).then(result =>
 	{
-		var oldRating = result;
-		var newRating = (Number(oldRating) +Number(rating)) / Number(users_voted);
+		var users_voted = Number(result) + Number('1');
+		getTotalRatingValuesShow(id).then(result =>
+		{
+			var total_rating_values = Number(result) + Number(rating);
+			var newRating = Number(total_rating_values) / Number(users_voted);
+			newRating = Number((newRating).toFixed(1));
 
-		var sql = "UPDATE tv_show SET tv_show_rating='" + newRating + "' WHERE tv_show_id='" + id + "'";
-  	connection.query(sql, function(err, result)
-    {
-      if(err)
-      {
-        console.log(err);
-        response.send('{"result": "false"}');
-      } else {
-        console.log("Rating show updated!");
-        response.send('{"result": "true"}');
-      }
-    });
-  });
-});
-});
-
-router.get("/getData/getMovieCommentList", function(req, response)
-{
-  var id = req.body.movieId;
-
-  getMovieCommentList().then(result =>
-  {
-    console.log(result);
-	var commentIds = [];
-    var userIds = [];
-	var commentBody = [];
-    result.forEach(function(commentInfo)
-    {
-      commentIds[commentIds.length] = '"' + commentInfo.comment_id + '"';
-      userIds[userIds.length] = '"' + commentInfo.user_id + '"';
-	  commentBody[commentBody.length] = '"' + commentInfo.comment_body + '"';
-    });
-    console.log('{"commentIds": [' + commentIds + '], "userIds": [' + userIds + '], "Bodies": [' + commentBody + ']}');
-    response.send('{"commentIds": [' + commentIds + '], "userIds": [' + userIds + '], "Bodies": [' + commentBody + ']}');
-  });
+			var sql = "UPDATE tv_show SET tv_show_rating='" + newRating + "', total_rating_values='" + total_rating_values + "', users_voted='" + users_voted + "' WHERE tv_show_id='" + id + "'";
+			//	"\', \'"
+			connection.query(sql, function(err, result)
+			{
+				if(err)
+				{
+					console.log(err);
+					response.send('{"result": "false"}');
+				} else {
+					console.log("Rating tv show updated!");
+					response.send('{"result": "true"}');
+				}
+			});
+		});
+	});
 });
 
 router.get("/getData/getTopMovieList", function(req, response)
@@ -1169,24 +1202,6 @@ router.get("/getData/getTopShowList", function(req, response)
     }
   });
 });
-
-function getMovieCommentList(id)
-{
-  return new Promise(function(resolve, reject)
-  {
-    var sql = "SELECT * FROM movie_comment WHERE movie_id='" + id + "'";
-    connection.query(sql, function(err, result, fields)
-    {
-      if(err)
-      {
-        throw err;
-        return;
-      } else {
-        resolve(JSON.parse(JSON.stringify(result)));
-      }
-    });
-  });
-}
 
 // goes to MySQL DB and fetches users_voted from movie
 function getUsersVotedMovie(id)
@@ -1265,6 +1280,726 @@ function getRatingShow(id)
     });
   });
 }
+
+// goes to MySQL DB and fetches users_voted from episode
+function getUsersVotedEpisode(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+	var sql = "SELECT users_voted FROM episode WHERE episode_id='" + id + "'";
+
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+		resolve(result[0].users_voted);
+		}
+    });
+  });
+}
+
+// goes to MySQL DB and fetches rating from episode
+function getRatingEpisode(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+	var sql = "SELECT episode_rating FROM episode WHERE episode_id='" + id + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+		resolve(result[0].episode_rating);
+      }
+    });
+  });
+}
+
+// goes to MySQL DB and fetches total rating values from movie
+function getTotalRatingValuesMovie(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+	var sql = "SELECT total_rating_values FROM movie WHERE movie_id='" + id + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+		resolve(result[0].total_rating_values);
+      }
+    });
+  });
+}
+// goes to MySQL DB and fetches total rating values from tv show
+function getTotalRatingValuesShow(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+	var sql = "SELECT total_rating_values FROM tv_show WHERE tv_show_id='" + id + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+		resolve(result[0].total_rating_values);
+      }
+    });
+  });
+}
+// goes to MySQL DB and fetches total rating values from episode
+function getTotalRatingValuesEpisode(id)
+{
+  return new Promise(function(resolve, reject)
+  {
+	var sql = "SELECT total_rating_values FROM episode WHERE episode_id='" + id + "'";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+		resolve(result[0].total_rating_values);
+      }
+    });
+  });
+}
+
+
+router.put("/getData/getEpisodeList", function(req, response)
+{
+  var showId = req.body.showID;
+  var sql = "SELECT * FROM episode WHERE tv_show_id='" + showId + "'";
+  connection.query(sql, function(err, result)
+  {
+    if(err)
+    {
+      console.log(err);
+      response.send('{"result": "false"}');
+    } else {
+      // send JSON array of episodes
+	  console.log("success");
+      response.send(result);
+    }
+  });
+});
+
+router.put("/getData/getShowName", function(req, response)
+{
+  var id = req.body.id;
+  // pull from SHOWS
+  var sql = "SELECT tv_show_title FROM tv_show WHERE tv_show_id='" + id + "'";
+  connection.query(sql, function(err, result)
+  {
+	if(err)
+    {
+		console.log(err);
+        response.send('{"result": "false"}');
+    } else {
+        console.log("Fetched id: " + id);
+        // build the response from result
+        var back = '{"result": "false"}';
+        if(result[0] !== null)
+        {
+		  console.log("Title: " + result[0].tv_show_title);
+          back = '{"title": "' + result[0].tv_show_title + '"}';
+        }
+        response.send(back);
+     }
+  });
+});
+
+router.put("/getData/getShowInfo", function(req, response)
+{
+  var isMovie = req.body.isMovie;
+  var id = req.body.id;
+  // pull from either MOVIES or SHOWS
+  var sql = "SELECT * FROM tv_show WHERE tv_show_id = \'" + id + "\'";
+  connection.query(sql, function(err, result)
+  {
+	if(err)
+    {
+		console.log(err);
+        response.send('{"result": "false"}');
+    } else {
+        //console.log("Fetched id: " + id + " from movies: " + isMovie);
+        // build the response from result
+        var back = '{"result": "false"}'
+        if(result[0] !== null)
+        {
+          back = '{"title": "' + result[0].tv_show_title + '", "desc": "' + result[0].tv_show_description +
+                  '", "rate": "' + result[0].tv_show_rating + '", "act": "' + "" + '", "year": "' + result[0].tv_show_release_year + '"}';
+        }
+        response.send(back);
+     }
+  });
+});
+
+//update rating value in episode
+router.put("/updateRatingEpisode", function(req, response)
+{
+	var rating = req.body.rating;
+	var id = req.body.id;
+	getUsersVotedEpisode(id).then(result =>
+	{
+		var users_voted = Number(result) + Number('1');
+		getTotalRatingValuesEpisode(id).then(result =>
+		{
+			var total_rating_values = Number(result) + Number(rating);
+			var newRating = Number(total_rating_values) / Number(users_voted);
+			newRating = Number((newRating).toFixed(1));
+
+			var sql = "UPDATE episode SET episode_rating='" + newRating + "', total_rating_values='" + total_rating_values + "', users_voted='" + users_voted + "' WHERE episode_id='" + id + "'";
+			//	"\', \'"
+			connection.query(sql, function(err, result)
+			{
+				if(err)
+				{
+					console.log(err);
+					response.send('{"result": "false"}');
+				} else {
+					console.log("Rating episode updated!");
+					response.send('{"result": "true"}');
+				}
+			});
+		});
+	});
+});
+
+router.put("/updateUsersVotedEpisode", function(req, response)
+{
+	var id = req.body.id;
+	getUsersVotedEpisode(id).then(result =>
+    {
+	var users_voted = Number(result) + Number('1');
+
+	var sql = "UPDATE episode SET users_voted='" + users_voted + "' WHERE episode_id='" + id + "'";
+
+  	connection.query(sql, function(err, result)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        console.log("users voted episode updated!");
+        response.send('{"result": "true"}');
+      }
+    });
+  });
+});
+
+router.put("/addCommentMovie", function(req, response)
+{
+	getUserID(req.body.username).then(result =>
+  {
+  	var user_id = result;
+  	var commentID = Math.floor(Math.random()*9000000) + 1000000;
+  	var body = req.body.body
+  	var movieID = req.body.id
+
+	var d = new Date();
+	var time = "";
+	var date = "";
+
+	var month = Number(d.getMonth()) + Number('1');
+
+	if(month< 10) {
+		month = "0" + month;
+	}
+	var day = d.getDate();
+	if(day < 10) {
+		day = "0" + day;
+	}
+	var hour = d.getHours();
+	if(hour < 10) {
+		hour = "0" + hour;
+	}
+	var minutes = d.getMinutes();
+	if(minutes < 10) {
+		minutes = "0" + minutes;
+	}
+	var seconds = d.getSeconds();
+	if(seconds < 10) {
+		seconds = "0" + seconds;
+	}
+	time = hour + ":" + minutes + ":" + seconds;
+	date = d.getFullYear() + "-" + month + "-" + day;
+
+  	var sql = "INSERT INTO movie_comment (comment_id, movie_id, user_id, comment_body, time, date) VALUES (\'" + commentID + "\', \'" + movieID  + "\', \'" + user_id + "\', \'" + body + "\', \'" + time + "\', \'" + date + "\')";
+
+  	connection.query(sql, function(err, result)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        console.log("Comment added!");
+        response.send('{"result": "true"}');
+      }
+    });
+  });
+});
+
+router.put("/addCommentShow", function(req, response)
+{
+	getUserID(req.body.username).then(result =>
+  {
+  	var user_id = result;
+  	var commentID = Math.floor(Math.random()*9000000) + 1000000;
+  	var body = req.body.body
+  	var showID = req.body.id
+
+	var d = new Date();
+	var time = "";
+	var date = "";
+
+	var month = Number(d.getMonth()) + Number('1');
+
+	if(month< 10) {
+		month = "0" + month;
+	}
+	var day = d.getDate();
+	if(day < 10) {
+		day = "0" + day;
+	}
+	var hour = d.getHours();
+	if(hour < 10) {
+		hour = "0" + hour;
+	}
+	var minutes = d.getMinutes();
+	if(minutes < 10) {
+		minutes = "0" + minutes;
+	}
+	var seconds = d.getSeconds();
+	if(seconds < 10) {
+		seconds = "0" + seconds;
+	}
+	time = hour + ":" + minutes + ":" + seconds;
+	date = d.getFullYear() + "-" + month + "-" + day;
+
+  	var sql = "INSERT INTO tv_show_comment (comment_id, tv_show_id, user_id, comment_body, time, date) VALUES (\'" + commentID + "\', \'" + showID  + "\', \'" + user_id + "\', \'" + body + "\', \'" + time + "\', \'" + date + "\')";
+
+  	connection.query(sql, function(err, result)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        console.log("Comment added!");
+        response.send('{"result": "true"}');
+      }
+    });
+  });
+});
+
+router.put("/addCommentEpisode", function(req, response)
+{
+	getUserID(req.body.username).then(result =>
+  {
+  	var user_id = result;
+  	var commentID = Math.floor(Math.random()*9000000) + 1000000;
+  	var body = req.body.body
+  	var episodeID = req.body.id
+
+	var d = new Date();
+	var time = "";
+	var date = "";
+
+	var month = Number(d.getMonth()) + Number('1');
+
+	if(month< 10) {
+		month = "0" + month;
+	}
+	var day = d.getDate();
+	if(day < 10) {
+		day = "0" + day;
+	}
+	var hour = d.getHours();
+	if(hour < 10) {
+		hour = "0" + hour;
+	}
+	var minutes = d.getMinutes();
+	if(minutes < 10) {
+		minutes = "0" + minutes;
+	}
+	var seconds = d.getSeconds();
+	if(seconds < 10) {
+		seconds = "0" + seconds;
+	}
+	time = hour + ":" + minutes + ":" + seconds;
+	date = d.getFullYear() + "-" + month + "-" + day;
+
+  	var sql = "INSERT INTO episode_comment (comment_id, episode_id, user_id, comment_body, time, date) VALUES (\'" + commentID + "\', \'" + episodeID  + "\', \'" + user_id + "\', \'" + body + "\', \'" + time + "\', \'" + date + "\')";
+
+  	connection.query(sql, function(err, result)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        console.log("Comment added!");
+        response.send('{"result": "true"}');
+      }
+    });
+  });
+});
+
+//Comment bodies
+router.put("/getData/getMovieCommentList", function(req, response)
+{
+  var id = req.body.id;
+  var sql = "SELECT * FROM movie_comment WHERE movie_id='" + id + "' ORDER BY date ASC, time ASC";
+  connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+		console.log(sqlresult);
+        if(sqlresult.length === 0)
+        {
+          // respond with no comments
+          response.send('{"bodies": []}');
+        } else {
+          var bodies = [];
+          sqlresult.forEach(function(item)
+          {
+			//console.log(item.comment_body);
+            bodies[bodies.length] = JSON.parse(JSON.stringify(item.comment_body));
+			//console.log(bodies[bodies.length]);
+          });
+          response.send('{"bodies": ' + JSON.stringify(bodies) + '}');
+		  //console.log('{"bodies": [' + JSON.stringify(bodies) + ']}');
+        }
+      }
+    });
+});
+router.put("/getData/getShowCommentList", function(req, response)
+{
+  var id = req.body.id;
+  var sql = "SELECT * FROM tv_show_comment WHERE tv_show_id='" + id + "' ORDER BY date ASC, time ASC";
+  connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+		//console.log(sqlresult);
+        if(sqlresult.length === 0)
+        {
+          // respond with no comments
+          response.send('{"bodies": []}');
+        } else {
+          var bodies = [];
+          sqlresult.forEach(function(item)
+          {
+			//console.log(item.comment_body);
+            bodies[bodies.length] = JSON.parse(JSON.stringify(item.comment_body));
+			//console.log(bodies[bodies.length]);
+          });
+          response.send('{"bodies": ' + JSON.stringify(bodies) + '}');
+		  console.log('{"bodies": [' + JSON.stringify(bodies) + ']}');
+        }
+      }
+    });
+});
+router.put("/getData/getEpisodeCommentList", function(req, response)
+{
+  var id = req.body.id;
+  var sql = "SELECT * FROM episode_comment WHERE episode_id='" + id + "' ORDER BY date ASC, time ASC";
+  connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+		console.log(sqlresult);
+        if(sqlresult.length === 0)
+        {
+          // respond with no comments
+          response.send('{"bodies": []}');
+        } else {
+          var bodies = [];
+          sqlresult.forEach(function(item)
+          {
+			//console.log(item.comment_body);
+            bodies[bodies.length] = JSON.parse(JSON.stringify(item.comment_body));
+			//console.log(bodies[bodies.length]);
+          });
+          response.send('{"bodies": ' + JSON.stringify(bodies) + '}');
+		  //console.log('{"bodies": [' + JSON.stringify(bodies) + ']}');
+        }
+      }
+    });
+});
+
+//Comment usernames
+router.put("/getData/getMovieCommentUsername", function(req, response)
+{
+  var id = req.body.id;
+  var sql = "SELECT * FROM movie_comment MC INNER JOIN users U ON MC.user_id = U.user_id WHERE movie_id='" + id + "' ORDER BY date ASC, time ASC";
+  connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+		console.log(sqlresult);
+        if(sqlresult.length === 0)
+        {
+          // respond with no comments
+          response.send('{"usernames": []}');
+        } else {
+          var usernames = [];
+          sqlresult.forEach(function(item)
+          {
+            usernames[usernames.length] = JSON.parse(JSON.stringify(item.username));
+          });
+          response.send('{"usernames": ' + JSON.stringify(usernames) + '}');
+        }
+      }
+    });
+});
+router.put("/getData/getShowCommentUsername", function(req, response)
+{
+  var id = req.body.id;
+  var sql = "SELECT * FROM tv_show_comment MC INNER JOIN users U ON MC.user_id = U.user_id WHERE tv_show_id='" + id + "' ORDER BY date ASC, time ASC";
+  connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+		console.log(sqlresult);
+        if(sqlresult.length === 0)
+        {
+          // respond with no comments
+          response.send('{"usernames": []}');
+        } else {
+          var usernames = [];
+          sqlresult.forEach(function(item)
+          {
+            usernames[usernames.length] = JSON.parse(JSON.stringify(item.username));
+          });
+          response.send('{"usernames": ' + JSON.stringify(usernames) + '}');
+		  console.log('{"usernames": ' + JSON.stringify(usernames) + '}');
+        }
+      }
+    });
+});
+router.put("/getData/getEpisodeCommentUsername", function(req, response)
+{
+  var id = req.body.id;
+  var sql = "SELECT * FROM episode_comment MC INNER JOIN users U ON MC.user_id = U.user_id WHERE episode_id='" + id + "' ORDER BY date ASC, time ASC";
+  connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+		console.log(sqlresult);
+        if(sqlresult.length === 0)
+        {
+          // respond with no comments
+          response.send('{"usernames": []}');
+        } else {
+          var usernames = [];
+          sqlresult.forEach(function(item)
+          {
+            usernames[usernames.length] = JSON.parse(JSON.stringify(item.username));
+          });
+          response.send('{"usernames": ' + JSON.stringify(usernames) + '}');
+        }
+      }
+    });
+});
+
+//Comment Times
+router.put("/getData/getMovieCommentTime", function(req, response)
+{
+  var id = req.body.id;
+  var sql = "SELECT * FROM movie_comment WHERE movie_id='" + id + "' ORDER BY date ASC, time ASC";
+
+  connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+		console.log(sqlresult);
+        if(sqlresult.length === 0)
+        {
+          // respond with no times
+          response.send('{"times": []}');
+        } else {
+          var times = [];
+          sqlresult.forEach(function(item)
+          {
+            times[times.length] = JSON.parse(JSON.stringify(item.time));
+          });
+          response.send('{"times": ' + JSON.stringify(times) + '}');
+        }
+      }
+    });
+});
+router.put("/getData/getShowCommentTime", function(req, response)
+{
+  var id = req.body.id;
+  var sql = "SELECT * FROM tv_show_comment WHERE tv_show_id='" + id + "' ORDER BY date ASC, time ASC";
+  connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+		console.log(sqlresult);
+        if(sqlresult.length === 0)
+        {
+          // respond with no times
+          response.send('{"times": []}');
+        } else {
+          var times = [];
+          sqlresult.forEach(function(item)
+          {
+            times[times.length] = JSON.parse(JSON.stringify(item.time));
+          });
+          response.send('{"times": ' + JSON.stringify(times) + '}');
+        }
+      }
+    });
+});
+router.put("/getData/getEpisodeCommentTime", function(req, response)
+{
+  var id = req.body.id;
+  var sql = "SELECT * FROM episode_comment WHERE episode_id='" + id + "' ORDER BY date ASC, time ASC";
+  connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+		console.log(sqlresult);
+        if(sqlresult.length === 0)
+        {
+          // respond with no times
+          response.send('{"times": []}');
+        } else {
+          var times = [];
+          sqlresult.forEach(function(item)
+          {
+            times[times.length] = JSON.parse(JSON.stringify(item.time));
+          });
+          response.send('{"times": ' + JSON.stringify(times) + '}');
+        }
+      }
+    });
+});
+
+//Comment Dates
+router.put("/getData/getMovieCommentDate", function(req, response)
+{
+  var id = req.body.id;
+  var sql = "SELECT * FROM movie_comment WHERE movie_id='" + id + "' ORDER BY date ASC, time ASC";
+  connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+		console.log(sqlresult);
+        if(sqlresult.length === 0)
+        {
+          // respond with no dates
+          response.send('{"dates": []}');
+        } else {
+          var dates = [];
+          sqlresult.forEach(function(item)
+          {
+            dates[dates.length] = JSON.parse(JSON.stringify(item.date));
+          });
+          response.send('{"dates": ' + JSON.stringify(dates) + '}');
+        }
+      }
+    });
+});
+router.put("/getData/getShowCommentDate", function(req, response)
+{
+  var id = req.body.id;
+  var sql = "SELECT * FROM tv_show_comment WHERE tv_show_id='" + id + "' ORDER BY date ASC, time ASC";
+  connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+		console.log(sqlresult);
+        if(sqlresult.length === 0)
+        {
+          // respond with no dates
+          response.send('{"dates": []}');
+        } else {
+          var dates = [];
+          sqlresult.forEach(function(item)
+          {
+            dates[dates.length] = JSON.parse(JSON.stringify(item.date));
+          });
+          response.send('{"dates": ' + JSON.stringify(dates) + '}');
+        }
+      }
+    });
+});
+router.put("/getData/getEpisodeCommentDate", function(req, response)
+{
+  var id = req.body.id;
+  var sql = "SELECT * FROM episode_comment WHERE episode_id='" + id + "' ORDER BY date ASC, time ASC";
+  connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+		console.log(sqlresult);
+        if(sqlresult.length === 0)
+        {
+          // respond with no dates
+          response.send('{"dates": []}');
+        } else {
+          var dates = [];
+          sqlresult.forEach(function(item)
+          {
+            dates[dates.length] = JSON.parse(JSON.stringify(item.date));
+          });
+          response.send('{"dates": ' + JSON.stringify(dates) + '}');
+        }
+      }
+    });
+});
 
 // start backend on port 3001
 app.listen(3001, function()

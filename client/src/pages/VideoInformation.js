@@ -2,26 +2,25 @@ import React from "react";
 import '../style.css';
 import star from '../images/star.png';
 import empty from '../images/starEmpty.png';
-//import CommentsList from '../HTMLComponents/CommentsList.js'
 
 const utilFunc = require('../Helpers/UtilityFunctions');
 
-class PlayVideo extends React.Component {
+class VideoInformation extends React.Component {
   constructor(props)
   {
     super(props)
     this.state = {
-	  //TEMP VARIABLES
-	  //IDs: null,
-	  //bodies: null,
-
       isMovie: false,
       id: 0,
       name: "",
       description: "",
       rating: 0,
       actors: "",
-      release_year: 0
+      release_year: 0,
+	  bodies: null,
+	  usernames: null,
+	  times: null,
+	  dates:null
     };
 
     checkParams().then(json => {
@@ -37,7 +36,7 @@ class PlayVideo extends React.Component {
       var isMovie = json.isMovie;
       var id = json.id;
       var set = {};
-      getVideoInfo(isMovie, id).then(result => {
+      getShowInfo(isMovie, id).then(result => {
         set = result;
         if(set.hasOwnProperty("result"))
         {
@@ -56,11 +55,23 @@ class PlayVideo extends React.Component {
             release_year: set.year
           });
         }
-		/*
-		getComments(id).then(commentsList => {
-			this.setState({bodies: commentsList.bodies, IDs: commentsList.IDs});
+		utilFunc.getShowComments(id).then(bodiesList => {
+			this.setState({bodies: bodiesList.bodies});
+
+			utilFunc.getShowCommentsUsername(id).then(usernamesList => {
+			this.setState({usernames: usernamesList.usernames});
+
+				utilFunc.getShowCommentsTime(id).then(timesList => {
+				this.setState({times: timesList.times});
+
+					utilFunc.getShowCommentsDate(id).then(datesList => {
+					this.setState({dates: datesList.dates});
+
+					buildComments(bodiesList.bodies, usernamesList.usernames, timesList.times, datesList.dates);
+					});
+				});
+			});
 		});
-		*/
 	 });
     });
 }
@@ -68,11 +79,15 @@ class PlayVideo extends React.Component {
 
   render() {
 	var ratingInput = -1;
-    const {isMovie, id, name, description, rating, actors, release_year, commentID, userID} = this.state;
-	//,bodies, IDs
+    const {isMovie, id, name, description, rating, actors, release_year} = this.state;
+	var isUserNotLoggedIn = true;
+	if (window.localStorage.getItem("Razzlers_Username") != null) {
+		isUserNotLoggedIn = false;
+	}
 
     var loc = "";
     var isSubscribed = false;
+
     if(id !== 0)
     {
       if(isMovie === "true")
@@ -95,6 +110,7 @@ class PlayVideo extends React.Component {
         }
       }
     }
+
     if(!isSubscribed)
     {
       // is NOT subscribed
@@ -109,55 +125,76 @@ class PlayVideo extends React.Component {
       }
       return (
         <div>
-          <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
-		  <div className="clearfix">
-		  <img className="video_info_thumbnail" src={loc} alt="background"/>
-          <p className="video_info"><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}</font>
-		  <font  color ="white" size = "20px">{"Release Year : " + release_year}</font>
-		  <font  color ="white" size = "20px">{description}</font>
-		  </p>
+		  <div className="container">
+			<img className="container__image" src={loc} alt="background"/>
+
+			<div className="container__text">
+				<h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
+				<p><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font></p>
+				<p><font  color ="white" size = "20px">{"Release Year : " + release_year}</font></p>
+				<p><font  color ="white" size = "20px">{description}</font></p>
+			</div>
+
+			<p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
+			<p className="centerText">
+            <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
+			</p>
+			<p className="centerText">
+				<font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
+			</p>
+
+			<button hidden = {isSubscribed} className="subButton" onClick = {() =>
+			{
+				subscribe(isMovie, id).then(result =>
+				{
+					console.log("result");
+					// result is either true or false based on if subbing went correctly or note
+					if(result.result === "true")
+					{
+						// refresh page so they can watch the subbed show/movie
+						window.location.reload();
+						} else if(result.result === "full") {
+							// they are at capacity for subscriptions!
+							document.getElementById("capacityMessage").hidden=false;
+						} else {
+							// subbing failed
+							// display error message!
+							document.getElementById("invalidMessage1").hidden=false;
+						}
+				})
+            }
+			}>Subscribe</button>
 		  </div>
 
-		  <p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
-          <p className="centerText">
-            <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
-          </p>
-          <p className="centerText">
-            <font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
-          </p>
-
-          <button hidden = {isSubscribed} className="subButton" onClick = {() =>
-            {
-              subscribe(isMovie, id).then(result =>
-              {
-                // result is either true or false based on if subbing went correctly or note
-                if(result.result === "true")
-                {
-                  // refresh page so they can watch the subbed show/movie
-                  window.location.reload();
-                } else if(result.result === "full") {
-                  // they are at capacity for subscriptions!
-                  document.getElementById("capacityMessage").hidden=false;
-                } else {
-                  // subbing failed
-                  // display error message!
-                  document.getElementById("invalidMessage1").hidden=false;
-                }
-              })
-            }
-          }>Subscribe</button>
 
 
 		<h2 className="centerText"><font  color = "white" size = "50"> {"Comments"} </font></h2>
-		<p><font color = "white" size = "12px"> {"storment: "}</font>
-		<font color = "white" size = "12px"> {name + " is a cool Movie"}</font></p>
 
-		<p><font color = "white" size = "12px"> {"Scoutzknifez: "}</font>
-		<font color = "white" size = "12px"> {"Eh"}</font></p>
+		<div onload="buildComments();" data-role="fieldcontain" class="ui-hide-label" id="bodiesDiv"></div>
 
-		<p><font color = "white" size = "12px"> {"Connorcon2020: "}</font>
-		<font color = "white" size = "12px"> {"Best movie ever xD"}</font></p>
+		<div class="new_comment">
+			<ul class="user_comment">
+				<font  color = "white" size = "50" hidden = {isUserNotLoggedIn}> {"Leave a comment"} </font>
+				<textarea id="commentInput" className="largeInput" rows="14" cols="10" wrap="soft" hidden = {isUserNotLoggedIn}> </textarea>
+				<p hidden id="invalidCommentMessage">
+				<font className="error">Error submitting comment, please try again!</font></p>
 
+				<button className="commentButton" id="submitComment" hidden = {isUserNotLoggedIn} onClick={() => {
+					if(document.getElementById("commentInput").value.trim() !== "") {
+						addComment(document.getElementById("commentInput").value.replace(/\n/g, '\\n'), id).then(response => {
+							if(response.result === "true")
+							{
+								// Update was successful
+								window.location.href="videoInformation?isMovie=" + isMovie + "&id=" + id;
+							} else {
+								// display error, reprompt for information
+								document.getElementById("invalidCommentMessage").hidden=false;
+							}
+						});
+					}
+				}}>Submit comment</button>
+			</ul>
+		</div>
 
 		</div>
       );
@@ -171,24 +208,47 @@ class PlayVideo extends React.Component {
         }
       return (
         <div>
-          <h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
-		  <div className="clearfix">
-		  <img className="video_info_thumbnail" src={loc} alt="background"/>
-		  <button className="subButton" onClick={() => window.location.href="PlayVideo?isMovie=" + isMovie + "&id=" + id}>Play</button>
-          <p className="video_info"><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font>
-		  <font  color ="white" size = "20px">{"Release Year : " + release_year}</font>
-		  <font  color ="white" size = "20px">{description}</font>
-		  </p>
-		  </div>
+		  <div className="container">
+			<img className="container__image" src={loc} alt="background"/>
 
+			<div className="container__text">
+				<h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
+				<button className="subButton" onClick={() => window.location.href="episodes?isMovie=" + isMovie + "&id=" + id}>View Episodes</button>
+				<p><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font></p>
+				<p><font  color ="white" size = "20px">{"Release Year : " + release_year}</font></p>
+				<p><font  color ="white" size = "20px">{description}</font></p>
+			</div>
 
-		  <p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
-          <p className="centerText">
+			<p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
+			<p className="centerText">
             <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
-          </p>
-          <p className="centerText">
-            <font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
-          </p>
+			</p>
+			<p className="centerText">
+				<font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
+			</p>
+
+			<button hidden = {isSubscribed} className="subButton" onClick = {() =>
+			{
+				subscribe(isMovie, id).then(result =>
+				{
+					console.log("result");
+					// result is either true or false based on if subbing went correctly or note
+					if(result.result === "true")
+					{
+						// refresh page so they can watch the subbed show/movie
+						window.location.reload();
+						} else if(result.result === "full") {
+							// they are at capacity for subscriptions!
+							document.getElementById("capacityMessage").hidden=false;
+						} else {
+							// subbing failed
+							// display error message!
+							document.getElementById("invalidMessage1").hidden=false;
+						}
+				})
+            }
+			}>Subscribe</button>
+		  </div>
 
 
 		 <h2 className="centerText"><font  color = "white" size = "50"> {"Leave Rating"} </font></h2>
@@ -346,49 +406,16 @@ class PlayVideo extends React.Component {
                 return;
           }
 
-		  if(isMovie) {
-			updateRatingMovie(ratingInput, id).then(response => {
+
+			updateRatingShow(ratingInput, id).then(response => {
 			if(response.result === "true") {
 				// Update was successful
-				window.location.href="VideoInformation?isMovie=" + isMovie + "&id=" + id;
+				window.location.href="videoInformation?isMovie=" + isMovie + "&id=" + id;
             } else {
               // display error, reprompt for information
               document.getElementById("invalidMessage").hidden=false;
               }
           });
-
-		  updateUsersVotedMovie(id).then(response => {
-			if(response.result === "true") {
-				// Update was successful
-			} else {
-			  // display error, reprompt for information
-	     		document.getElementById("invalidMessage").hidden=false;
-			}
-		  });
-
-		  }
-
-		  else if(!isMovie){
-			updateRatingShow(document.getElementById("ratingInput").value, id).then(response => {
-			if(response.result === "true") {
-				// Update was successful
-				window.location.href="VideoInformation?isMovie=" + isMovie + "&id=" + id;
-            } else {
-              // display error, reprompt for information
-                    document.getElementById("invalidMessage").hidden=false;
-              }
-          });
-
-		  updateUsersVotedShow(id).then(response => {
-			if(response.result === "true") {
-				// Update was successful
-			} else {
-			  // display error, reprompt for information
-	     		document.getElementById("invalidMessage").hidden=false;
-			}
-		    });
-
-		  }
 	}}>Submit Rating</button>
 
 	<button className="subButton" id="cancelRatingButton" onClick={() => {
@@ -406,90 +433,37 @@ class PlayVideo extends React.Component {
 	}>Cancel Selection</button>
 
 
+		<h2 className="centerText"><font  color = "white" size = "30"> {"Comments"} </font></h2>
 
+		<div onload="buildComments();" data-role="fieldcontain" class="ui-hide-label" id="bodiesDiv"></div>
 
-		<h2 className="centerText"><font  color = "white" size = "50"> {"Comments"} </font></h2>
-		<p><font color = "white" size = "12px"> {"storment: "}</font>
-		<font color = "white" size = "12px"> {name + " is a cool Movie"}</font></p>
+		<div class="new_comment">
+			<ul class="user_comment">
+				<font  color = "white" size = "50" hidden = {isUserNotLoggedIn}> {"Leave a comment"} </font>
+				<textarea id="commentInput" className="largeInput" rows="14" cols="10" wrap="soft" hidden = {isUserNotLoggedIn}> </textarea>
+				<p hidden id="invalidCommentMessage">
+				<font className="error">Error submitting comment, please try again!</font></p>
 
-		<p><font color = "white" size = "12px"> {"Scoutzknifez: "}</font>
-		<font color = "white" size = "12px"> {"Eh"}</font></p>
-
-		<p><font color = "white" size = "12px"> {"Connorcon2020: "}</font>
-		<font color = "white" size = "12px"> {"Best movie ever xD"}</font></p>
-		<p className="centerText"><a href="/" ><font color= "">Click here to add a comment!</font></a></p>
-
+				<button className="commentButton" id="submitComment" hidden = {isUserNotLoggedIn} onClick={() => {
+					if(document.getElementById("commentInput").value.trim() !== "") {
+						addComment(document.getElementById("commentInput").value.replace(/\n/g, '\\n'), id).then(response => {
+							if(response.result === "true")
+							{
+								// Update was successful
+								window.location.href="videoInformation?isMovie=" + isMovie + "&id=" + id;
+							} else {
+								// display error, reprompt for information
+								document.getElementById("invalidCommentMessage").hidden=false;
+							}
+						});
+					}
+				}}>Submit comment</button>
+			</ul>
+		</div>
 		</div>
       );
     }
   }
-}
-  //<p className="quarterLeft"><button className= "button">Previous Episode</button></p>
-
-function getMovieCommentList(id) {
-  return new Promise(function(resolve, reject) {
-    var data = '{"movieId": "' + id + '"}';
-    data = JSON.parse(data);
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(data)
-    };
-    const url = "//razzlers.me:3001/api/getData/getUserList";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      resolve(json);
-    }).catch(err => {
-      throw new Error(err);
-    });
-  });
-}
-
-function updateRatingMovie(inRating, videoId)
-{
-  return new Promise(function(resolve, reject)
-  {
-    var data = '{"rating": "' + inRating + '", "id": "' + videoId + '"}';
-    data = JSON.parse(data);
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(data)
-    };
-    const url = "//razzlers.me:3001/api/updateRatingMovie";
-    fetch(url, transport).then(response => response.json()).then(json => {
-      // needs to return true or false based on if registration is successful
-      // if true, return true and set username in localStorage
-      // if false, return what went wrong, if multiple things, put inside array[]
-      resolve(json);
-    });
-  });
-}
-
-function updateUsersVotedShow(videoId)
-{
-  return new Promise(function(resolve, reject)
-  {
-    var data = '{"id": "' + videoId + '"}';
-    data = JSON.parse(data);
-    var transport = {
-	  headers: {
-		'Content-Type': "application/json"
-	  },
-      method: "PUT",
-	  body: JSON.stringify(data)
-    };
-    const url = "//razzlers.me:3001/api/updateUsersVotedShow";
-    fetch(url, transport).then(response => response.json()).then(json => {
-      // needs to return true or false based on if registration is successful
-      // if true, return true and set username in localStorage
-      // if false, return what went wrong, if multiple things, put inside array[]
-      resolve(json);
-    });
-  });
 }
 
 function updateRatingShow(inRating, videoId)
@@ -505,7 +479,7 @@ function updateRatingShow(inRating, videoId)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/updateRatingShow";
+    const url = "http://razzlers.me:3001/api/updateRating";
     fetch(url, transport).then(response => response.json()).then(json => {
       // needs to return true or false based on if registration is successful
       // if true, return true and set username in localStorage
@@ -514,30 +488,6 @@ function updateRatingShow(inRating, videoId)
     });
   });
 }
-
-function updateUsersVotedMovie(videoId)
-{
-  return new Promise(function(resolve, reject)
-  {
-    var data = '{"id": "' + videoId + '"}';
-    data = JSON.parse(data);
-    var transport = {
-	  headers: {
-		'Content-Type': "application/json"
-	  },
-      method: "PUT",
-	  body: JSON.stringify(data)
-    };
-    const url = "//razzlers.me:3001/api/updateUsersVotedMovie";
-    fetch(url, transport).then(response => response.json()).then(json => {
-      // needs to return true or false based on if registration is successful
-      // if true, return true and set username in localStorage
-      // if false, return what went wrong, if multiple things, put inside array[]
-      resolve(json);
-    });
-  });
-}
-
 
 function subscribe(isMovie, id)
 {
@@ -592,7 +542,7 @@ function getVideoInfo(isMovie, id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/getVideoInfo";
+    const url = "http://razzlers.me:3001/api/getData/getVideoInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -601,9 +551,11 @@ function getVideoInfo(isMovie, id)
   });
 }
 
-function getUserBilling(user) {
-  return new Promise(function(resolve, reject) {
-    var data = '{"user": "' + user + '"}';
+function getShowInfo(isMovie, id)
+{
+  return new Promise(function(resolve, reject)
+  {
+    var data = '{"isMovie": "' + isMovie + '", "id": "' + id + '"}';
     data = JSON.parse(data);
     var transport = {
       headers: {
@@ -612,7 +564,7 @@ function getUserBilling(user) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/getUserBilling";
+    const url = "http://razzlers.me:3001/api/getData/getShowInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -621,28 +573,12 @@ function getUserBilling(user) {
   });
 }
 
-/*
-function getCommentList() {
-  return new Promise(function(resolve, reject) {
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "GET"
-    };
-    const url = "//razzlers.me:3001/api/getData/getCommentList";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      console.log(json);
-      resolve(json);
-    }).catch(err => {
-      throw new Error(err);
-    });
-  });
-}
-
-function getComments(id) {
-  return new Promise(function(resolve, reject) {
-    var data = '{"id": "' + id + '"}';
+function addComment(inBody, id)
+{
+  return new Promise(function(resolve, reject)
+  {
+	var user = window.localStorage.getItem("Razzlers_Username");
+    var data = '{"body": "' + inBody + '", "id": "' + id + '", "username": "' + user + '"}';
     data = JSON.parse(data);
     var transport = {
       headers: {
@@ -651,15 +587,26 @@ function getComments(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/getComments";
-    fetch(url, transport).then(result => result.json()).then(json => {
-      //console.log(json);
+    const url = "http://razzlers.me:3001/api/addCommentShow";
+    fetch(url, transport).then(response => response.json()).then(json => {
+      // needs to return true or false based on if registration is successful
+      // if true, return true and set username in localStorage
+      // if false, return what went wrong, if multiple things, put inside array[]
       resolve(json);
-    }).catch(err => {
-      throw new Error(err);
     });
   });
 }
-*/
 
-export default PlayVideo
+function buildComments(bodies, usernames, times, dates) {
+	//console.log(bodies);
+    var bodiesDiv = document.getElementById("bodiesDiv");
+    var html = "<form>";
+    for (var i = 0; i < bodies.length; i++) {
+		console.log(bodies[i]);
+		html += "<div class='new_comment'><ul class='user_comment'><div class='user_avatar'>" + usernames[i] + " <p><i class='fa fa-calendar'></i> " + dates[i].replace('T07:00:00.000Z','') + " <i class='fa fa-clock-o'></i> " + times[i] + "</p></div><div class='comment_body'><p>" + bodies[i].replace(/\n/g, "<br />") + "</p></div></ul></div>";
+    }
+    html += "</form>";
+    bodiesDiv.innerHTML = html;
+}
+
+export default VideoInformation
