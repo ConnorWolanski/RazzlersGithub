@@ -1105,25 +1105,14 @@ router.put("/updateRatingMovie", function(req, response)
 	var id = req.body.id;
 	getUsersVotedMovie(id).then(result =>
 	{
-<<<<<<< HEAD
-		var oldRating = result;
-		var newRating = (Number(oldRating) + Number(rating)) / Number(users_voted);
-		newRating = Number((newRating).toFixed(1));
-
-		var sql = "UPDATE movie SET movie_rating='" + newRating + "' WHERE movie_id='" + id + "'";
-
-		connection.query(sql, function(err, result)
-=======
 		var users_voted = Number(result) + Number('1');
 		getTotalRatingValuesMovie(id).then(result =>
->>>>>>> dd482c1f3c1e2083c7640c57b57ee4b61f1fe786
 		{
 			var total_rating_values = Number(result) + Number(rating);
 			var newRating = Number(total_rating_values) / Number(users_voted);
 			newRating = Number((newRating).toFixed(1));
-		
+
 			var sql = "UPDATE movie SET movie_rating='" + newRating + "', total_rating_values='" + total_rating_values + "', users_voted='" + users_voted + "' WHERE movie_id='" + id + "'";
-			//	"\', \'"
 			connection.query(sql, function(err, result)
 			{
 				if(err)
@@ -1152,7 +1141,7 @@ router.put("/updateRating", function(req, response)
 			var total_rating_values = Number(result) + Number(rating);
 			var newRating = Number(total_rating_values) / Number(users_voted);
 			newRating = Number((newRating).toFixed(1));
-		
+
 			var sql = "UPDATE tv_show SET tv_show_rating='" + newRating + "', total_rating_values='" + total_rating_values + "', users_voted='" + users_voted + "' WHERE tv_show_id='" + id + "'";
 			//	"\', \'"
 			connection.query(sql, function(err, result)
@@ -1457,7 +1446,7 @@ router.put("/updateRatingEpisode", function(req, response)
 			var total_rating_values = Number(result) + Number(rating);
 			var newRating = Number(total_rating_values) / Number(users_voted);
 			newRating = Number((newRating).toFixed(1));
-		
+
 			var sql = "UPDATE episode SET episode_rating='" + newRating + "', total_rating_values='" + total_rating_values + "', users_voted='" + users_voted + "' WHERE episode_id='" + id + "'";
 			//	"\', \'"
 			connection.query(sql, function(err, result)
@@ -1506,17 +1495,13 @@ router.put("/addCommentMovie", function(req, response)
   	var commentID = Math.floor(Math.random()*9000000) + 1000000;
   	var body = req.body.body
   	var movieID = req.body.id
-<<<<<<< HEAD
 
-  	var sql = "INSERT INTO movie_comment (comment_id, movie_id, user_id, comment_body) VALUES (\'" + commentID + "\', \'" + movieID  + "\', \'" + user_id + "\', \'" + body + "\')";
-=======
-	
 	var d = new Date();
 	var time = "";
 	var date = "";
-	  
+
 	var month = Number(d.getMonth()) + Number('1');
-	
+
 	if(month< 10) {
 		month = "0" + month;
 	}
@@ -1538,9 +1523,8 @@ router.put("/addCommentMovie", function(req, response)
 	}
 	time = hour + ":" + minutes + ":" + seconds;
 	date = d.getFullYear() + "-" + month + "-" + day;
-	
+
   	var sql = "INSERT INTO movie_comment (comment_id, movie_id, user_id, comment_body, time, date) VALUES (\'" + commentID + "\', \'" + movieID  + "\', \'" + user_id + "\', \'" + body + "\', \'" + time + "\', \'" + date + "\')";
->>>>>>> dd482c1f3c1e2083c7640c57b57ee4b61f1fe786
 
   	connection.query(sql, function(err, result)
     {
@@ -1564,17 +1548,13 @@ router.put("/addCommentShow", function(req, response)
   	var commentID = Math.floor(Math.random()*9000000) + 1000000;
   	var body = req.body.body
   	var showID = req.body.id
-<<<<<<< HEAD
 
-  	var sql = "INSERT INTO tv_show_comment (comment_id, tv_show_id, user_id, comment_body) VALUES (\'" + commentID + "\', \'" + showID  + "\', \'" + user_id + "\', \'" + body + "\')";
-=======
-	
 	var d = new Date();
 	var time = "";
 	var date = "";
-	  
+
 	var month = Number(d.getMonth()) + Number('1');
-	
+
 	if(month< 10) {
 		month = "0" + month;
 	}
@@ -1596,9 +1576,8 @@ router.put("/addCommentShow", function(req, response)
 	}
 	time = hour + ":" + minutes + ":" + seconds;
 	date = d.getFullYear() + "-" + month + "-" + day;
-	
+
   	var sql = "INSERT INTO tv_show_comment (comment_id, tv_show_id, user_id, comment_body, time, date) VALUES (\'" + commentID + "\', \'" + showID  + "\', \'" + user_id + "\', \'" + body + "\', \'" + time + "\', \'" + date + "\')";
->>>>>>> dd482c1f3c1e2083c7640c57b57ee4b61f1fe786
 
   	connection.query(sql, function(err, result)
     {
@@ -1622,17 +1601,13 @@ router.put("/addCommentEpisode", function(req, response)
   	var commentID = Math.floor(Math.random()*9000000) + 1000000;
   	var body = req.body.body
   	var episodeID = req.body.id
-<<<<<<< HEAD
 
-  	var sql = "INSERT INTO episode_comment (comment_id, episode_id, user_id, comment_body) VALUES (\'" + commentID + "\', \'" + episodeID  + "\', \'" + user_id + "\', \'" + body + "\')";
-=======
-	
 	var d = new Date();
 	var time = "";
 	var date = "";
-	  
+
 	var month = Number(d.getMonth()) + Number('1');
-	
+
 	if(month< 10) {
 		month = "0" + month;
 	}
@@ -1654,9 +1629,8 @@ router.put("/addCommentEpisode", function(req, response)
 	}
 	time = hour + ":" + minutes + ":" + seconds;
 	date = d.getFullYear() + "-" + month + "-" + day;
-	
+
   	var sql = "INSERT INTO episode_comment (comment_id, episode_id, user_id, comment_body, time, date) VALUES (\'" + commentID + "\', \'" + episodeID  + "\', \'" + user_id + "\', \'" + body + "\', \'" + time + "\', \'" + date + "\')";
->>>>>>> dd482c1f3c1e2083c7640c57b57ee4b61f1fe786
 
   	connection.query(sql, function(err, result)
     {
@@ -1853,7 +1827,7 @@ router.put("/getData/getMovieCommentTime", function(req, response)
 {
   var id = req.body.id;
   var sql = "SELECT * FROM movie_comment WHERE movie_id='" + id + "' ORDER BY date ASC, time ASC";
-  
+
   connection.query(sql, function(err, sqlresult)
     {
       if(err)
