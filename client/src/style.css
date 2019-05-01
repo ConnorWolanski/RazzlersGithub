@@ -42,6 +42,30 @@
   height: 399px;
   overflow:auto;
 }
+.messageCount{
+  color: white;
+  border-radius: 8px;
+  padding: 2px;
+  font-size: 11px;
+  min-width: 17px;
+  background-color: #DC143C;
+  position: absolute;
+  top: 1%;
+  right: 52px;
+  text-align: center;
+}
+.innermessageCount{
+  color: white;
+  border-radius: 8px;
+  padding: 2px;
+  font-size: 11px;
+  min-width: 17px;
+  background-color: #DC143C;
+  float: right;
+  text-align: center;
+  margin-right: 10px;
+  margin-top: 3px;
+}
 .leftmessageBubble{
   background-image: url('./images/back2.png');
   border-color: white;
@@ -110,6 +134,17 @@
   height: 40px;
   font-size: 16px;
   border: 1px;
+  border-style: ridge;
+  border-color: grey;
+}
+.messageCard{
+  background-image: url('./images/background.png');
+  padding: 0px;
+  padding-left: 3px;
+  height: 50px;
+  font-size: 16px;
+  border: 1px;
+  overflow: hidden;
   border-style: ridge;
   border-color: grey;
 }

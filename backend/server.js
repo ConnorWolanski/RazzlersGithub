@@ -867,6 +867,37 @@ router.put("/getData/getUsersMessages", function(req, response)
   });
 });
 
+router.put("/getData/getUnreadUsersMessages", function(req, response)
+{
+  //console.log(req.body.user + "!!!!");
+  getUserID(req.body.user).then(user => {
+      var receivedMessages = [];
+      var sql = 'SELECT * FROM message WHERE (recipient_user_id="' + user + '" AND message_status="' + 0 + '")';
+      connection.query(sql, function(err, sqlresult)
+      {
+        if(err)
+        {
+          console.log(err);
+          response.send('{"messages": "false"}');
+        } else {
+          // sqlresult = friend_id array
+          if(sqlresult.length === 0)
+          {
+            // respond with no messages like connor talking to girls
+            response.send('{"messages": []}');
+          } else {
+            var messageList = [];
+            sqlresult.forEach(function(message)
+            {
+              messageList[messageList.length] = JSON.parse(JSON.stringify(message));
+            });
+            response.send('{"messages": ' + JSON.stringify(messageList) + '}');
+          }
+        }
+    });
+  });
+});
+
 router.put("/getData/getUserBilling", function(req, response)
 {
   var user = req.body.user;
@@ -999,15 +1030,36 @@ router.put("/getData/getSubscribedMovies", function(req, response)
   });
 });
 
+router.put("/readUserMessages", function(req, response)
+{
+	var senderUser = req.body.sender;
+  var recipientUser = req.body.recipient;
+  getUserID(senderUser).then(sender => {
+    getUserID(recipientUser).then(recipient=>{
+      var sql = "UPDATE message SET message_status='" + 1 + "' WHERE (recipient_user_id='" + recipient + "' AND user_id='" + sender + "')";
+    	connection.query(sql, function(err, result)
+      {
+        if(err)
+        {
+          console.log(err);
+          response.send('{"result": "false"}');
+        } else {
+          response.send('{"result": "true"}');
+        }
+      });
+    });
+  });
+});
+
 router.put("/updateUsersVotedMovie", function(req, response)
 {
 	var id = req.body.id;
 	getUsersVotedMovie(id).then(result =>
     {
 	var users_voted = Number(result) + Number('1');
-	
+
 	var sql = "UPDATE movie SET users_voted='" + users_voted + "' WHERE movie_id='" + id + "'";
-	
+
   	connection.query(sql, function(err, result)
     {
       if(err)
@@ -1022,15 +1074,16 @@ router.put("/updateUsersVotedMovie", function(req, response)
   });
 });
 
+
 router.put("/updateUsersVotedShow", function(req, response)
 {
 	var id = req.body.id;
 	getUsersVotedShow(id).then(result =>
     {
 	var users_voted = Number(result) + Number('1');
-	
+
 	var sql = "UPDATE tv_show SET users_voted='" + users_voted + "' WHERE tv_show_id='" + id + "'";
-	
+
   	connection.query(sql, function(err, result)
     {
       if(err)
@@ -1058,7 +1111,7 @@ router.put("/updateRatingMovie", function(req, response)
 		var oldRating = result;
 		var newRating = (Number(oldRating) + Number(rating)) / Number(users_voted);
 		newRating = Number((newRating).toFixed(1));
-		
+
 		var sql = "UPDATE movie SET movie_rating='" + newRating + "' WHERE movie_id='" + id + "'";
 
 		connection.query(sql, function(err, result)
@@ -1164,7 +1217,7 @@ function getUsersVotedShow(id)
   return new Promise(function(resolve, reject)
   {
 	var sql = "SELECT users_voted FROM tv_show WHERE tv_show_id='" + id + "'";
-	
+
     connection.query(sql, function(err, result, fields)
     {
       if(err)
@@ -1222,7 +1275,7 @@ function getUsersVotedEpisode(id)
   return new Promise(function(resolve, reject)
   {
 	var sql = "SELECT users_voted FROM episode WHERE episode_id='" + id + "'";
-	
+
     connection.query(sql, function(err, result, fields)
     {
       if(err)
@@ -1249,7 +1302,7 @@ function getRatingEpisode(id)
         throw err;
         return;
       } else {
-		resolve(result[0].episode_rating);	
+		resolve(result[0].episode_rating);
       }
     });
   });
@@ -1360,9 +1413,9 @@ router.put("/updateUsersVotedEpisode", function(req, response)
 	getUsersVotedEpisode(id).then(result =>
     {
 	var users_voted = Number(result) + Number('1');
-	
+
 	var sql = "UPDATE episode SET users_voted='" + users_voted + "' WHERE episode_id='" + id + "'";
-	
+
   	connection.query(sql, function(err, result)
     {
       if(err)
@@ -1385,7 +1438,7 @@ router.put("/addCommentMovie", function(req, response)
   	var commentID = Math.floor(Math.random()*9000000) + 1000000;
   	var body = req.body.body
   	var movieID = req.body.id
-	
+
   	var sql = "INSERT INTO movie_comment (comment_id, movie_id, user_id, comment_body) VALUES (\'" + commentID + "\', \'" + movieID  + "\', \'" + user_id + "\', \'" + body + "\')";
 
   	connection.query(sql, function(err, result)
@@ -1410,7 +1463,7 @@ router.put("/addCommentShow", function(req, response)
   	var commentID = Math.floor(Math.random()*9000000) + 1000000;
   	var body = req.body.body
   	var showID = req.body.id
-	
+
   	var sql = "INSERT INTO tv_show_comment (comment_id, tv_show_id, user_id, comment_body) VALUES (\'" + commentID + "\', \'" + showID  + "\', \'" + user_id + "\', \'" + body + "\')";
 
   	connection.query(sql, function(err, result)
@@ -1435,7 +1488,7 @@ router.put("/addCommentEpisode", function(req, response)
   	var commentID = Math.floor(Math.random()*9000000) + 1000000;
   	var body = req.body.body
   	var episodeID = req.body.id
-	
+
   	var sql = "INSERT INTO episode_comment (comment_id, episode_id, user_id, comment_body) VALUES (\'" + commentID + "\', \'" + episodeID  + "\', \'" + user_id + "\', \'" + body + "\')";
 
   	connection.query(sql, function(err, result)

@@ -186,6 +186,26 @@ exports.getUsersMessages = function(sender, recipient)
     });
   });
 }
+exports.getUnreadUsersMessages = function(user)
+{
+  return new Promise(function(resolve, reject) {
+    var data = '{"user": "' + user + '"}';
+    data = JSON.parse(data);
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    };
+    const url = "http://localhost:3001/api/getData/getUnreadUsersMessages";
+    fetch(url, transport).then(result => result.json()).then(json => {
+      resolve(json);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
+}
 
 exports.getUsernameFromID = function(id)
 {
@@ -208,6 +228,21 @@ exports.getUsernameFromID = function(id)
   });
 }
 
+exports.readUserMessages = function(sender, recipient){
+    var data = '{"sender": "' + sender + '", "recipient": "' + recipient + '"}';
+    data = JSON.parse(data);
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    };
+    const url = "http://localhost:3001/api/readUserMessages";
+    fetch(url, transport).catch(err => {
+      throw new Error(err);
+    });
+}
 /*exports.forceUpdateMessages = function()
 {
   var sender = window.localStorage.getItem("Razzlers_Username");
@@ -248,7 +283,6 @@ exports.getTopShowList = function()
 {
   return getTopShowList();
 }
-
 
 function getTopShowList()
 {
