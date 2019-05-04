@@ -12,6 +12,7 @@ class EpisodeInformation extends React.Component {
     this.state = {
       isMovie: false,
       id: 0,
+	  episodeId: 0,
       name: "",
       description: "",
       rating: 0,
@@ -27,6 +28,7 @@ class EpisodeInformation extends React.Component {
       this.setState({
         isMovie: json.isMovie,
         id: json.id,
+		episodeId: json.episodeId,
         name: "",
         description: "",
         rating: 0,
@@ -35,8 +37,9 @@ class EpisodeInformation extends React.Component {
       });
       var isMovie = json.isMovie;
       var id = json.id;
+	  var episodeId = json.episodeId;
       var set = {};
-      getVideoInfo(isMovie, id).then(result => {
+      getVideoInfo(isMovie, episodeId).then(result => {
         set = result;
         if(set.hasOwnProperty("result"))
         {
@@ -55,16 +58,16 @@ class EpisodeInformation extends React.Component {
             release_year: set.year
           });
         }
-		utilFunc.getEpisodeComments(id).then(bodiesList => {
+		utilFunc.getEpisodeComments(episodeId).then(bodiesList => {
 			this.setState({bodies: bodiesList.bodies});
 			
-			utilFunc.getEpisodeCommentsUsername(id).then(usernamesList => {
+			utilFunc.getEpisodeCommentsUsername(episodeId).then(usernamesList => {
 			this.setState({usernames: usernamesList.usernames});
 
-				utilFunc.getEpisodeCommentsTime(id).then(timesList => {
+				utilFunc.getEpisodeCommentsTime(episodeId).then(timesList => {
 				this.setState({times: timesList.times});
 				
-					utilFunc.getEpisodeCommentsDate(id).then(datesList => {
+					utilFunc.getEpisodeCommentsDate(episodeId).then(datesList => {
 					this.setState({dates: datesList.dates});
 				
 					buildComments(bodiesList.bodies, usernamesList.usernames, timesList.times, datesList.dates);
@@ -79,16 +82,115 @@ class EpisodeInformation extends React.Component {
   
   render() {
 	var ratingInput = -1;
-    const {isMovie, id, name, description, rating, actors, release_year} = this.state;
+    const {isMovie, id, episodeId, name, description, rating} = this.state;
 	var isUserNotLoggedIn = true;
 	if (window.localStorage.getItem("Razzlers_Username") != null) {
 		isUserNotLoggedIn = false;
 	}
 	
     var loc = "";
+	var isSubscribed = false;
 	
+	if(id !== 0)
+    {
+		var showList = JSON.parse(localStorage.getItem("Razzlers_Subscribed_Shows"));
+		if(showList !== null)
+        {
+          isSubscribed = showList.includes(parseInt(id,10));
+        }
+	}
+	
+	if(!isSubscribed)
+    {
+      // is NOT subscribed
+      if(id !== 0)
+      {
+		  loc = "//assets.razzlers.me/assets/thumbnails/episodeThumbnails/" + episodeId + ".jpg";
+	  }
+	  
+	  return (
+        <div>
+		  <div className="container">
+			<img className="container__image" src={loc} alt="background"/>
+
+			<div className="container__text">
+				<h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
+				<p><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font></p>
+				<p><font  color ="white" size = "20px">{description}</font></p>
+			</div>
+
+			<p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Episode</font></p>
+			<p className="centerText">
+            <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
+			</p>
+			<p className="centerText">
+				<font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
+			</p>
+			<p className="centerText">
+				<font hidden id="invalidMessage2" className="error">You must be logged in to subscribe!</font>
+			</p>
+			
+			<button hidden = {isSubscribed} className="subButton" onClick = {() => {
+						if(!isUserNotLoggedIn) {
+							subscribe(isMovie, id).then(result => {
+								console.log("result");
+								// result is either true or false based on if subbing went correctly or note
+								if(result.result === "true") {
+									// refresh page so they can watch the subbed show/movie
+									window.location.reload();
+								
+								}
+								else if(result.result === "full") {
+									// they are at capacity for subscriptions!
+									document.getElementById("capacityMessage").hidden=false;
+								}
+								else {
+									// subbing failed
+									// display error message!
+									document.getElementById("invalidMessage1").hidden=false;
+								}	
+							});
+						}
+						else {
+							document.getElementById("invalidMessage2").hidden=false;	
+						}	
+					}}>Subscribe</button>
+			</div>
+
+		<h2 className="centerText"><font  color = "white" size = "50"> {"Comments"} </font></h2>
+
+		<div onload="buildComments();" data-role="fieldcontain" class="ui-hide-label" id="bodiesDiv"></div>
+
+		<div class="new_comment">
+			<ul class="user_comment">
+				<font  color = "white" size = "50" hidden = {isUserNotLoggedIn}> {"Leave a comment"} </font>
+				<textarea id="commentInput" className="largeInput" rows="14" cols="10" wrap="soft" hidden = {isUserNotLoggedIn}> </textarea>
+				<p hidden id="invalidCommentMessage">
+				<font className="error">Error submitting comment, please try again!</font></p>
+
+				<button className="commentButton" id="submitComment" hidden = {isUserNotLoggedIn} onClick={() => {
+					if(document.getElementById("commentInput").value.trim() !== "") {
+						addComment(document.getElementById("commentInput").value.replace(/\n/g, '\\n'), episodeId).then(response => {
+							if(response.result === "true")
+							{
+								// Update was successful
+								window.location.href="episodeInformation?isMovie=" + isMovie + "&id=" + id + "&episode=" + episodeId;
+							} else {
+								// display error, reprompt for information
+								document.getElementById("invalidCommentMessage").hidden=false;
+							}
+						});
+					}
+				}}>Submit comment</button>
+			</ul>
+		</div>
+
+		</div>
+      );
+	}
+	else {
       // is subscribed
-      loc = "//assets.razzlers.me/assets/thumbnails/episodeThumbnails/" + id + ".jpg";
+      loc = "//assets.razzlers.me/assets/thumbnails/episodeThumbnails/" + episodeId + ".jpg";
        
       return (
         <div>
@@ -97,7 +199,7 @@ class EpisodeInformation extends React.Component {
 			
 			<div className="container__text"> 
 				<h2 className="centerText"><font  color = "white" size = "50"> {name} </font></h2>
-				<button className="subButton" onClick={() => window.location.href="playVideo?isMovie=" + isMovie + "&id=" + id}>Play Episode</button>
+				<button className="subButton" onClick={() => window.location.href="playVideo?isMovie=" + isMovie + "&id=" + id + "&episode=" + episodeId}>Play Episode</button>
 				<p><font  color ="white" size = "20px">{"Rating: " + rating + "/5\n"}<img src={star} alt="star"/></font></p>
 				<p><font  color ="white" size = "20px">{description}</font></p>
 			</div>
@@ -259,10 +361,10 @@ class EpisodeInformation extends React.Component {
                 return;
           }
 		  
-		  updateRatingEpisode(ratingInput, id).then(response => {
+		  updateRatingEpisode(ratingInput, episodeId).then(response => {
 			if(response.result === "true") {
 				// Update was successful
-				window.location.href="episodeInformation?isMovie=" + isMovie + "&id=" + id;
+				window.location.href="episodeInformation?isMovie=" + isMovie + "&id=" + id + "&episode=" + episodeId;
             } else {
               // display error, reprompt for information
                     document.getElementById("invalidMessage").hidden=false;
@@ -298,11 +400,11 @@ class EpisodeInformation extends React.Component {
 			
 				<button className="commentButton" id="submitComment" hidden = {isUserNotLoggedIn} onClick={() => {
 					if(document.getElementById("commentInput").value.trim() !== "") {
-						addComment(document.getElementById("commentInput").value.replace(/\n/g, '\\n'), id).then(response => {
+						addComment(document.getElementById("commentInput").value.replace(/\n/g, '\\n'), episodeId).then(response => {
 							if(response.result === "true")
 							{
 								// Update was successful
-								window.location.href="episodeInformation?isMovie=" + isMovie + "&id=" + id;
+								window.location.href="episodeInformation?isMovie=" + isMovie + "&id=" + id + "&episode=" + episodeId;
 							} else {
 								// display error, reprompt for information
 								document.getElementById("invalidCommentMessage").hidden=false;
@@ -316,6 +418,7 @@ class EpisodeInformation extends React.Component {
       );
     }
   }
+}
 
 function updateRatingEpisode(inRating, videoId)
 {
@@ -349,7 +452,8 @@ function checkParams()
     url = new URL(url);
     var isMovie = url.searchParams.get("isMovie");
     var id = url.searchParams.get("id");
-    resolve({isMovie, id});
+	var episodeId = url.searchParams.get("episode");
+    resolve({isMovie, id, episodeId});
   });
 }
 
@@ -380,7 +484,8 @@ function addComment(inBody, id)
   return new Promise(function(resolve, reject)
   {
 	var user = window.localStorage.getItem("Razzlers_Username");
-    var data = '{"body": "' + inBody + '", "id": "' + id + '", "username": "' + user + '"}';
+	var escapedBody = inBody.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+    var data = '{"body": "' + escapedBody + '", "id": "' + id + '", "username": "' + user + '"}';
     data = JSON.parse(data);
     var transport = {
       headers: {
@@ -405,10 +510,38 @@ function buildComments(bodies, usernames, times, dates) {
     var html = "<form>";
     for (var i = 0; i < bodies.length; i++) {
 		console.log(bodies[i]);
-		html += "<div class='new_comment'><ul class='user_comment'><div class='user_avatar'>" + usernames[i] + " <p><i class='fa fa-calendar'></i> " + dates[i].replace('T07:00:00.000Z','') + " <i class='fa fa-clock-o'></i> " + times[i] + "</p></div><div class='comment_body'><p>" + bodies[i].replace(/\n/g, "<br />") + "</p></div></ul></div>";
+		html += "<div class='new_comment'><ul class='user_comment'><div class='user_avatar'>" + usernames[i] + " <p><i class='fa fa-calendar'></i> " + dates[i].replace('T07:00:00.000Z','') + " <i class='fa fa-clock-o'></i> " + times[i] + "</p></div><div class='comment_body'><p>" + bodies[i].replace(/\n/g, "<br />").replace(/(['"])/g, "\\$1") + "</p></div></ul></div>";
     }
     html += "</form>";
     bodiesDiv.innerHTML = html;
+}
+
+function subscribe(isMovie, id)
+{
+  return new Promise(function(resolve, reject)
+  {
+    // resolves with object in format {result: true|false} which comes directly from server
+    var username = window.localStorage.getItem("Razzlers_Username");
+    var data = '{"username": "' + username + '", "isMovie": "' + isMovie + '", "id": "' + id + '"}';
+    data = JSON.parse(data);
+    var transport = {
+      headers: {
+        'Content-Type': "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    };
+    const url = "//razzlers.me:3001/api/getData/subscribeToShow";
+    fetch(url, transport).then(result => result.json()).then(json =>
+    {
+      utilFunc.updateLocalSubscribedLists().then(output =>
+      {
+        resolve(json);
+      });
+    }).catch(err => {
+      throw new Error(err);
+    });
+  });
 }
 
 export default EpisodeInformation
