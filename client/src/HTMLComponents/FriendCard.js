@@ -18,7 +18,6 @@ class FriendCard extends React.Component {
   {
     const {username} = this.props;
     const areFriends = this.state.isFriends;
-    // can be changed to const {username, areFriends} = this.state; ?????
     return (
       <div className="friendCard">
         <font>{username}</font>
@@ -26,6 +25,9 @@ class FriendCard extends React.Component {
             addFriend(username).then(result => {
               checkIfFriends({"username": username}).then(boolFriend => {
                 this.setState({isFriends: boolFriend.areFriends});
+                document.getElementById("friends").hidden = false;
+                document.getElementById("addFriends").hidden = true;
+                this.props.handler();
               });
             });
           }}>+</button>

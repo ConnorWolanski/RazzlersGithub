@@ -124,7 +124,33 @@ class MovieInformation extends React.Component {
         }
       }
       return (
-        <div>
+        <div><div className= "modal_center" hidden= {true} id = "confirm">
+          <font>You will be Charged $1.50 Confirm?</font>
+          <button className= "button" onClick ={() =>
+            subscribe(isMovie, id).then(result =>
+            {
+              document.getElementById("confirm").hidden=true;
+              console.log("result");
+              // result is either true or false based on if subbing went correctly or note
+              if(result.result === "true")
+              {
+                // refresh page so they can watch the subbed show/movie
+                window.location.reload();
+                } else if(result.result === "full") {
+                  // they are at capacity for subscriptions!
+                  document.getElementById("capacityMessage").hidden=false;
+                } else {
+                  // subbing failed
+                  // display error message!
+                  document.getElementById("invalidMessage1").hidden=false;
+                }
+            })
+            }>Yes</button>
+          <button className= "button" onClick = {() =>
+    			{
+            document.getElementById("confirm").hidden=true;
+          }}>No</button>
+        </div>
 		  <div className="container">
 			<img className="container__image" src={loc} alt="background"/>
 
@@ -145,25 +171,9 @@ class MovieInformation extends React.Component {
 
 			<button hidden = {isSubscribed} className="subButton" onClick = {() =>
 			{
-				subscribe(isMovie, id).then(result =>
-				{
-					console.log("result");
-					// result is either true or false based on if subbing went correctly or note
-					if(result.result === "true")
-					{
-						// refresh page so they can watch the subbed show/movie
-						window.location.reload();
-						} else if(result.result === "full") {
-							// they are at capacity for subscriptions!
-							document.getElementById("capacityMessage").hidden=false;
-						} else {
-							// subbing failed
-							// display error message!
-							document.getElementById("invalidMessage1").hidden=false;
-						}
-				})
-            }
-			}>Subscribe</button>
+        document.getElementById("confirm").hidden=false;
+      }
+    }>Rent</button>
 		  </div>
 
 		<h2 className="centerText"><font  color = "white" size = "50"> {"Comments"} </font></h2>
@@ -193,7 +203,6 @@ class MovieInformation extends React.Component {
 				}}>Submit comment</button>
 			</ul>
 		</div>
-
 		</div>
       );
 

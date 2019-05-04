@@ -521,6 +521,17 @@ router.put("/getData/resetSubs", function(req, response)
         response.send('{"result": "false"}');
       } else {
         console.log("Deleted membership for userID: " + userID);
+      }
+    });
+    var sql = "UPDATE users SET subscription_slots=0 WHERE user_id=" + userID;
+    connection.query(sql, function(err, sqlresult)
+    {
+      if(err)
+      {
+        console.log(err);
+        response.send('{"result": "false"}');
+      } else {
+        console.log("Deleted membership for userID: " + userID);
         response.send('{"result": "true"}');
       }
     });
@@ -791,7 +802,7 @@ router.put("/getData/getUserInfo", function(req, response)
 		var accountStatus = "";
         if(result[0] !== null)
         {
-		  if(result[0].subscription_slots == 0){
+		  if(result[0].subscription_slots < 10){
 			  accountStatus = "Inactive";
 		  }
 		  else{
