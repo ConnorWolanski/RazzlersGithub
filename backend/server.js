@@ -762,7 +762,7 @@ router.put("/getData/getVideoInfo", function(req, response)
         if(result[0] !== null)
         {
           back = '{"title": "' + result[0].episode_name + '", "desc": "' + result[0].episode_description +
-                  '", "rate": "' + result[0].episode_rating + '", "act": "' + "" + '", "year": "' + result[0].tv_show_release_year + '"}';
+                  '", "rate": "' + result[0].episode_rating + '", "act": "' + "" + '", "year": "' + "" + '"}';
         }
         response.send(back);
       }
@@ -1184,7 +1184,7 @@ router.put("/updateRating", function(req, response)
 
 router.get("/getData/getTopMovieList", function(req, response)
 {
-  var sql = "SELECT * FROM movie WHERE movie_rating >= 4";
+  var sql = "SELECT * FROM movie WHERE movie_rating >= 4 ORDER BY movie_rating DESC LIMIT 12";
   connection.query(sql, function(err, result)
   {
     if(err)
@@ -1200,7 +1200,7 @@ router.get("/getData/getTopMovieList", function(req, response)
 
 router.get("/getData/getTopShowList", function(req, response)
 {
-  var sql = "SELECT * FROM tv_show WHERE tv_show_rating >= 4";
+  var sql = "SELECT * FROM tv_show WHERE tv_show_rating >= 4 ORDER BY tv_show_rating DESC LIMIT 12";
   connection.query(sql, function(err, result)
   {
     if(err)
@@ -1517,6 +1517,7 @@ router.put("/addCommentMovie", function(req, response)
   	var user_id = result;
   	var commentID = Math.floor(Math.random()*9000000) + 1000000;
   	var body = req.body.body
+	
   	var movieID = req.body.id
 
 	var d = new Date();
@@ -2010,6 +2011,31 @@ router.put("/getData/getEpisodeCommentDate", function(req, response)
         }
       }
     });
+});
+
+router.put("/getData/getShowIdFromEpisodeId", function(req, response)
+{
+  var id = req.body.id;
+  var sql = "SELECT * FROM tv_show TS INNER JOIN episode E ON TS.tv_show_id = E.tv_show_id WHERE episode_id='" + id + "'";
+	console.log(id);
+  connection.query(sql, function(err, result)
+  {
+	  console.log(result);
+	if(err)
+    {
+		console.log(err);
+        response.send('{"result": "false"}');
+    } else {
+        // build the response from result
+        var back = '{"result": "false"}'
+		
+        if(result[0] !== null)
+        {
+          back = '{"showId": "' + result[0].tv_show_id + '"}';
+        }
+        response.send(back);
+     }
+  });
 });
 
 // start backend on port 3001

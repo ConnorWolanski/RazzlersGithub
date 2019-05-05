@@ -161,14 +161,16 @@ class VideoInformation extends React.Component {
 				<p><font  color ="white" size = "20px">{"Release Year : " + release_year}</font></p>
 				<p><font  color ="white" size = "20px">{description}</font></p>
 			</div>
-			<p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
+
+			<p className="centerText" hidden = {isSubscribed || window.localStorage.getItem("Razzlers_Username") === null}><font color = "white" size = "50">Subscribe to See Episodes</font></p>
 			<p className="centerText">
             <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
 			</p>
 			<p className="centerText">
 				<font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
 			</p>
-			<button hidden = {isSubscribed} className="subButton" onClick = {() =>
+
+			<button hidden = {isSubscribed || window.localStorage.getItem("Razzlers_Username") === null} className="subButton" onClick = {() =>
 			{
         document.getElementById("confirm").hidden=false;
 			}}>Subscribe</button>
@@ -224,7 +226,7 @@ class VideoInformation extends React.Component {
 				<p><font  color ="white" size = "20px">{description}</font></p>
 			</div>
 
-			<p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
+			<p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to See Episodes</font></p>
 			<p className="centerText">
             <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
 			</p>
@@ -584,7 +586,8 @@ function addComment(inBody, id)
   return new Promise(function(resolve, reject)
   {
 	var user = window.localStorage.getItem("Razzlers_Username");
-    var data = '{"body": "' + inBody + '", "id": "' + id + '", "username": "' + user + '"}';
+	var escapedBody = inBody.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+    var data = '{"body": "' + escapedBody + '", "id": "' + id + '", "username": "' + user + '"}';
     data = JSON.parse(data);
     var transport = {
       headers: {
@@ -609,7 +612,7 @@ function buildComments(bodies, usernames, times, dates) {
     var html = "<form>";
     for (var i = 0; i < bodies.length; i++) {
 		console.log(bodies[i]);
-		html += "<div class='new_comment'><ul class='user_comment'><div class='user_avatar'>" + usernames[i] + " <p><i class='fa fa-calendar'></i> " + dates[i].replace('T07:00:00.000Z','') + " <i class='fa fa-clock-o'></i> " + times[i] + "</p></div><div class='comment_body'><p>" + bodies[i].replace(/\n/g, "<br />") + "</p></div></ul></div>";
+		html += "<div class='new_comment'><ul class='user_comment'><div class='user_avatar'>" + usernames[i] + " <p><i class='fa fa-calendar'></i> " + dates[i].replace('T07:00:00.000Z','') + " <i class='fa fa-clock-o'></i> " + times[i] + "</p></div><div class='comment_body'><p>" + bodies[i].replace(/\n/g, "<br />").replace(/(['"])/g, "\\$1") + "</p></div></ul></div>";
     }
     html += "</form>";
     bodiesDiv.innerHTML = html;
