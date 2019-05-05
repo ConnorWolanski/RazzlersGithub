@@ -2,7 +2,6 @@ import React from 'react';
 import {Card, CardTitle, CardMedia} from 'material-ui';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-
 const styles = {
   cardTitle: {
     whiteSpace: 'nowrap',
@@ -34,14 +33,13 @@ class EpisodeCard extends React.Component {
     //console.log(this.props);
     this.state = {
       isMouseOver: false,
-      episode: props
+      episode: props,
     };
   }
 
   render() {
-    const {episode} = this.props;
+    const {episode, showID} = this.props;
     var loc = "//assets.razzlers.me/assets/thumbnails/episodeThumbnails/" + episode.episode_id + ".jpg";
-
     // The subtitle won't render if it's null
     const subtitle = this.state.isMouseOver ? episode.episode_description : null;
     return (
@@ -50,7 +48,7 @@ class EpisodeCard extends React.Component {
           style={styles.card}
           onMouseOver={() => this.setState({isMouseOver: true})}
           onMouseLeave={() => this.setState({isMouseOver: false})}
-          onClick={() => window.location.href="episodeInformation?isMovie=false&id=" + episode.episode_id}>
+          onClick={() => window.location.href="episodeInformation?isMovie=false&id=" + episode.tv_show_id + "&episode=" + episode.episode_id}>
           <CardMedia
             style={styles.cardMedia}
             overlay={

@@ -36,6 +36,11 @@ class Footer extends React.Component {
     }
     thisref = this;
   }
+  handler() {
+    utilFunc.getUsersFriends(window.localStorage.getItem("Razzlers_Username")).then(friendsList => {
+      this.setState({friends: friendsList.friends, IDs: friendsList.IDs, users: friendsList.friends, ids: friendsList.IDs});
+    });
+  }
   componentDidMount()
   {
     setTimeout(function()
@@ -75,7 +80,7 @@ class Footer extends React.Component {
             <input type="text" id="messageTyped" className="messageText" placeholder="text message" />
             <button type="submit" className="sendButton" onClick={() => {
                 window.event.preventDefault();
-                sendMessage(document.getElementById("messageTitle").innerHTML, document.getElementById("messageTyped").value).then(result => {
+                utilFunc.checkSpecialChars(document.getElementById("messageTyped").value).then(str => {sendMessage(document.getElementById("messageTitle").innerHTML, str).then(result => {
                   utilFunc.getUsersMessages(window.localStorage.getItem("Razzlers_Username"), document.getElementById("messageTitle").innerHTML).then(json => {
                     forceUpdateMessages();
                     document.getElementById('messageTyped').value = "";
@@ -85,6 +90,7 @@ class Footer extends React.Component {
                     }, 150);
                   });
                 });
+              });
               }}>Send</button>
           </form>
         </div>
@@ -113,7 +119,7 @@ class Footer extends React.Component {
             </button>
           </h1>
           <div className="autoFlow">
-            <FriendsList friends={friends} IDs={IDs} parent={this}/>
+            <FriendsList friends={friends} IDs={IDs} parent={this} handler = {this.handler.bind(this)}/>
           </div>
         </div>
 
@@ -140,7 +146,7 @@ class Footer extends React.Component {
                 this.setState({users:users, ids: ids});
               })}/>
             <div id="dhold">
-              <FriendsList friends={users} IDs={ids} parent={this}/>
+              <FriendsList friends={users} IDs={ids} handler = {this.handler.bind(this)}/>
             </div>
         </div>
 

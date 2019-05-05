@@ -125,6 +125,33 @@ class VideoInformation extends React.Component {
       }
       return (
         <div>
+          <div className= "modal_center" hidden= {true} id = "confirm">
+            <font>Are you sure?</font>
+            <button className= "button" onClick ={() =>
+              subscribe(isMovie, id).then(result =>
+              {
+                document.getElementById("confirm").hidden=true;
+                console.log("result");
+                // result is either true or false based on if subbing went correctly or note
+                if(result.result === "true")
+                {
+                  // refresh page so they can watch the subbed show/movie
+                  window.location.reload();
+                  } else if(result.result === "full") {
+                    // they are at capacity for subscriptions!
+                    document.getElementById("capacityMessage").hidden=false;
+                  } else {
+                    // subbing failed
+                    // display error message!
+                    document.getElementById("invalidMessage1").hidden=false;
+                  }
+              })
+              }>Yes</button>
+            <button className= "button" onClick = {() =>
+            {
+              document.getElementById("confirm").hidden=true;
+            }}>No</button>
+          </div>
 		  <div className="container">
 			<img className="container__image" src={loc} alt="background"/>
 
@@ -135,7 +162,7 @@ class VideoInformation extends React.Component {
 				<p><font  color ="white" size = "20px">{description}</font></p>
 			</div>
 
-			<p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
+			<p className="centerText" hidden = {isSubscribed || window.localStorage.getItem("Razzlers_Username") === null}><font color = "white" size = "50">Subscribe to See Episodes</font></p>
 			<p className="centerText">
             <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
 			</p>
@@ -143,35 +170,14 @@ class VideoInformation extends React.Component {
 				<font hidden id="invalidMessage1" className="error">Subscription Failed, please try again!</font>
 			</p>
 
-			<button hidden = {isSubscribed} className="subButton" onClick = {() =>
+			<button hidden = {isSubscribed || window.localStorage.getItem("Razzlers_Username") === null} className="subButton" onClick = {() =>
 			{
-				subscribe(isMovie, id).then(result =>
-				{
-					console.log("result");
-					// result is either true or false based on if subbing went correctly or note
-					if(result.result === "true")
-					{
-						// refresh page so they can watch the subbed show/movie
-						window.location.reload();
-						} else if(result.result === "full") {
-							// they are at capacity for subscriptions!
-							document.getElementById("capacityMessage").hidden=false;
-						} else {
-							// subbing failed
-							// display error message!
-							document.getElementById("invalidMessage1").hidden=false;
-						}
-				})
-            }
-			}>Subscribe</button>
+        document.getElementById("confirm").hidden=false;
+			}}>Subscribe</button>
 		  </div>
-
-
-
 		<h2 className="centerText"><font  color = "white" size = "50"> {"Comments"} </font></h2>
 
 		<div onload="buildComments();" data-role="fieldcontain" class="ui-hide-label" id="bodiesDiv"></div>
-
 		<div class="new_comment">
 			<ul class="user_comment">
 				<font  color = "white" size = "50" hidden = {isUserNotLoggedIn}> {"Leave a comment"} </font>
@@ -194,6 +200,7 @@ class VideoInformation extends React.Component {
 					}
 				}}>Submit comment</button>
 			</ul>
+
 		</div>
 
 		</div>
@@ -207,7 +214,7 @@ class VideoInformation extends React.Component {
           loc = "//assets.razzlers.me/assets/thumbnails/showThumbnails/" + id + ".jpg";
         }
       return (
-        <div>
+      <div>
 		  <div className="container">
 			<img className="container__image" src={loc} alt="background"/>
 
@@ -219,7 +226,7 @@ class VideoInformation extends React.Component {
 				<p><font  color ="white" size = "20px">{description}</font></p>
 			</div>
 
-			<p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to Watch Video</font></p>
+			<p className="centerText" hidden = {isSubscribed}><font color = "white" size = "50">Subscribe to See Episodes</font></p>
 			<p className="centerText">
             <font hidden id="capacityMessage" className="error">You have no more subscriptions left this month!</font>
 			</p>
@@ -229,6 +236,7 @@ class VideoInformation extends React.Component {
 
 			<button hidden = {isSubscribed} className="subButton" onClick = {() =>
 			{
+        document.getElementById("confirm").hidden = false;
 				subscribe(isMovie, id).then(result =>
 				{
 					console.log("result");
@@ -578,7 +586,8 @@ function addComment(inBody, id)
   return new Promise(function(resolve, reject)
   {
 	var user = window.localStorage.getItem("Razzlers_Username");
-    var data = '{"body": "' + inBody + '", "id": "' + id + '", "username": "' + user + '"}';
+	var escapedBody = inBody.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+    var data = '{"body": "' + escapedBody + '", "id": "' + id + '", "username": "' + user + '"}';
     data = JSON.parse(data);
     var transport = {
       headers: {
@@ -603,7 +612,7 @@ function buildComments(bodies, usernames, times, dates) {
     var html = "<form>";
     for (var i = 0; i < bodies.length; i++) {
 		console.log(bodies[i]);
-		html += "<div class='new_comment'><ul class='user_comment'><div class='user_avatar'>" + usernames[i] + " <p><i class='fa fa-calendar'></i> " + dates[i].replace('T07:00:00.000Z','') + " <i class='fa fa-clock-o'></i> " + times[i] + "</p></div><div class='comment_body'><p>" + bodies[i].replace(/\n/g, "<br />") + "</p></div></ul></div>";
+		html += "<div class='new_comment'><ul class='user_comment'><div class='user_avatar'>" + usernames[i] + " <p><i class='fa fa-calendar'></i> " + dates[i].replace('T07:00:00.000Z','') + " <i class='fa fa-clock-o'></i> " + times[i] + "</p></div><div class='comment_body'><p>" + bodies[i].replace(/\n/g, "<br />").replace(/(['"])/g, "\\$1") + "</p></div></ul></div>";
     }
     html += "</form>";
     bodiesDiv.innerHTML = html;

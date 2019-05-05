@@ -44,7 +44,71 @@ class Profile extends React.Component {
   }
   render() {
     const { user, firstName, lastName, Email, Status } = this.state;
-    return (<div className="bg2">
+    return (
+      <div>
+        <div className= "modal_center" hidden= {true} id = "confirmSub">
+          <font>Confirm Subscription</font>
+          <button className= "button" onClick ={() => {
+            document.getElementById("confirmSub").hidden=true;
+            startSubscription().then(result =>
+            {
+              getUserInfo(user).then(set =>
+              {
+                if (!set.hasOwnProperty("result")){
+                  this.setState({
+                    Status: set.status
+                  });
+                }
+              });
+              console.log(result);
+            });
+            }
+          }>Yes</button>
+          <button className= "button" onClick = {() =>
+          {
+            document.getElementById("confirmSub").hidden=true;
+          }}>No</button>
+        </div>
+        <div className= "modal_center" hidden= {true} id = "confirmAdd">
+          <font>Confirm add 1 slot</font>
+          <button className= "button" onClick ={() => {
+            document.getElementById("confirmAdd").hidden=true;
+            addOneToSlots().then(result =>
+            {
+              getUserInfo(user).then(set =>
+              {
+                if (!set.hasOwnProperty("result")){
+                  this.setState({
+                    Status: set.status
+                  });
+                }
+              });
+              console.log(result);
+            });
+            }
+            }>Yes</button>
+          <button className= "button" onClick = {() =>
+          {
+            document.getElementById("confirmAdd").hidden=true;
+          }}>No</button>
+        </div>
+        <div className= "modal_center" hidden= {true} id = "confirmEnd">
+          <font>Confirm Cancel</font>
+          <button className= "button" onClick ={() => {
+            document.getElementById("confirmEnd").hidden=true;
+            resetSubs().then(result =>
+            {
+              this.setState({Status: "Inactive"});
+              console.log(result);
+            });
+            }
+            }>Yes</button>
+          <button className= "button" onClick = {() =>
+          {
+            document.getElementById("confirmEnd").hidden=true;
+          }}>No</button>
+        </div>
+      <div className="bg2_center">
       <h2 className="centerText">
         <font color="black" size="50">{"Hello, " + user + "!"}</font>
       </h2>
@@ -65,28 +129,21 @@ class Profile extends React.Component {
           <font color="#d7e2e9" size="20px">Click here to view billing information</font>
         </a>
       </p>
-      <button className="button2" onClick={() =>
+      <button className="button2" hidden = {Status!=="Inactive"} onClick={() =>
         {
-          startSubscription().then(result =>
-          {
-            console.log(result);
-          });
+          document.getElementById("confirmSub").hidden=false;
         }}>Start Subscriptions</button>
-      <button className="button2" onClick={() =>
+      <button className="button2" hidden = {Status==="Inactive"} onClick={() =>
         {
-          addOneToSlots().then(result =>
-          {
-            console.log(result);
-          });
+        document.getElementById("confirmAdd").hidden=false;
         }}>Add one to sub slots</button>
-      <button className="button2" onClick={() =>
+      <button className="button2" hidden = {Status==="Inactive"} onClick={() =>
         {
-          resetSubs().then(result =>
-          {
-            console.log(result);
-          });
-        }}>Reset Subscriptions</button>
-    </div>);
+          document.getElementById("confirmEnd").hidden=false;
+        }}>End Subscriptions</button>
+    </div>
+  </div>
+  );
   }
 }
 
@@ -109,7 +166,7 @@ function getUserInfo(user) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/getUserInfo";
+    const url = "//localhost:3001/api/getData/getUserInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -132,7 +189,7 @@ function startSubscription()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/subscribe";
+    const url = "//localhost:3001/api/getData/subscribe";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
       resolve(json);
@@ -156,7 +213,7 @@ function addOneToSlots()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/addOneSub";
+    const url = "//localhost:3001/api/getData/addOneSub";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
       resolve(json);
@@ -182,7 +239,7 @@ function resetSubs()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/resetSubs";
+    const url = "//localhost:3001/api/getData/resetSubs";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
       window.localStorage.setItem("Razzlers_Subscribed_Shows", null);
