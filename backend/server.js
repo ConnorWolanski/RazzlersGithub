@@ -189,7 +189,7 @@ function getUserSubscriptionCount(userid)
   return new Promise(function(resolve, reject)
   {
     var total = 0;
-    var sql = "SELECT * FROM user_movies_selected WHERE user_id='" + userid + "'";
+    /*var sql = "SELECT * FROM user_movies_selected WHERE user_id='" + userid + "'";
     connection.query(sql, function(err, result, fields)
     {
       if(err)
@@ -199,7 +199,7 @@ function getUserSubscriptionCount(userid)
       } else {
         total += result.length;
       }
-    });
+    });*/
     var sql = "SELECT * FROM user_shows_selected WHERE user_id='" + userid + "'";
     connection.query(sql, function(err, result, fields)
     {
@@ -568,65 +568,65 @@ router.put("/getData/subscribeToShow", function(req, response)
 {
   var username = req.body.username;
   var isMovie = req.body.isMovie;
+  console.log(isMovie);
   var id = req.body.id;
   // get the user data first
   getUserID(username).then(result =>
   {
-    // result is now userID
-    // check if user cant sub anymore because they are at capacity
-    getUserSubscriptionCount(result).then(count => {
-      // count should be int
-      getUserSubscriptionTotal(username).then(total => {
-        console.log("total: " + count + " / " + total);
-        if(total > count)
+    if(isMovie === "true")
+    {
+      var sql = "SELECT movie_id FROM user_movies_selected WHERE user_id='" + result + "'";
+      connection.query(sql, function(err, sqlresult)
+      {
+        if(err)
         {
-          // they can still sub
-          if(isMovie === "true")
-          {
-            var sql = "SELECT movie_id FROM user_movies_selected WHERE user_id='" + result + "'";
-            connection.query(sql, function(err, sqlresult)
+          console.log(err);
+          response.send('{"result": "false"}');
+        } else {
+          // result = tv_show_id array
+          getMovieList(sqlresult).then(listResult => {
+            returned = listResult.includes(parseInt(id,10));
+            if(!returned)
             {
-              if(err)
+              // list does not contain the subbed movie
+              // add it to movie db and return {result:true}
+              var dayAfter = new Date();
+              dayAfter.setTime(dayAfter.getTime() + 86400000);
+              getDateAsString(new Date()).then(startDate =>
               {
-                console.log(err);
-                response.send('{"result": "false"}');
-              } else {
-                // result = tv_show_id array
-                getMovieList(sqlresult).then(listResult => {
-                  returned = listResult.includes(parseInt(id,10));
-                  if(!returned)
+                getDateAsString(dayAfter).then(endDate =>
+                {
+                  var sql = "INSERT INTO user_movies_selected (user_id, movie_id, start_time, end_time) VALUES (\'" + result + "\', \'" + id + "\', \'" + startDate + "\', \'" + endDate + "\')";
+                  connection.query(sql, function(err, result)
                   {
-                    // list does not contain the subbed movie
-                    // add it to movie db and return {result:true}
-                    var dayAfter = new Date();
-                    dayAfter.setTime(dayAfter.getTime() + 86400000);
-                    getDateAsString(new Date()).then(startDate =>
+                    if(err)
                     {
-                      getDateAsString(dayAfter).then(endDate =>
-                      {
-                        var sql = "INSERT INTO user_movies_selected (user_id, movie_id, start_time, end_time) VALUES (\'" + result + "\', \'" + id + "\', \'" + startDate + "\', \'" + endDate + "\')";
-                        connection.query(sql, function(err, result)
-                        {
-                          if(err)
-                          {
-                            console.log(err);
-                            response.send('{"result": "false"}');
-                          } else {
-                            console.log(username + " has subscribed to movie " + id);
-                            response.send('{"result": "true"}');
-                          }
-                        });
-                      });
-                    });
-                  } else {
-                    // list does contain the subbed movie
-                    // return {result:true}
-                    response.send('{"result": "true"}');
-                  }
+                      console.log(err);
+                      response.send('{"result": "false"}');
+                    } else {
+                      console.log(username + " has subscribed to movie " + id);
+                      response.send('{"result": "true"}');
+                    }
+                  });
                 });
-              }
-            });
-          } else {
+              });
+            } else {
+              // list does contain the subbed movie
+              // return {result:true}
+              response.send('{"result": "true"}');
+            }
+          });
+        }
+      });
+    } else {
+      // result is now userID
+      // check if user cant sub anymore because they are at capacity
+      getUserSubscriptionCount(result).then(count => {
+        // count should be int
+        getUserSubscriptionTotal(username).then(total => {
+          console.log("total: " + count + " / " + total);
+          if(total > count)
+          {
             var sql = "SELECT tv_show_id FROM user_shows_selected WHERE user_id='" + result + "'";
             connection.query(sql, function(err, sqlresult)
             {
@@ -662,13 +662,13 @@ router.put("/getData/subscribeToShow", function(req, response)
                 });
               }
             });
+          } else {
+            // they are at capacity!
+            response.send('{"result": "full"}')
           }
-        } else {
-          // they are at capacity!
-          response.send('{"result": "full"}')
-        }
+        });
       });
-    });
+    }
   });
 });
 

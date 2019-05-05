@@ -504,7 +504,7 @@ function subscribe(isMovie, id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/subscribeToShow";
+    const url = "//localhost:3001/api/getData/subscribeToShow";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
       utilFunc.updateLocalSubscribedLists().then(output =>
