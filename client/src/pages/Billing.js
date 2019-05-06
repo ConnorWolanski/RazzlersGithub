@@ -75,20 +75,20 @@ class Billing extends React.Component {
           {hasBillingInfo ? (
             <div>
               <h2 className="centerText"><font  color = "black" size = "50"> {"Billing Information"} </font></h2>
-              <p className="centerText"><font  color ="black" size = "20px">{"Name on card: " + name}</font></p>
-              <p className="centerText"><font  color ="black" size = "20px">{"Credit Card Number: " + censoredCCN}</font></p>
-              <p className="centerText"><font  color ="black" size = "20px">{"Expiration Date: " + exp}</font></p>
-              <p className="centerText"><font  color ="black" size = "20px">{"CVC: " + CVC}</font></p>
-              <p className="centerText"><font  color ="black" size = "20px">{"Billing Address: " + address}</font></p>
-              <p className="centerText"><font  color ="black" size = "20px">{"Billing Date: " + date + " of every month"}</font></p>
+              <p className="centerText"><font  color ="black" size = "20px"><b>Name on card: </b>{name}</font></p>
+              <p className="centerText"><font  color ="black" size = "20px"><b>Credit Card Number: </b>{censoredCCN}</font></p>
+              <p className="centerText"><font  color ="black" size = "20px"><b>Expiration Date: </b>{exp}</font></p>
+              <p className="centerText"><font  color ="black" size = "20px"><b>CVV: </b>{CVC}</font></p>
+              <p className="centerText"><font  color ="black" size = "20px"><b>Billing Address: </b>{address}</font></p>
+              <p className="centerText"><font  color ="black" size = "20px"><b>Billing Date: </b>{date} of every month</font></p>
               <p className="centerText"><a href="/editBilling" ><font color= "#d7e2e9">Click here to edit it!</font></a></p>
             </div>
           ) : (
-    				<div>
-      				<h2 className="centerText"><font  color = "black" size = "50"> {"Billing Information"} </font></h2>
-      				<p className="centerText"><font  color ="red" size = "20px">{"You do not have any billing information in file"}</font></p>
-      				<p className="centerText"><a href="/editBilling" ><font color= "#d7e2e9">Click here to add it!</font></a></p>
-    				</div>
+    		<div>
+      		  <h2 className="centerText"><font  color = "black" size = "50"> {"Billing Information"} </font></h2>
+      		  <p className="centerText"><font  color ="red" size = "20px">{"You do not have any billing information in file"}</font></p>
+      		  <p className="centerText"><a href="/editBilling" ><font color= "#d7e2e9">Click here to add it!</font></a></p>
+    		</div>
           )}
         </div>
       </div>
@@ -121,29 +121,5 @@ function getUserBilling(user) {
     });
   });
 }
-/*function updateBilling(inName, inCCN, inExp, inCvc, inAddress)
-{
-  return new Promise(function(resolve, reject)
-  {
-	var user = window.localStorage.getItem("Razzlers_Username");
-    var data = '{"name": "' + inName + '", "ccn": "' + inCCN + '", "exp": "' + inExp + '", "cvc": "' + inCvc + '", "address": "' + inAddress + '", "username": "' + user + '"}';
-    data = JSON.parse(data);
-    var transport = {
-      headers: {
-        'Content-Type': "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(data)
-    };
-    const url = "http://localhost:3001/api/updateBilling";
-    fetch(url, transport).then(response => response.json()).then(json =>
-      {
-        // needs to return true or false based on if registration is successful
-        // if true, return true and set username in localStorage
-        // if false, return what went wrong, if multiple things, put inside array[]
-        resolve(json);
-      });
-  });
-}*/
 
 export default Billing
