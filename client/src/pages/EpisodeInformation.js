@@ -484,7 +484,7 @@ function addComment(inBody, id)
   return new Promise(function(resolve, reject)
   {
 	var user = window.localStorage.getItem("Razzlers_Username");
-	var escapedBody = inBody.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+	var escapedBody = inBody.replace(/'/g, "&apos;").replace(/"/g, "&quot;").replace(/\\n/g, '<br />').replace(/\\/g, "\\\\\\\\");
     var data = '{"body": "' + escapedBody + '", "id": "' + id + '", "username": "' + user + '"}';
     data = JSON.parse(data);
     var transport = {
