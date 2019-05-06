@@ -13,7 +13,7 @@ function getMovieList()
       },
       method: "GET"
     };
-    const url = "http://localhost:3001/api/getData/getMovieList";
+    const url = "http://razzlers.me:3001/api/getData/getMovieList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -52,7 +52,7 @@ function getUsersFriends(user) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getUsersFriends";
+    const url = "http://razzlers.me:3001/api/getData/getUsersFriends";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -78,7 +78,7 @@ function getShowList()
       },
       method: "GET"
     };
-    const url = "http://localhost:3001/api/getData/getShowList";
+    const url = "http://razzlers.me:3001/api/getData/getShowList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -107,7 +107,7 @@ function getSubscribedMList()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getSubscribedMovies";
+    const url = "http://razzlers.me:3001/api/getData/getSubscribedMovies";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -136,7 +136,7 @@ function getSubscribedSList()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getSubscribedShows";
+    const url = "http://razzlers.me:3001/api/getData/getSubscribedShows";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -192,7 +192,7 @@ exports.getUsersMessages = function(sender, recipient)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getUsersMessages";
+    const url = "http://razzlers.me:3001/api/getData/getUsersMessages";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -212,7 +212,7 @@ exports.getUnreadUsersMessages = function(user)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//localhost:3001/api/getData/getUnreadUsersMessages";
+    const url = "//razzlers.me:3001/api/getData/getUnreadUsersMessages";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -233,7 +233,7 @@ exports.getUsernameFromID = function(id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getUsernameOfID";
+    const url = "http://razzlers.me:3001/api/getData/getUsernameOfID";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -252,7 +252,7 @@ exports.readUserMessages = function(sender, recipient){
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//localhost:3001/api/readUserMessages";
+    const url = "//razzlers.me:3001/api/readUserMessages";
     fetch(url, transport).catch(err => {
       throw new Error(err);
     });
@@ -284,7 +284,7 @@ function getTopMovieList()
       },
       method: "GET"
     };
-    const url = "http://localhost:3001/api/getData/getTopMovieList";
+    const url = "http://razzlers.me:3001/api/getData/getTopMovieList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -308,7 +308,7 @@ function getTopShowList()
       },
       method: "GET"
     };
-    const url = "http://localhost:3001/api/getData/getTopShowList";
+    const url = "http://razzlers.me:3001/api/getData/getTopShowList";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -335,7 +335,7 @@ function getEpisodeList(id)
       method: "PUT",
 	  body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getEpisodeList";
+    const url = "http://razzlers.me:3001/api/getData/getEpisodeList";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -362,7 +362,7 @@ function getMovieComments(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getMovieCommentList";
+    const url = "http://razzlers.me:3001/api/getData/getMovieCommentList";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -388,7 +388,7 @@ function getShowComments(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getShowCommentList";
+    const url = "http://razzlers.me:3001/api/getData/getShowCommentList";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -414,7 +414,7 @@ function getEpisodeComments(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getEpisodeCommentList";
+    const url = "http://razzlers.me:3001/api/getData/getEpisodeCommentList";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -441,7 +441,7 @@ function getMovieCommentsUsername(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getMovieCommentUsername";
+    const url = "http://razzlers.me:3001/api/getData/getMovieCommentUsername";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -467,7 +467,7 @@ function getShowCommentsUsername(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getShowCommentUsername";
+    const url = "http://razzlers.me:3001/api/getData/getShowCommentUsername";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -493,7 +493,7 @@ function getEpisodeCommentsUsername(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getEpisodeCommentUsername";
+    const url = "http://razzlers.me:3001/api/getData/getEpisodeCommentUsername";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -520,7 +520,7 @@ function getMovieCommentsTime(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getMovieCommentTime";
+    const url = "http://razzlers.me:3001/api/getData/getMovieCommentTime";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -546,7 +546,7 @@ function getShowCommentsTime(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getShowCommentTime";
+    const url = "http://razzlers.me:3001/api/getData/getShowCommentTime";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -572,7 +572,7 @@ function getEpisodeCommentsTime(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getEpisodeCommentTime";
+    const url = "http://razzlers.me:3001/api/getData/getEpisodeCommentTime";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -599,7 +599,7 @@ function getMovieCommentsDate(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getMovieCommentDate";
+    const url = "http://razzlers.me:3001/api/getData/getMovieCommentDate";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -625,7 +625,7 @@ function getShowCommentsDate(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getShowCommentDate";
+    const url = "http://razzlers.me:3001/api/getData/getShowCommentDate";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
@@ -651,7 +651,7 @@ function getEpisodeCommentsDate(id) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://localhost:3001/api/getData/getEpisodeCommentDate";
+    const url = "http://razzlers.me:3001/api/getData/getEpisodeCommentDate";
     fetch(url, transport).then(result => result.json()).then(json => {
       //console.log(json);
       resolve(json);
