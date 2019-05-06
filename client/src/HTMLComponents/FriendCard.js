@@ -53,6 +53,7 @@ function addFriend(addedFriend)
   return new Promise(function(resolve, reject) {
     var data = '{"username": "' + window.localStorage.getItem("Razzlers_Username") + '", "friend_username": "' + addedFriend + '"}';
     data = JSON.parse(data);
+    console.log(data);
     var transport = {
       headers: {
         'Content-Type': "application/json"
@@ -60,7 +61,7 @@ function addFriend(addedFriend)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "http://razzlers.me:3001/api/addFriend";
+    const url = "//razzlers.me:3001/api/addFriend";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {

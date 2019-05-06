@@ -433,9 +433,8 @@ router.put("/addBilling", function(req, response) {
 
 router.put("/addFriend", function(req, response) {
   var username = req.body.username;
-  if (username !== 'string') {
+  if (typeof username !== 'string') {
     response.send('{"result": "false"}');
-    return;
     return;
   }
   getUserID(username).then(userID => {
