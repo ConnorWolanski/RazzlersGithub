@@ -166,7 +166,7 @@ function getUserInfo(user) {
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//localhost:3001/api/getData/getUserInfo";
+    const url = "//razzlers.me:3001/api/getData/getUserInfo";
     fetch(url, transport).then(result => result.json()).then(json => {
       resolve(json);
     }).catch(err => {
@@ -189,7 +189,7 @@ function startSubscription()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//localhost:3001/api/getData/subscribe";
+    const url = "//razzlers.me:3001/api/getData/subscribe";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
       resolve(json);
@@ -213,7 +213,7 @@ function addOneToSlots()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//localhost:3001/api/getData/addOneSub";
+    const url = "//razzlers.me:3001/api/getData/addOneSub";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
       resolve(json);
@@ -239,7 +239,7 @@ function resetSubs()
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//localhost:3001/api/getData/resetSubs";
+    const url = "//razzlers.me:3001/api/getData/resetSubs";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
       window.localStorage.setItem("Razzlers_Subscribed_Shows", null);
