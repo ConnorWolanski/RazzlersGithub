@@ -6,7 +6,7 @@ class UnreadMessagesCard extends React.Component {
     super(props);
     this.state = {
       unread: props.unread,
-      username: props.unread.id
+      username: window.localStorage.getItem("Razzlers_Username")
     };
     utilFunc.getUsernameFromID(props.unread.id).then(result =>{
       this.setState({username: result.username});

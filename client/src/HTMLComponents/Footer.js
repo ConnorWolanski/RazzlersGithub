@@ -81,6 +81,7 @@ class Footer extends React.Component {
             <button type="submit" className="sendButton" onClick={() => {
                 window.event.preventDefault();
                 utilFunc.checkSpecialChars(document.getElementById("messageTyped").value).then(str => {sendMessage(document.getElementById("messageTitle").innerHTML, str).then(result => {
+                  if(window.localStorage.getItem("Razzlers_Username").length > 0 && document.getElementById("messageTitle").innerHTML !== ""){
                   utilFunc.getUsersMessages(window.localStorage.getItem("Razzlers_Username"), document.getElementById("messageTitle").innerHTML).then(json => {
                     forceUpdateMessages();
                     document.getElementById('messageTyped').value = "";
@@ -88,7 +89,7 @@ class Footer extends React.Component {
                     {
                       document.getElementById('bottom').scrollIntoView({behavior: "smooth"});
                     }, 150);
-                  });
+                  });}
                 });
               });
               }}>Send</button>
@@ -245,7 +246,7 @@ function forceUpdateMessages()
 {
   var sender = window.localStorage.getItem("Razzlers_Username");
   var recip = document.getElementById("messageTitle").innerHTML;
-  if(sender !== recip)
+  if(sender !== recip && recip.length>0)
   {
     utilFunc.getUsersMessages(sender, recip).then(messages => {
       thisref.setState({defaultMessage: messages.messages});
