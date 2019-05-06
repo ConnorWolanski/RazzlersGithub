@@ -57,7 +57,7 @@ class Billing extends React.Component{
     return (
       <div className ="bg2_center">
 		      <p hidden id="invalidMessage">
-          <font className="error">Username or password is invalid, please try again!</font>
+          <font className="error">Billing information is invalid, please try again!</font>
           </p>
 		      <p hidden id="blankSpacesMessage">
           <font className="error">Please fill out all required sections and try again!</font>

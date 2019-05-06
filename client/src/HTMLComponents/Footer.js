@@ -217,8 +217,8 @@ function getUnreadList(unreadMessages){
   })
 }
 
-function updateUnreadMessages(){
-
+function updateUnreadMessages()
+{
   if(window.localStorage.getItem("Razzlers_Username") != null){
     setTimeout(function()
     {

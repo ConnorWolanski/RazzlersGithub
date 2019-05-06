@@ -130,7 +130,7 @@ class MovieInformation extends React.Component {
             subscribe(isMovie, id).then(result =>
             {
               document.getElementById("confirm").hidden=true;
-              console.log("result");
+              //console.log("result");
               // result is either true or false based on if subbing went correctly or note
               if(result.result === "true")
               {
@@ -240,7 +240,7 @@ class MovieInformation extends React.Component {
 			{
 				subscribe(isMovie, id).then(result =>
 				{
-					console.log("result");
+					//console.log("result");
 					// result is either true or false based on if subbing went correctly or note
 					if(result.result === "true")
 					{
@@ -526,9 +526,10 @@ function subscribe(isMovie, id)
       method: "PUT",
       body: JSON.stringify(data)
     };
-    const url = "//razzlers.me:3001/api/getData/subscribeToShow";
+    const url = "//localhost:3001/api/getData/subscribeToShow";
     fetch(url, transport).then(result => result.json()).then(json =>
     {
+      //console.log(json);
       utilFunc.updateLocalSubscribedLists().then(output =>
       {
         resolve(json);
@@ -604,7 +605,7 @@ function buildComments(bodies, usernames, times, dates) {
     var bodiesDiv = document.getElementById("bodiesDiv");
     var html = "<form>";
     for (var i = 0; i < bodies.length; i++) {
-		console.log(bodies[i]);
+		//console.log(bodies[i]);
 		html += "<div class='new_comment'><ul class='user_comment'><div class='user_avatar'>" + usernames[i] + " <p><i class='fa fa-calendar'></i> " + dates[i].replace('T07:00:00.000Z','') + " <i class='fa fa-clock-o'></i> " + times[i] + "</p></div><div class='comment_body'><p>" + bodies[i].replace(/\n/g, "<br />").replace(/(['"])/g, "\\$1") + "</p></div></ul></div>";
     }
     html += "</form>";

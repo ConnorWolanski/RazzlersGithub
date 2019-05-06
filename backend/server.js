@@ -35,14 +35,117 @@ connection.connect(function(err) {
     return;
   }
   console.log("Connected to MySQL database!");
+  updateSubscriptions();
 })
 
+function checkSubscriptions()
+{
+  return new Promise(function(resolve, reject)
+  {
+    var current = new Date();
+    // fetch list and mark those if they need to be deleted depending on date comparison
+    getMovieSubList().then(movieList =>
+    {
+      getShowSubList().then(showList =>
+      {
+        for(var i = 0; i < movieList.length; i++)
+        {
+          var movieEndDate = movieList[i].end_time;
+          movieEndDate = new Date(movieEndDate);
+          if(movieEndDate < current)
+          {
+            var sql = "DELETE FROM user_movies_selected WHERE user_id='" + movieList[i].user_id + "' AND movie_id='" + movieList[i].movie_id + "'";
+            connection.query(sql, function(err, result, fields)
+            {
+              if(err)
+              {
+                throw err;
+                return;
+              } else {
+                console.log("Deleted index " + i + " from movie selected DB...");
+                //console.log("Deleted " + movieList[i].user_id + " : " + movieList[i].movie_id + " from DB!");
+              }
+            });
+          }
+        }
+        for(var i = 0; i < showList.length; i++)
+        {
+          var showEndDate = showList[i].end_time;
+          showEndDate = new Date(showEndDate);
+          if(showEndDate < current)
+          {
+            var sql = "DELETE FROM user_shows_selected WHERE user_id='" + showList[i].user_id + "' AND tv_show_id='" + showList[i].tv_show_id + "'";
+            connection.query(sql, function(err, result, fields)
+            {
+              if(err)
+              {
+                throw err;
+                return;
+              } else {
+                console.log("Deleted index " + i + " from show selected DB...");
+                //console.log("Deleted " + showList[i].user_id + " : " + showList[i].show_id + " from DB!");
+              }
+            });
+          }
+        }
+      });
+    });
+    // put the marked into a list
+    // if movie, put in one list or the other for show
+    // then iterate over the list for movies and remove from db 'user_movies_selected'
+    // ^^ for shows
+    // return count of deleted entries
+  });
+}
+function getMovieSubList()
+{
+  return new Promise(function(resolve, reject)
+  {
+    var sql = "SELECT * FROM user_movies_selected";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        resolve(JSON.parse(JSON.stringify(result)));
+      }
+    });
+  });
+}
+function getShowSubList()
+{
+  return new Promise(function(resolve, reject)
+  {
+    var sql = "SELECT * FROM user_shows_selected";
+    connection.query(sql, function(err, result, fields)
+    {
+      if(err)
+      {
+        throw err;
+        return;
+      } else {
+        resolve(JSON.parse(JSON.stringify(result)));
+      }
+    });
+  });
+}
+function updateSubscriptions()
+{
+  // this is the recursive function
+  checkSubscriptions();
+  setTimeout(function()
+  {
+    updateSubscriptions();
+  }, 900000);
+}
 // fetches the current date and returns it as string
 function getDateAsString(date)
 {
   return new Promise(function(resolve, reject)
   {
-    var month = date.getMonth();
+    var month = date.getMonth() + 1;
     if(month< 10)
     {
       month = "0" + month;
@@ -579,7 +682,6 @@ router.put("/getData/subscribeToShow", function(req, response)
 {
   var username = req.body.username;
   var isMovie = req.body.isMovie;
-  console.log(isMovie);
   var id = req.body.id;
   // get the user data first
   getUserID(username).then(result =>
@@ -635,7 +737,7 @@ router.put("/getData/subscribeToShow", function(req, response)
       getUserSubscriptionCount(result).then(count => {
         // count should be int
         getUserSubscriptionTotal(username).then(total => {
-          console.log("total: " + count + " / " + total);
+          //console.log("total: " + count + " / " + total);
           if(total > count)
           {
             var sql = "SELECT tv_show_id FROM user_shows_selected WHERE user_id='" + result + "'";
@@ -653,17 +755,25 @@ router.put("/getData/subscribeToShow", function(req, response)
                   {
                     // list does not contain the subbed movie
                     // add it to movie db and return {result:true}
-                    var sql = "INSERT INTO user_shows_selected (user_id, tv_show_id) VALUES (\'" + result + "\', \'" + id + "\')";
-                    connection.query(sql, function(err, result)
+                    var monthAfter = new Date();
+                    monthAfter.setTime(monthAfter.getTime() + 2592000000);
+                    getDateAsString(new Date()).then(startDate =>
                     {
-                      if(err)
+                      getDateAsString(monthAfter).then(endDate =>
                       {
-                        console.log(err);
-                        response.send('{"result": "false"}');
-                      } else {
-                        console.log(username + " has subscribed to show " + id);
-                        response.send('{"result": "true"}');
-                      }
+                        var sql = "INSERT INTO user_shows_selected (user_id, tv_show_id, start_time, end_time) VALUES (\'" + result + "\', \'" + id + "\', \'" + startDate + "\', \'" + endDate + "\')";
+                        connection.query(sql, function(err, result)
+                        {
+                          if(err)
+                          {
+                            console.log(err);
+                            response.send('{"result": "false"}');
+                          } else {
+                            console.log(username + " has subscribed to show " + id);
+                            response.send('{"result": "true"}');
+                          }
+                        });
+                      });
                     });
                   } else {
                     // list does contain the subbed movie
@@ -1417,12 +1527,12 @@ router.put("/getData/getShowName", function(req, response)
 		console.log(err);
         response.send('{"result": "false"}');
     } else {
-        console.log("Fetched id: " + id);
+        //console.log("Fetched id: " + id);
         // build the response from result
         var back = '{"result": "false"}';
         if(result[0] !== null)
         {
-		  console.log("Title: " + result[0].tv_show_title);
+		  //console.log("Title: " + result[0].tv_show_title);
           back = '{"title": "' + result[0].tv_show_title + '"}';
         }
         response.send(back);
@@ -1517,7 +1627,7 @@ router.put("/addCommentMovie", function(req, response)
   	var user_id = result;
   	var commentID = Math.floor(Math.random()*9000000) + 1000000;
   	var body = req.body.body
-	
+
   	var movieID = req.body.id
 
 	var d = new Date();
@@ -1682,7 +1792,7 @@ router.put("/getData/getMovieCommentList", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-		console.log(sqlresult);
+		//console.log(sqlresult);
         if(sqlresult.length === 0)
         {
           // respond with no comments
@@ -1742,7 +1852,7 @@ router.put("/getData/getEpisodeCommentList", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-		console.log(sqlresult);
+		//console.log(sqlresult);
         if(sqlresult.length === 0)
         {
           // respond with no comments
@@ -1774,7 +1884,7 @@ router.put("/getData/getMovieCommentUsername", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-		console.log(sqlresult);
+		//console.log(sqlresult);
         if(sqlresult.length === 0)
         {
           // respond with no comments
@@ -1801,7 +1911,7 @@ router.put("/getData/getShowCommentUsername", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-		console.log(sqlresult);
+		//console.log(sqlresult);
         if(sqlresult.length === 0)
         {
           // respond with no comments
@@ -1829,7 +1939,7 @@ router.put("/getData/getEpisodeCommentUsername", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-		console.log(sqlresult);
+		//console.log(sqlresult);
         if(sqlresult.length === 0)
         {
           // respond with no comments
@@ -1859,7 +1969,7 @@ router.put("/getData/getMovieCommentTime", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-		console.log(sqlresult);
+		//console.log(sqlresult);
         if(sqlresult.length === 0)
         {
           // respond with no times
@@ -1886,7 +1996,7 @@ router.put("/getData/getShowCommentTime", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-		console.log(sqlresult);
+		//console.log(sqlresult);
         if(sqlresult.length === 0)
         {
           // respond with no times
@@ -1913,7 +2023,7 @@ router.put("/getData/getEpisodeCommentTime", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-		console.log(sqlresult);
+		//console.log(sqlresult);
         if(sqlresult.length === 0)
         {
           // respond with no times
@@ -1942,7 +2052,7 @@ router.put("/getData/getMovieCommentDate", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-		console.log(sqlresult);
+		//console.log(sqlresult);
         if(sqlresult.length === 0)
         {
           // respond with no dates
@@ -1969,7 +2079,7 @@ router.put("/getData/getShowCommentDate", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-		console.log(sqlresult);
+		//console.log(sqlresult);
         if(sqlresult.length === 0)
         {
           // respond with no dates
@@ -1996,7 +2106,7 @@ router.put("/getData/getEpisodeCommentDate", function(req, response)
         console.log(err);
         response.send('{"result": "false"}');
       } else {
-		console.log(sqlresult);
+		//console.log(sqlresult);
         if(sqlresult.length === 0)
         {
           // respond with no dates
@@ -2017,10 +2127,10 @@ router.put("/getData/getShowIdFromEpisodeId", function(req, response)
 {
   var id = req.body.id;
   var sql = "SELECT * FROM tv_show TS INNER JOIN episode E ON TS.tv_show_id = E.tv_show_id WHERE episode_id='" + id + "'";
-	console.log(id);
+	//console.log(id);
   connection.query(sql, function(err, result)
   {
-	  console.log(result);
+	  //console.log(result);
 	if(err)
     {
 		console.log(err);
@@ -2028,7 +2138,7 @@ router.put("/getData/getShowIdFromEpisodeId", function(req, response)
     } else {
         // build the response from result
         var back = '{"result": "false"}'
-		
+
         if(result[0] !== null)
         {
           back = '{"showId": "' + result[0].tv_show_id + '"}';
